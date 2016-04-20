@@ -1,0 +1,481 @@
+<div class="widget-box widget-color-green2">
+	<div class="widget-header widget-header-small clearfix">
+		<h5 class="widget-title">知识库维护</h5>
+		<div class="widget-toolbar">
+			<a href="#" data-action="fullscreen" class="btn-minier orange2"> <i
+				class="ace-icon fa fa-expand"></i>
+			</a>
+		</div>
+	<div class="widget-toolbar no-border width-40" style="padding-top: 2px;">
+			<form method="post" class="form-search" id="search-form"  action="">
+				<div class="input-group" style="line-height: 0px;">
+					<span class="input-group-btn">
+						<span  class=" btn  btn-success btn-minier "
+							id="search-all-btn">
+							 显示全部 
+						</span> 
+					</span>
+					<input type="text" class="form-control search-query input-minier"
+						name="name" placeholder="文件名称" id="search-input">
+						<span class="input-group-btn">
+						<span class="btn  btn-success btn-minier"
+							id="search-btn">
+							搜索 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+						</span>
+					</span>
+				</div>
+			</form>
+		</div> 
+	<div class="widget-toolbar">
+            <a class="btn btn-purple btn-minier" href="javascript:void(0);"
+               data-mode="add" data-title="新建"
+               data-url="${ctxPath}/repository/add"
+               data-width="50%"
+               data-reloadurl="true"
+               data-table="treeRepository"
+               >
+				<i class="ace-icon fa fa-plus-circle bigger-130"></i>
+				<span>新&nbsp;建&nbsp;</span>
+			</a>
+        </div>
+	</div>
+		
+	<div class="widget-body">
+		<div class="widget-main padding-2">
+			<div class="row">
+				<div class="col-sm-3">
+					<div id="tree-menu-div" style="overflow: auto;">
+						<ul id="treeRepository" class="ztree"></ul>
+					</div>
+				</div>
+			<div class="widget-box" id="y_box1">
+				<div class="table-responsive">
+				<div class="col-sm-9">
+					<table id="table" class="table table-condensed table-striped table-bordered table-hover nomargin-bottom"
+							  data-pagination="true" 
+							  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+							  data-smart-display="false" data-unique-id="stdId"
+							  data-toggle="table"> 
+						<thead>
+							<tr>
+								
+								<!--  <th data-field="stdId" data-align="center">序号</th> -->
+								<th data-field="stdCode" data-align="center">编码</th>
+								<th data-field="fileNo" data-width="90" data-align="center">标准文号</th>
+								<th data-field="fileName" data-align="center" data-formatter="dataDetail3">文件名称</th>
+								<th data-field="kbstdtype" data-align="center">审计依据类型</th>
+								<th data-field="filetype" data-width="50" data-align="center">文件类型</th>
+								<th data-align="center" data-width="100" data-formatter="operatorBtn3">操作</th>
+							</tr>
+						</thead>
+				</table>
+				</div>
+			</div>
+			</div>
+			<div class="widget-box" id="y_box2">
+				<div class="table-responsive">
+				<div class="col-sm-9">
+					<table id="table1" class="table table-condensed table-striped table-bordered table-hover nomargin-bottom"
+							  data-pagination="true" 
+							  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+							  data-smart-display="true" data-unique-id="stdId"
+							  data-toggle="table">
+						<thead>
+							<tr>
+								
+								<th data-field="profitCode"  data-align="center">编码</th>
+								<th data-field="profitTitle" data-formatter="dataDetail" data-align="center">名称</th>
+								<th data-field="profitDesc" data-align="center">描述</th>
+								<th data-field="keyword" data-align="center">关键字</th>
+								<th data-field="creatorId"  data-align="center">创建人</th>
+								<th data-field="createTime"  data-align="center">创建时间</th>
+								<th data-align="center"  data-formatter="operatorBtn4">操作</th>
+							</tr>
+						</thead>
+				</table>
+				</div>
+			</div>
+			</div>
+			<div class="widget-box" id="y_box3">
+				<div class="table-responsive">
+				<div class="col-sm-9">
+					<table id="table2" class="table table-condensed table-striped table-bordered table-hover nomargin-bottom"
+							  data-pagination="true" 
+							  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+							  data-smart-display="true" data-unique-id="stdId"
+							  data-toggle="table">
+						<thead>
+							<tr>
+								
+								<th data-field="auditCode"  data-align="center">编码</th>
+								<th data-field="auditTitle" data-formatter="dataDetail1" data-align="center">名称</th>
+								<th data-field="auditDesc" data-align="center">描述</th>
+								<th data-field="auditObject" data-align="center">审计对象</th>
+								<th data-field="keyword" data-align="center">关键字</th>
+								<th data-field="creatorId"  data-align="center">创建人</th>
+								<th data-field="createTime"  data-align="center">创建时间</th>
+								<th data-align="center"  data-formatter="operatorBtn5">操作</th>
+							</tr>
+						</thead>
+				</table>
+				</div>
+			</div>
+			</div>
+			<div class="widget-box" id="y_box4">
+				<div class="table-responsive">
+				<div class="col-sm-9">
+					<table id="table3" class="table table-condensed table-striped table-bordered table-hover nomargin-bottom"
+							  data-pagination="true" 
+							  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+							  data-smart-display="true" 
+							  data-toggle="table">
+						<thead>
+							<tr>
+								
+								<th data-field="trainCode"  data-align="center">编码</th>
+								<th data-field="trainTitle" data-formatter="dataDetail2" data-align="center">名称</th>
+								<th data-field="trainDesc" data-align="center">描述</th>
+								<th data-field="keyword" data-align="center">关键字</th>
+								<th data-field="creatorId"  data-align="center">创建人</th>
+								<th data-field="createTime"  data-align="center">创建时间</th>
+								<th data-align="center"  data-formatter="operatorBtn6">操作</th>
+							</tr>
+						</thead>
+				</table>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+<div id="rowBtn_edit" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" 
+			title="编辑数据"
+			data-mode="page" data-title="编辑"
+			data-url="${ctxPath}/repository/kbstd/edit/showlayer"
+			data-data="{id:'{row.stdId}'}"
+			data-width="50%"
+			>
+			<i class="ace-icon fa fa-pencil midder-130"></i>
+		</a>
+	
+		<a class="red" href="javascript:void(0);" 
+			title="删除数据"
+			data-mode="del" data-title="删除操作"
+			data-msg="你确定删除该条数据吗?(慎重操作)"
+			data-url="${ctxPath}/repository/kbstd/delete" data-data="{id:'{row.stdId}'}"
+			data-callback="loadData(1501,null)"
+			>
+			<i class="ace-icon fa fa-trash-o midder-130"></i>
+		</a>
+	
+		<a class="black" href="javascript:void(0);" 
+			title="增加条目"
+			data-mode="page" data-title="增加条目"
+			data-url="${ctxPath}/kbStdEntry/add/showlayer" 
+			data-data="{id:'{row.stdId}'}"
+			data-width="50%"
+			data-reloadurl="true"
+			>
+			<i class="ace-icon fa fa-plus midder-130"></i>
+		</a>
+		<a class="grey" href="javascript:void(0);" 
+			title="浏览条目"
+			data-mode="detail" data-title="浏览条目"
+			data-url="${ctxPath}/kbStdEntry/detail/showlayer" data-data="{id:'{row.stdId}'}"
+			data-width="80%"
+			data-reloadurl="true"
+			>
+			<i class="ace-icon fa fa-ellipsis-h midder-130"></i>
+		</a>
+	</div>
+</div>
+<div id="rowBtn_edit1" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" 
+			title="编辑数据"
+			data-mode="page" data-title="编辑"
+			data-url="${ctxPath}/repository/profit/edit/showlayer"
+			data-data="{id:'{row.profitId}'}"
+			data-width="50%"
+			>
+			<i class="ace-icon fa fa-pencil bigger-130"></i>
+		</a>
+	
+		<a class="red" href="javascript:void(0);" 
+			title="删除数据"
+			data-mode="del" data-title="删除操作"
+			data-msg="你确定删除该条数据吗?(慎重操作)"
+			data-url="${ctxPath}/repository/profit/delete" data-data="{id:'{row.profitId}'}"
+			data-callback="loadData(1503,null)"
+			>
+			<i class="ace-icon fa fa-trash-o bigger-130"></i>
+		</a>
+	</div>
+</div>
+<div id="rowBtn_edit2" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" 
+			title="编辑数据"
+			data-mode="page" data-title="编辑"
+			data-url="${ctxPath}/repository/audit/edit/showlayer"
+			data-data="{id:'{row.auditId}'}"
+			data-width="50%"
+			>
+			<i class="ace-icon fa fa-pencil bigger-130"></i>
+		</a>
+	
+		<a class="red" href="javascript:void(0);" 
+			title="删除数据"
+			data-mode="del" data-title="删除操作"
+			data-msg="你确定删除该条数据吗?(慎重操作)"
+			data-url="${ctxPath}/repository/audit/delete" data-data="{id:'{row.auditId}'}"
+			data-callback="loadData(1401,null)"
+			>
+			<i class="ace-icon fa fa-trash-o bigger-130"></i>
+		</a>
+	</div>
+</div>
+<div id="rowBtn_edit3" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" 
+			title="编辑数据"
+			data-mode="page" data-title="编辑"
+			data-url="${ctxPath}/repository/train/edit/showlayer"
+			data-data="{id:'{row.trainId}'}"
+			data-width="50%"
+			>
+			<i class="ace-icon fa fa-pencil bigger-130"></i>
+		</a>
+	
+		<a class="red" href="javascript:void(0);" 
+			title="删除数据"
+			data-mode="del" data-title="删除操作"
+			data-msg="你确定删除该条数据吗?(慎重操作)"
+			data-url="${ctxPath}/repository/train/delete" data-data="{id:'{row.trainId}'}"
+			data-callback="loadData(1402,null)"
+			>
+			<i class="ace-icon fa fa-trash-o bigger-130"></i>
+		</a>
+	</div>
+</div>
+<script type="text/javascript">
+	var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		},
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : "id",
+				pIdKey : "parentId"
+			}
+		},
+		callback: {
+			onClick: onClickNode,
+			beforeDrag: function(){return false;}
+		}
+	};
+	var key = $("#search-input"),nodeList = [];
+	$("#search-all-btn").click(function(){
+		var type = '';
+		var parentId = '';
+		var treeObj = $.fn.zTree.getZTreeObj('treeRepository');
+		var nodes = treeObj.getSelectedNodes();
+		$.each(nodes,function(i,obj){
+			type = obj.id;
+			parentId = obj.parentId;
+		})
+		loadData(type,null);
+	});
+	
+	$("#search-btn").click(function(e){
+		var type = '';
+		var parentId = '';
+		var treeObj = $.fn.zTree.getZTreeObj('treeRepository');
+		var nodes = treeObj.getSelectedNodes();
+		$.each(nodes,function(i,obj){
+			type = obj.id;
+			parentId = obj.parentId;
+		})
+		if(type == ''){
+			layer.msg('<span class="red bigger-120">请先点击左侧类型再进行搜索</span>');
+			return;
+		}
+		// 取得输入的关键字的值
+		var value = $.trim(key.get(0).value);
+		var name = key.val();
+		name = decodeURIComponent(name,true);
+		name = encodeURI(encodeURI(name));
+		loadData(type,parentId,name);
+	});
+	
+	//节点点击事件
+	function onClickNode(event, treeId, treeNode) {
+		loadData(treeNode.id,treeNode.parentId);
+	};
+	
+	var key = $("#search-input"),nodeList = [];
+	
+	var treeObj;
+	$(function(){
+		//树结构初始化
+		nodeList=[]; //清除缓存
+		var treeData = ${treeList};
+		
+		$.fn.zTree.init($("#treeRepository"), setting,treeData);
+		treeObj = $.fn.zTree.getZTreeObj("treeRepository");
+		// 默认展开一级节点
+		
+	});
+	
+	$(function(){
+		$("#y_box1").show();  $("#y_box2").hide();
+		$("#y_box3").hide();  $("#y_box4").hide();
+	    $('#table').bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:"${ctxPath!}/repository/kbstd/list"
+	    });
+	    $('#table1').bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server'
+	    });
+	    $('#table2').bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server'
+	    });
+	    $('#table3').bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server'
+	    });
+	})
+	
+	function loadData(type,parentId,name){
+		if(type == 1501 || parentId == 1501){
+			$("#y_box1").show();  $("#y_box2").hide();
+			$("#y_box3").hide();  $("#y_box4").hide();
+			if(name == undefined){
+				$('#table').bootstrapTable("refresh",{url:"${ctxPath!}/repository/kbstd/list?type="+type+"&parentId="+parentId})
+			}else{
+				$('#table').bootstrapTable("refresh",{url:"${ctxPath!}/repository/kbstd/list?name="+name})
+			}
+		}
+		if(type == 1503 || parentId == 1503){
+			$("#y_box1").hide();  $("#y_box2").show();
+			$("#y_box3").hide();  $("#y_box4").hide();
+			if(name == undefined){
+				$('#table1').bootstrapTable("refresh",{url:"${ctxPath!}/repository/profit/list?type="+type+"&parentId="+parentId})
+			}else{
+				$('#table1').bootstrapTable("refresh",{url:"${ctxPath!}/repository/profit/list?name="+name})
+			}
+		}
+		if(type == 1401 || parentId == 1401){
+			$("#y_box1").hide();  $("#y_box2").hide();
+			$("#y_box3").show();  $("#y_box4").hide();
+			if(name == undefined){
+				$('#table2').bootstrapTable("refresh",{url:"${ctxPath!}/repository/audit/list?type="+type+"&parentId="+parentId})
+			}else{
+				$('#table2').bootstrapTable("refresh",{url:"${ctxPath!}/repository/audit/list?name="+name})
+			}
+			
+		}
+		if(type == 1402 || parentId == 1402){
+			$("#y_box1").hide();  $("#y_box2").hide();
+			$("#y_box3").hide();  $("#y_box4").show();
+			if(name == undefined){
+				$('#table3').bootstrapTable("refresh",{url:"${ctxPath!}/repository/train/list?type="+type+"&parentId="+parentId})
+			}else{
+				$('#table3').bootstrapTable("refresh",{url:"${ctxPath!}/repository/train/list?name="+name})
+			}
+		}
+	}
+	
+	
+	function dataDetail(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+				' data-mode="detail" data-title="'+value+'    详细"'+
+				' data-url="${ctxPath}/repository/profit/detail/showlayer"'+
+				'data-width="50%"'+
+				'data-data="{id:'+row.profitId+'}" >'+
+				value +
+				'</a>';
+	}
+	
+	function dataDetail1(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+				' data-mode="detail" data-title="'+value+'    详细"'+
+				' data-url="${ctxPath}/repository/audit/detail/showlayer"'+
+				'data-width="50%"'+
+				'data-data="{id:'+row.auditId+'}" >'+
+				value +
+				'</a>';
+	}
+	function dataDetail2(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+				' data-mode="detail" data-title="'+value+'    详细"'+
+				' data-url="${ctxPath}/repository/train/detail/showlayer"'+
+				'data-width="50%"'+
+				'data-data="{id:'+row.trainId+'}" >'+
+				value +
+				'</a>';
+	}
+	function dataDetail3(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+		' data-mode="detail" data-title="详细信息"'+
+		' data-url="${ctxPath}/repository/kbstd/detail/showlayer"'+
+		'data-width="50%"'+
+		'data-data="{id:'+row.stdId+'}" >'+
+		value +
+		'</a>';
+	}
+	
+	function operatorBtn3(value, row) {
+		return $("#rowBtn_edit").html()
+		.replace(new RegExp("{row.stdId}", "g"), row.stdId);
+	}
+	function operatorBtn4(value, row) {
+		return $("#rowBtn_edit1").html()
+		.replace(new RegExp("{row.profitId}", "g"), row.profitId);
+	}
+	function operatorBtn5(value, row) {
+		return $("#rowBtn_edit2").html()
+		.replace(new RegExp("{row.auditId}", "g"), row.auditId);
+	}
+	function operatorBtn6(value, row) {
+		return $("#rowBtn_edit3").html()
+		.replace(new RegExp("{row.trainId}", "g"), row.trainId);
+	}
+	
+</script>

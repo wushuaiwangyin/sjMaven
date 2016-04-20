@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.RiskModelMapper">
+
+	<sql id="riskModelColumns">
+		id,risk_type,model_id,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasRiskModelColumns">
+		b.id,b.risk_type,b.model_id,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.verify.model.RiskModel">
+		select  <include refid="aliasRiskModelColumns" />  
+			from risk_model  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(riskType)">
+			    and b.risk_type =  #{riskType}
+			 </if>
+			 <if test="@Ognl@isNotBlank(modelId)">
+			    and b.model_id =  #{modelId}
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.report.analysis.mapper.AnalysisMapper">
+	
+	<select id="getAnalysisList" resultType="com.krm.dbaudit.web.report.analysis.model.Analysis">
+		select *
+		from report_analysis_conf a
+		<where>
+			a.status = '0'
+			and a.report_type in 
+    				(select id from report_type b where b.status=0 START WITH b.id=#{reportType} CONNECT BY PRIOR b.ID = b.parent_id)
+		</where>
+		order by a.sort
+	</select>
+	
+	<resultMap id="analysis" type="com.krm.dbaudit.web.report.analysis.model.Analysis" >
+		<result column="id" property="id"/>
+		<result column="report_id" property="reportId"/>
+		<result column="report_name" property="reportName"/>
+		<result column="report_url" property="reportUrl"/>
+		<result column="type_name" property="typeName"/>
+	</resultMap>
+	
+	<resultMap id="analysisedit" type="com.krm.dbaudit.web.report.analysis.model.Analysis" >
+		<result column="id" property="id"/>
+		<result column="report_id" property="reportId"/>
+		<result column="report_name" property="reportName"/>
+		<result column="report_url" property="reportUrl"/>
+		<result column="report_type" property="reportType"/>
+	</resultMap>
+	
+	<select id="findPageInfo" resultMap="analysis">
+		select a.id, a.report_id,a.report_name,a.report_url,b.NAME type_name from REPORT_ANALYSIS_CONF a ,report_type b  
+    		<where>
+    			a.REPORT_TYPE=b.ID
+    			<if test="@Ognl@isNotBlank(reportType)">
+    				and a.REPORT_TYPE in 
+    				(select id from report_type b where b.status=0 START WITH b.id=#{reportType} CONNECT BY PRIOR b.ID = b.parent_id)
+    			</if>
+    		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+	
+	<select id="findById" resultMap="analysisedit">
+		select a.id, a.report_id,a.report_name,a.report_url,a.report_type from REPORT_ANALYSIS_CONF a 
+    		<where>
+    			a.id=#{id}
+    		</where>
+	</select>
+	
+	<update id="updateById">
+		update report_analysis_conf set 
+		report_id=#{reportId},
+		report_name=#{reportName},
+		report_url=#{reportUrl},
+		report_type=#{reportType}  
+		where id=#{id}
+	</update>
+</mapper>

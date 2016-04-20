@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="GB2312">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+<body>
+<div id="muchart" style="height:900px"></div>
+</body>
+</html>
+ <script src="jquery.min.js"></script>
+ <script src="echarts_rl.js"></script>
+<script>
+   var myChart;  
+   var eCharts; 
+  
+    myChart = echarts.init(document.getElementById('muchart'));  
+    myChart.showLoading({  
+        text : "图表数据正在努力加载..."  
+    });
+option = {
+    title : {
+        text: '担保关系',
+        x:'right',
+        y:'bottom'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: '{a} : {b}'
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            restore : {show: true},
+            magicType: {show: true, type: ['force', 'chord']},
+            saveAsImage : {show: true}
+        }
+    },
+  /*   legend: {
+        x: 'left',
+        data:['担保机构','被担保机构']
+    }, */
+    series : [
+        {
+            type:'force',
+            name : "担保关系",
+            ribbonType: false,
+            categories : [
+                {
+                    name: '担保机构'
+                },
+                {
+                    name: '被担保机构'
+                },
+                {
+                    name:'朋友'
+                }
+            ],
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true,
+                        textStyle: {
+                            color: '#333'
+                        }
+                    },
+                    nodeStyle : {
+                        brushType : 'both',
+                        borderColor : 'rgba(255,215,255,0.4)',
+                        width:100,
+                        borderWidth : 1
+                    },
+                    linkStyle: {
+                        type: 'curve',
+						color:'#8F8F8F'
+                    }
+                },
+                emphasis: {
+                    label: {
+                        show: true
+                        // textStyle: null      // 默认使用全局文本样式，详见TEXTSTYLE
+                    },
+                    nodeStyle : {
+                        //r: 30
+                        brushType : 'both',
+                        borderColor : 'rgba(255,215,255,100)',
+                        borderWidth : 1,
+                       width:100
+                    },
+                    linkStyle : {}
+                }
+            },
+            useWorker: false,
+            minRadius : 20,
+            maxRadius : 30,
+            gravity: 1.1,
+            scaling: 1.1,
+            roam: 'move',
+            linkSymbol: 'arrow',
+            nodes:[
+                
+            ],
+            links : [
+                
+            ]
+        }
+    ]
+};
+
+function focus(param) {
+    var data = param.data;
+    var links = option.series[0].links;
+    var nodes = option.series[0].nodes;
+   
+    if (
+            data.source !== undefined
+            && data.target !== undefined
+    ) { //点击的是边
+        var sourceNode = nodes.filter(function (n) {return n.name == data.source})[0];
+        var targetNode = nodes.filter(function (n) {return n.name == data.target})[0];
+        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    } else { // 点击的是点
+    	// alert(data.name);
+        console.log("选中了" + data.name + '(' + data.value + ')');
+        window.open('capitalFlow/frame.html', '_blank')
+        
+    	/* if(data.name == 'CORPA12011019700814122800'){
+            window.open('${ctxPath}/verify/capital/flow3','_blank'); 	
+    	}if(data.value == '2'){
+            window.open('${ctxPath}/verify/capital/flow4','_blank'); 	
+    	}if(data.value == '3'){
+            window.open('${ctxPath}/verify/capital/flow4','_blank'); 	
+    	}if(data.value == '4'){
+            window.open('${ctxPath}/verify/capital/flow7','_blank'); 	
+    	}if(data.value == '5'){
+            window.open('${ctxPath}/verify/capital/flow6','_blank'); 	
+    	} */
+    }
+}
+var tpnodes =[{"category":1,"name":"CORPA12022519640316451300","value":24},{"category":0,"name":"P0000138978033212597270","value":21},{"category":0,"name":"P0001888096197036549029","value":21},{"category":0,"name":"C0008459248464741187634","value":21},{"category":0,"name":"P0000640904578988572995","value":21},{"category":0,"name":"P0001712041950101214513","value":21},{"category":0,"name":"P0007544732574282884211","value":21},{"category":0,"name":"P0000714585166706140413","value":21},{"category":0,"name":"P0004633983394430769238","value":21},{"category":0,"name":"P0002895091151585409052","value":21},{"category":0,"name":"P0001211117109363673363","value":21},{"category":0,"name":"P0007652127975722799718","value":21},{"category":0,"name":"P0005510689279494872260","value":21},{"category":0,"name":"P0000984282603104495447","value":21},{"category":0,"name":"P0006076382842274813455","value":21},{"category":0,"name":"P0002735767195706470423","value":21}];
+
+var tplinks =[{"source":"CORPA12022519640316451300","target":"P0000138978033212597270","weight":10},{"source":"P0000138978033212597270","target":"P0001888096197036549029","weight":10},{"source":"P0001888096197036549029","target":"C0008459248464741187634","weight":10},{"source":"C0008459248464741187634","target":"P0000640904578988572995","weight":10},{"source":"P0000640904578988572995","target":"P0001712041950101214513","weight":10},{"source":"P0001712041950101214513","target":"P0007544732574282884211","weight":10},{"source":"P0007544732574282884211","target":"P0000714585166706140413","weight":10},{"source":"P0000714585166706140413","target":"P0004633983394430769238","weight":10},{"source":"P0004633983394430769238","target":"P0002895091151585409052","weight":10},{"source":"P0002895091151585409052","target":"P0001211117109363673363","weight":10},{"source":"P0001211117109363673363","target":"CORPA12022519640316451300","weight":10},{"source":"P0002895091151585409052","target":"P0007652127975722799718","weight":10},{"source":"P0007652127975722799718","target":"P0005510689279494872260","weight":10},{"source":"P0005510689279494872260","target":"P0001211117109363673363","weight":10},{"source":"P0007652127975722799718","target":"CORPA12022519640316451300","weight":10},{"source":"P0007544732574282884211","target":"P0004633983394430769238","weight":10},{"source":"P0001712041950101214513","target":"P0000984282603104495447","weight":10},{"source":"P0000984282603104495447","target":"P0006076382842274813455","weight":10},{"source":"P0006076382842274813455","target":"P0007544732574282884211","weight":10},{"source":"P0000984282603104495447","target":"P0007544732574282884211","weight":10},{"source":"P0000640904578988572995","target":"P0000984282603104495447","weight":10},{"source":"P0006076382842274813455","target":"P0001712041950101214513","weight":10},{"source":"P0000138978033212597270","target":"P0007652127975722799718","weight":10},{"source":"P0000138978033212597270","target":"CORPA12022519640316451300","weight":10},{"source":"CORPA12022519640316451300","target":"P0007652127975722799718","weight":10},{"source":"CORPA12022519640316451300","target":"P0002735767195706470423","weight":10},{"source":"P0002735767195706470423","target":"P0007652127975722799718","weight":10},{"source":"P0002735767195706470423","target":"CORPA12022519640316451300","weight":10}];
+  option.series[0].nodes=tpnodes;
+  option.series[0].links=tplinks;
+  myChart.setOption(option); //先把可选项注入myChart中  
+  myChart.hideLoading();  
+  myChart.on(echarts.config.EVENT.CLICK, focus)
+ // setdata();
+/*
+var ecConfig = require('echarts/config');
+function focus(param) {
+    var data = param.data;
+    var links = option.series[0].links;
+    var nodes = option.series[0].nodes;
+    if (
+        data.source !== undefined
+        && data.target !== undefined
+    ) { //点击的是边
+        var sourceNode = nodes.filter(function (n) {return n.name == data.source})[0];
+        var targetNode = nodes.filter(function (n) {return n.name == data.target})[0];
+        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    } else { // 点击的是点
+        console.log("选中了" + data.name + '(' + data.value + ')');
+        alert(data.name);
+    }
+}
+myChart.on(ecConfig.EVENT.CLICK, focus)
+
+myChart.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+    console.log(myChart.chart.force.getPosition());
+});
+*/
+
+/*
+function setdata()
+   {
+		var url="node.json";
+
+		//alert(url);
+		$.getJSON(url,function (data) {
+
+		    //对请求返回的JSON格式进行分解加载
+		      
+		    option.series[0].nodes=data;
+		  	myChart.setOption(option)
+		       
+		    });
+		   
+
+	   ;
+   }
+*/
+</script>
+                    

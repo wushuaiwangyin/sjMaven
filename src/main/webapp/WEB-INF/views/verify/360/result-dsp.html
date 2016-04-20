@@ -1,0 +1,209 @@
+
+	<div class="row">
+		<div class="col-xs-12">
+
+	@layout("/verify/360/top.html"){}
+		</div>
+	</div>
+	<div class="col-xs-12">
+		<div class="col-xs-3">
+		@layout("/verify/360/commom.html"){}
+		
+		<div style="position:absolute;left:5px;top:200px;width:200px;height:34px;">
+	    <p><span id="accuntno"></span></p>
+		<p><span id="sumbal"></span></p>
+		<span><font style="size:15px;color: red"></font></span>
+		
+		</div>
+		</div>
+		
+			<div class="col-xs-9">
+				<div class="widget-box">
+		
+					<div class="widget-body">
+						<div class="widget-main padding-0">
+						<input type="hidden" id="custId" name="custId" value="${custId!}" />
+							<div id="picBody" style="height: 500px;width: 900px;"></div>
+						</div>
+					</div>
+		
+		
+				</div>
+				
+				<div class="widget-main padding-8">
+                                <dl id="dt-list-2" class="dl-horizontal">
+                                <table id="table" calss="table_responsive" data-pagination="true" data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true">
+                               <thead>
+                               <tr id="rollTable">
+                               
+                               </tr>
+                               </thead>
+                               </table>    
+                                </dl>
+                                <div>
+                                <span id="dsp_span1"></span>
+                                </div>
+
+                        </div>
+			</div>
+		</div>
+		
+		
+
+
+<script type="text/javascript">
+
+function changeImg(path){
+    /*  $("#img").attr("src",'./static/img/'+path) */
+    var custId='${custId!}';
+    var isPublic='${isPublic!}';
+	  $("#fill-main-content").html(loadHtmlPage(path+"?isPublic="+isPublic+"&custId="+custId));
+ 	//  $("#fill-main-content").html(loadHtmlPage(path+"?custId="+custId));
+ }
+ 
+function modelNameFormatter(value,row,index){
+	  var isPublic='${isPublic!}';
+//	alert(value+","+row+","+index+","+isPublic);
+	return ' <a  href="javascript:void(0);"'+
+			' data-mode="detail" data-title="'+value+'    详细"'+
+			' data-url="${ctxPath}/cust360/main/detail/enterDspDetail?acctno='+value+'&isPublic='+isPublic+'"'+'data-width="80%" >'+
+			value +
+			'</a>';
+}
+$(function(){
+	var custId='${custId!}';
+	 var isPublic='${isPublic!}';
+	//var option=
+	var  option = {
+		    title : {
+		        text: '存款账户信息',
+		        subtext: '按月'
+		    },
+		    tooltip : {
+		        trigger: 'axis'
+		    },
+		    toolbox: {
+		        show : true,
+		        feature : {
+		            mark : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            magicType : {show: true, type: ['line']},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		    calculable : true,
+		    xAxis : [
+		        {
+		            type : 'category',
+		            boundaryGap : false,
+		            data : ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type :'value',
+		            axisLabel : {
+		              formatter: '{value} 万元',
+		              interval:'0',
+		              margin:'80' ,
+		              textStyle:{
+		                  fontSize:8,
+		                  align:'left'
+		                }
+		            }
+		        }
+		    ],
+		    grid:{
+		    	x:120
+		    	
+		    },
+		    series : [
+		     
+		    ]
+		};
+	
+	require([ 'echarts', 'echarts/chart/line' ],
+			 function(ec) {
+				var myChart = ec.init(document.getElementById('picBody'));
+				//myChart.showLoading({text:"图表数据正在努力加载中。。。"});
+				var ecConfig = require('echarts/config');
+				myChart.setOption(option, true);
+				$.ajax({
+					type: "post",
+					async: false, //同步执行
+					url: "${ctxPath}/cust360/main/ajaxGetDpsAccounts?custId="+custId+"&isPublic="+isPublic,
+					dataType: "json", //返回数据形式为json
+					success: function (result) {
+					if (result) {   
+					//alert(result[0].data);
+					option.series = result;
+					myChart.setOption(option);
+					}
+					},
+					error: function (errorMsg) {
+					alert("不好意思，大爷，图表请求数据失败啦!");
+					}
+					});
+			} 
+			//drawChart()
+	
+	);
+	
+
+	
+	
+	var isPublic=${isPublic!};
+	$.post("${ctxPath}/cust360/main/dspSumData",{custId:custId,isPublic:isPublic,model_id:2},function(data){
+	//	$("#accuntno").html("帐号:<font color='red' size='middle'>"+data.ACCTNO+"</font>")
+		$("#sumbal").html("存款总额:<font color='red' size='middle'>"+data.BALANCE+"</font>")
+	});
+	
+	/*  $.post("${ctxPath}/cust360/main/commonCust",{custId:custId,isPublic:isPublic,model_id:8},function(data){
+			$("#commonInfo").html(data);
+		}); */ 
+	 $.getJSON("${ctxPath}/cust360/main/commonCust",{custId:custId,isPublic:isPublic,model_id:8},function(data){
+   		  $("#com_custname").append(data.custName);
+  			$("#commonInfo").html("");
+  			var htmls="<p><span>客户号：</span><span>"+data.custId+"</span></p>"+"<p><span>客户类型：</span><span>"+data.custType+"</span></p>"
+  			+"<p><span>证件类型：</span><span>"+data.idtType+"</span></p>"
+  			+"<p><span>证件号码：</span><span>"+data.idNo+"</span></p>";
+  			$("#commonInfo").html(htmls);
+  		}); 
+	 
+	//存款账户信息
+		 $.post("${ctxPath}/cust360/main/getDspAccnoInfo",{custId:custId,isPublic:isPublic,model_id:4},function(data){
+			var str="";
+			var parsedJson = jQuery.parseJSON(data); 
+			var colName='';
+			$("#rollTable").html("");
+			 $.each(parsedJson.cols, function(i, item) {
+				// alert(i);
+				if("ACCTNO"==i){
+					str="<th data-field='"+i+"' data-align='center' data-width='30' data-sortable='true' data-formatter='modelNameFormatter' ";
+				}else{
+					str="<th data-field='"+i+"' data-align='center' data-width='30' data-sortable='true' ";
+				}
+				 $.each(item,function(n,obj){
+					if("alise"==n){
+					colName=obj;
+					//alert(colName);
+					}
+				 });
+		    	 str+=">"+colName+"</th>";
+		    	 //alert(str);
+		  			$("#rollTable").append(str);
+  	 });
+			var dataList=parsedJson.list
+		 $('#table').bootstrapTable('load',dataList);
+				$('#table').bootstrapTable({
+	                iconSize:'sm',
+	               data:dataList
+	            }); 
+			 
+	});
+	 
+})
+
+
+</script>

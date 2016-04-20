@@ -1,0 +1,38 @@
+<mxGraphModel dx="800" dy="800" grid="1" guides="1" tooltips="1" connect="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" style="default-style2">
+    <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="贷款合同信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#99CCFF" vertex="1" parent="1">
+            <mxGeometry x="69" y="127.5" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="贷款担保关联表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#66B2FF" vertex="1" parent="1">
+            <mxGeometry x="279" y="127.5" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="担保合同信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#66FFB3" vertex="1" parent="1">
+            <mxGeometry x="499" y="127.5" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="担保物信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#FFE6CC" vertex="1" parent="1">
+            <mxGeometry x="500" y="374.5" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="担保物关联表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#66FF66" vertex="1" parent="1">
+            <mxGeometry x="499" y="247.5" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="" style="endArrow=block;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#5F59FF" edge="1" parent="1" source="2" target="3">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="" style="endArrow=classic;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#7363FF" edge="1" parent="1" source="3" target="4">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="" style="endArrow=classic;entryX=0.5;entryY=0;entryPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#7363FF" edge="1" parent="1" target="6">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="559" y="187.5" as="sourcePoint"/>
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="10" value="" style="endArrow=classic;exitX=0.5;exitY=1;exitPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#7363FF" edge="1" parent="1" source="6" target="5">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="担保信息" style="whiteSpace=wrap;gradientColor=#FFFFFF;fontSize=24;strokeColor=none" vertex="1" parent="1">
+            <mxGeometry x="10" y="7" width="810" height="40" as="geometry"/>
+        </mxCell>
+    </root>
+</mxGraphModel>

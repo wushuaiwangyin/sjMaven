@@ -1,0 +1,169 @@
+<div class="profile-info-row">
+<div class="profile-info-name">付款人名称</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">收款人名称</div>
+<div class="profile-info-value" id='base_b'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">委托日期</div>
+<div class="profile-info-value" id='base_c'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">所属部门</div>
+<div class="profile-info-value" id='base_d'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">业务种类</div>
+<div class="profile-info-value" id='base_e'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">电汇委托书号码</div>
+<div class="profile-info-value" id='base_f'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">发起行支付系统号</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">支付交易序号</div>
+<div class="profile-info-value" id='base_h'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">发起清算行行号</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">收款人支付系统号</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">接受清算行行号</div>
+<div class="profile-info-value" id='base_k'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">接受行支付系统号</div>
+<div class="profile-info-value" id='base_l'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">货币符号</div>
+<div class="profile-info-value" id='base_m'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">金额</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">收报中心号码</div>
+<div class="profile-info-value" id='base_o'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">发报中心号码</div>
+<div class="profile-info-value" id='base_p'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">付款行支付系统号</div>
+<div class="profile-info-value" id='base_q'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">付款人账号</div>
+<div class="profile-info-value" id='base_r'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">付款人地址</div>
+<div class="profile-info-value" id='base_s'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">收款人账号</div>
+<div class="profile-info-value" id='base_t'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">收款人地址</div>
+<div class="profile-info-value" id='base_u'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">附言</div>
+<div class="profile-info-value" id='base_v'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易日期</div>
+<div class="profile-info-value" id='base_w'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">业务受理交易流水</div>
+<div class="profile-info-value" id='base_x'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">资金清算交易流水</div>
+<div class="profile-info-value" id='base_y'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">状态</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">对账标志</div>
+<div class="profile-info-value" id='base_aa'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">业务回执处理码</div>
+<div class="profile-info-value" id='base_ab'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">票据日期</div>
+<div class="profile-info-value" id='base_ac'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">凭证种类</div>
+<div class="profile-info-value" id='base_ad'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">赔偿金额</div>
+<div class="profile-info-value" id='base_ae'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">拒付金额</div>
+<div class="profile-info-value" id='base_af'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">报文参考号</div>
+<div class="profile-info-value" id='base_ag'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">业务类型</div>
+<div class="profile-info-value" id='base_ah'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">支付优先级</div>
+<div class="profile-info-value" id='base_ai'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">错误内容</div>
+<div class="profile-info-value" id='base_aj'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">凭证号</div>
+<div class="profile-info-value" id='base_ak'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易用户</div>
+<div class="profile-info-value" id='base_al'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">发送人</div>
+<div class="profile-info-value" id='base_am'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易时间</div>
+<div class="profile-info-value" id='base_sn'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">AAA</div>
+<div class="profile-info-value" id='base_so'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">AAASWWW</div>
+<div class="profile-info-value" id='base_sp'></div>
+</div>
+

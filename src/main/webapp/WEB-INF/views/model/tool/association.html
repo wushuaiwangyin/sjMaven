@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/tool/styles/table.css" />
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/searchTree.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+<title>数据关联</title>
+<script type="text/javascript">
+
+//alert("您传递的参数为：" +window.dialogArguments);
+var dlgargs = window.dialogArguments;
+
+//副表字段数组
+var sectablecols=null;
+var flowid;
+var edit_srctable1;
+var edit_srctable2;
+var editfirstcols;
+var editsecondcols;
+var relationfield;
+var oprflag=true;
+$(function(){
+	if(dlgargs[0]=='edit_merge_data'){
+		//编辑入口
+		var action_data = dlgargs[1];
+		$.each(action_data,function(gindex,ginfo){
+			var tablealias = ginfo.tablealias;
+			var condition = ginfo.contition;
+			var edittablename = ginfo.tablename;
+			var srctable1 = ginfo.srctable1;
+			var srctable2 = ginfo.srctable2;
+			edit_srctable1 = srctable1;
+			edit_srctable2 = srctable2;
+			var srctablename1 = ginfo.srctablename1;
+			var srctablename2 = ginfo.srctablename2;
+			flowid = ginfo.flowid;
+			
+			$('#filename').val(tablealias);
+			$('#maintable').text(srctablename1);
+			$('#secondtable').text(srctablename2);
+			$('#condition').val(condition);
+			
+			//主表选择的字段
+			var fields = ginfo.field;
+			
+			
+			//加载主表的字段
+			$("#tableselectcolumn").empty();
+			$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+srctable1, 
+				success: function(data){
+					var resfiled=data;
+					var cols = new Array();
+					var colData = new Object();
+					for(var i=0;i<resfiled.length;i++){
+						var fieldalias = resfiled[i].fieldalias;
+						var fieldname = resfiled[i].fieldname;
+						var fieldtype = resfiled[i].fieldtype;
+						var fieldid = resfiled[i].id;
+						colData = new Object();
+						colData.field = fieldalias;
+					    colData.title = fieldalias;
+					    colData.fieldtype = fieldtype;
+					    colData.fieldid = fieldid;
+					    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+					   
+					    cols.push(colData);
+					    
+						$("#tableselectcolumn").append("<option value='" +resfiled[i].id+"'>" + resfiled[i].fieldalias + "</option>");
+					}
+					editfirstcols = cols;
+					
+					//处理主表选择的字段为选中状态 
+					$("#tableselectcolumn option").each(function(tcoindex,tcoinfo){
+						for(var i=0;i<fields.length;i++){
+							if(tcoinfo.value==fields[i].id){
+								tcoinfo.selected=true;
+							}
+						}
+					});
+		    }});
+			
+			//加载副表的字段
+			$("#tablesecselectcolumn").empty();
+			$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+srctable2, 
+				success: function(data){
+					var resfiled=data;
+					var cols = new Array();
+					var colData = new Object();
+					for(var i=0;i<resfiled.length;i++){
+						var fieldalias = resfiled[i].fieldalias;
+						var fieldname = resfiled[i].fieldname;
+						var fieldtype = resfiled[i].fieldtype;
+						var fieldid = resfiled[i].id;
+						colData = new Object();
+						colData.field = fieldalias;
+					    colData.title = fieldalias;
+					    colData.fieldtype = fieldtype;
+					    colData.fieldid = fieldid;
+					    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+					   
+					    cols.push(colData);
+					    
+						$("#tablesecselectcolumn").append("<option value='" +resfiled[i].id+"'>" + resfiled[i].fieldalias + "</option>");
+					}
+					
+					editsecondcols=cols;
+					
+					//处理主表选择的字段为选中状态 
+					$("#tablesecselectcolumn option").each(function(tcoindex,tcoinfo){
+						for(var i=0;i<fields.length;i++){
+							if(tcoinfo.value==fields[i].id){
+								tcoinfo.selected=true;
+							}
+						}
+					});
+		    }});
+			
+			//处理关联方式
+			var mergeinfo = ginfo.mergeinfo
+			$.each($('input[name=asstype]'),function(asindex,asinfo){
+				if(asinfo.value==mergeinfo[0].mode){
+					asinfo.checked=true;
+				}
+			});
+			
+			//关联的字段
+			relationfield = mergeinfo[0].relationfield;
+		});
+	}else{
+		//新增入口
+		//加载主表字段
+		$.each(dlgargs[1],function(n,node) {
+		    //加载数据提取字段
+	    	$("#tableselectcolumn").append("<option value='" +node.fieldid+"' selected='selected'>" + node.title + "</option>");
+	    }); 
+		
+		$('#maintable').text(dlgargs[2]);
+		
+		
+	}
+	
+	
+	//树结构双击事件，双击选择副表
+	$('#tabletree').tree({//双击事件
+		onDblClick: function(node){
+			//双击显示表数据
+			var  tableName = node.name;
+			var tabletext = node.text;
+			
+			if(node.type==0){
+            	alert("这好像是一个文件夹，不是一个可查询的表！");
+            	return;
+        	}
+			
+
+			if($('#maintable').text()==tabletext){
+				alert("主表和副本不能相同，请重新选择!");
+				return;
+			}
+			$('#secondtable').text(tabletext);
+			$('#sectablename').val(tableName);
+			$('#dlgtabletree').dialog('close');
+
+
+			
+			//加载副表字段
+			$("#tablesecselectcolumn").empty();
+			$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+tableName, 
+				success: function(data){
+					var resfiled=data;
+					var cols = new Array();
+					var colData = new Object();
+					for(var i=0;i<resfiled.length;i++){
+						var fieldalias = resfiled[i].fieldalias;
+						var fieldname = resfiled[i].fieldname;
+						var fieldtype = resfiled[i].fieldtype;
+						var fieldid = resfiled[i].id;
+						colData = new Object();
+						colData.field = fieldalias;
+					    colData.title = fieldalias;
+					    colData.fieldtype = fieldtype;
+					    colData.fieldid = fieldid;
+					    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+					   
+					    cols.push(colData);
+					    
+						$("#tablesecselectcolumn").append("<option value='" +resfiled[i].id+"' selected='selected'>" + resfiled[i].fieldalias + "</option>");
+					}
+					sectablecols=cols;
+
+					
+					//重新加载副表的匹配字段
+					//加载副表字段
+					//alert('111');
+					if(dlgargs[0]=='edit_merge_data'){
+						alert('222');
+						$("#selectcolumn_s1").empty();
+						$("#selectcolumn_s1").append('<option value="0" selected="selected"> </option>');
+						$("#selectcolumn_s2").empty();
+						$("#selectcolumn_s2").append('<option value="0" selected="selected"> </option>');
+						$("#selectcolumn_s3").empty();
+						$("#selectcolumn_s3").append('<option value="0" selected="selected"> </option>');
+						$("#selectcolumn_s4").empty();
+						$("#selectcolumn_s4").append('<option value="0" selected="selected"> </option>');
+						$.each(sectablecols,function(n,node) {
+							$("#selectcolumn_s1").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+							
+							$("#selectcolumn_s2").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");		
+						    
+							$("#selectcolumn_s3").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+							
+							$("#selectcolumn_s4").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+					     });
+					}
+					
+
+					
+					//重新加载副表的匹配字段
+					//加载副表字段
+					//alert('111');
+					if(dlgargs[0]=='edit_merge_data'){
+						alert('222');
+						$("#selectcolumn_s1").empty();
+						$("#selectcolumn_s1").append('<option value="0" selected="selected"> </option>');
+						$("#selectcolumn_s2").empty();
+						$("#selectcolumn_s2").append('<option value="0" selected="selected"> </option>');
+						$("#selectcolumn_s3").empty();
+						$("#selectcolumn_s3").append('<option value="0" selected="selected"> </option>');
+						$("#selectcolumn_s4").empty();
+						$("#selectcolumn_s4").append('<option value="0" selected="selected"> </option>');
+						$.each(sectablecols,function(n,node) {
+							$("#selectcolumn_s1").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+							
+							$("#selectcolumn_s2").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");		
+						    
+							$("#selectcolumn_s3").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+							
+							$("#selectcolumn_s4").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+					     });
+					}
+					
+
+		    }});
+	    },
+	    onLoadSuccess: function(node){
+	    	//树加载完成后触发
+	    }
+    });
+	
+	
+});
+
+//主表条件
+function opendlgcondition(){
+	if(flowid==''||flowid==null){
+		str = window.showModalDialog("${ctxPath!}/model/flow/condition",dlgargs[0],"dialogWidth=650px;dialogHeight=560px");
+		if(str!=''&&str!=null){
+			$('#condition').val(str);
+		}
+	}else{
+		var arr = new Array();
+		arr.push("edit_table_condition");
+		arr.push(edit_srctable1);
+		arr.push($('#condition').val());
+		str = window.showModalDialog("${ctxPath!}/model/flow/condition",arr,"dialogWidth=650px;dialogHeight=560px");
+		if(str!=''&&str!=null){
+			$('#condition').val(str);
+		}
+	}
+}
+
+//选择副表
+function selectsectable(){
+	//加载树结构
+	$('#tabletree').tree({
+        url: "${ctxPath!}/model/tool/gettabletree",
+        loadFilter: function(data){
+            return data;
+        }
+    });
+	$('#dlgtabletree').dialog('open');
+	
+}
+
+//副表字段
+function opendlgsecondcolumn(){
+	//判断是否选择了副表
+	if($('#secondtable').text()==""){
+		alert("请先选择副本再选择字段!");
+		return;
+	}
+	$('#dlgsecondcolumn').dialog('open');
+}
+
+//选择两表的关联字段
+function opendlgasscolumn(){
+	
+	if($('#secondtable').text()==""){
+		alert("请先选择副本再选择匹配字段!");
+		return;
+	}
+	
+	$('#dlgasscolumn').dialog('open');
+	
+	
+	//加载主表字段
+	//加载前清空
+	$("#selectcolumn_m1").empty();
+	
+	$("#selectcolumn_m1").append('<option value="0" selected="selected"> </option>');
+	$("#selectcolumn_m2").empty();
+	$("#selectcolumn_m2").append('<option value="0" selected="selected"> </option>');
+	$("#selectcolumn_m3").empty();
+	$("#selectcolumn_m3").append('<option value="0" selected="selected"> </option>');
+	$("#selectcolumn_m4").empty();
+	$("#selectcolumn_m4").append('<option value="0" selected="selected"> </option>');
+	
+	var firstcols;
+	var secondcols;
+	if(dlgargs[0]=='edit_merge_data'){
+		firstcols = editfirstcols;
+		secondcols = editsecondcols;
+	}else{
+		firstcols=dlgargs[1];
+		secondcols=sectablecols;
+	}
+	$.each(firstcols,function(n,node) {
+	    //加载主表字段
+	    $("#selectcolumn_m1").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+	    
+		$("#selectcolumn_m2").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");    	
+		
+		$("#selectcolumn_m3").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+		
+		$("#selectcolumn_m4").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+		
+    }); 
+	
+	//加载副表字段
+	$("#selectcolumn_s1").empty();
+	$("#selectcolumn_s1").append('<option value="0" selected="selected"> </option>');
+	$("#selectcolumn_s2").empty();
+	$("#selectcolumn_s2").append('<option value="0" selected="selected"> </option>');
+	$("#selectcolumn_s3").empty();
+	$("#selectcolumn_s3").append('<option value="0" selected="selected"> </option>');
+	$("#selectcolumn_s4").empty();
+	$("#selectcolumn_s4").append('<option value="0" selected="selected"> </option>');
+	$.each(secondcols,function(n,node) {
+		$("#selectcolumn_s1").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+		
+		$("#selectcolumn_s2").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");		
+	    
+		$("#selectcolumn_s3").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+		
+		$("#selectcolumn_s4").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+     });
+	
+	
+	//如果是编辑，重现关联关系
+	if(dlgargs[0]=='edit_merge_data'){
+		$.each(relationfield,function(rfindex,rfinfo){
+			//左边的关联条件
+			$("#selectcolumn_m"+(rfindex+1)+" option").each(function(smindex,sminfo){
+				if(rfinfo.id1==sminfo.value){
+					sminfo.selected=true;
+				}
+			});
+			
+			//右边的关联条件
+			$("#selectcolumn_s"+(rfindex+1)+" option").each(function(ssindex,ssinfo){
+				if(rfinfo.id2==ssinfo.value){
+					ssinfo.selected=true;
+				}
+			});
+		})
+	}
+}
+
+//提交
+function associationsubmit(){
+	var srctable1 = dlgargs[0];
+	var srctable2 = $('#sectablename').val();
+	if(dlgargs[0]=='edit_merge_data'){
+		srctable1 = edit_srctable1;
+		srctable2 = edit_srctable2;
+		
+		if(oprflag){
+			//调用匹配方法加载关联字段
+			opendlgasscolumn();
+		}
+	}else{
+		flowid="";
+	}
+	var filename = $('#filename').val();
+	if(filename==''){
+		alert('请输入关联合并后的表名称!');
+		return;
+	}
+	
+	var field = "";
+	var relationfield = "";
+	var condition = "";
+	var mode = $('input:radio[name=asstype]:checked').val();
+	//提取用记选择的显示字段
+	 var selectobj = document.getElementById("tableselectcolumn");
+	 
+	 for(var i=0;i<selectobj.length;i++){
+		 if(selectobj.options[i].selected == true){
+			 var value = selectobj.options[i].value;
+			 var text = selectobj.options[i].text;
+			 field = field + "{\"id\":"+value+",\"fieldname\":\"item1\",\"fieldalias\":\""+text+"\"},";
+		 }
+	 }
+	 
+	 
+	 var selectobj2 = document.getElementById("tablesecselectcolumn");
+	 for(var i=0;i<selectobj2.length;i++){
+		 if(selectobj2.options[i].selected == true){
+			 var value = selectobj2.options[i].value;
+			 var text = selectobj2.options[i].text;
+			 field = field + "{\"id\":"+value+",\"fieldname\":\"item1\",\"fieldalias\":\""+text+"\"},";
+		 }
+	 }
+	 
+	 field = field.substring(0,field.length-1);
+	 field = "["+field+"]";
+	 
+	 //获取关联条件 
+	 //一共四组条件
+	 if($('#selectcolumn_m1').val()!='0' && $('#selectcolumn_s1').val()!='0'){
+		 relationfield = "{\"id1\":"+$('#selectcolumn_m1').val()+",\"id2\":"+$('#selectcolumn_s1').val()+"},";
+	 }
+	 if($('#selectcolumn_m2').val()!='0' && $('#selectcolumn_s2').val()!='0'){
+		 relationfield = relationfield + "{\"id1\":"+$('#selectcolumn_m2').val()+",\"id2\":"+$('#selectcolumn_s2').val()+"},";
+	 }
+	 if($('#selectcolumn_m3').val()!='0' && $('#selectcolumn_s3').val()!='0'){
+		 relationfield = relationfield + "{\"id1\":"+$('#selectcolumn_m3').val()+",\"id2\":"+$('#selectcolumn_s3').val()+"},";
+	 }
+	 if($('#selectcolumn_m4').val()!='0' && $('#selectcolumn_s4').val()!='0'){
+		 relationfield = relationfield + "{\"id1\":"+$('#selectcolumn_m4').val()+",\"id2\":"+$('#selectcolumn_s4').val()+"},";
+	 }
+	 relationfield = relationfield.substring(0,relationfield.length-1);
+	 relationfield = "["+relationfield+"]";
+	
+	//主表条件 
+	 condition = $('#condition').val();
+	
+	 
+	 var action_data = "[{\"modelid\":1,\"flowid\":\""+flowid+"\",\"tablealias\":\""+filename+"\",\"mode\":\""+mode+"\",\"srctable1\":\""+srctable1+"\",\"srctable2\":\""+srctable2+"\",\"field\":"+field+",\"relationfield\":"+relationfield+",\"condition\":\""+condition+"\"}]";
+	 var submitJson = "[{\"action_id\":\"merge_data\",\"action_data\":"+action_data+"}]";
+	 window.returnValue=submitJson;
+	 window.close();
+}
+
+
+//动态添加行
+function addline(){
+	var tr = $("#tb tr").eq(1).clone();
+	var seq = $("#tb tr").length;
+	
+	tr.find("td select").each(function(index,obj) {
+		if(index==0){
+			obj.id = "selectcolumn_m"+seq;
+		}else if(index==1){
+			obj.id = "selectcolumn_s"+seq;
+		}
+	});
+	
+	tr.show();
+    tr.appendTo("#tb");
+}
+
+
+//判断是否选择同样的条件组合
+function checkselect2(obj){
+	if(obj.value!=''){
+		//检查其它下拉列表是否选择了同样的字段
+		var sarr = document.getElementsByName("select_s");
+		for(var i=0;i<sarr.length;i++){
+			if(sarr[i].value!=''){
+				var pervalue = sarr[i].value;
+				//比较是否相同
+				if(obj.value==pervalue && obj.id != sarr[i].id){
+					//判断它们的对方是否相同
+					var objindex = obj.id.substring(obj.id.lastIndexOf('s')+1,obj.id.length);
+					var perindex = sarr[i].id.substring(sarr[i].id.lastIndexOf('s')+1,sarr[i].id.length);
+					//alert("objindex:"+objindex + "| perindex:" +perindex);
+					
+					//获取对方的值
+					var d_m_obj_val = $('#selectcolumn_m'+objindex).val();
+					var d_m_per_val = $('#selectcolumn_m'+perindex).val();
+					
+					//alert("d_m_obj_val:"+d_m_obj_val + " | d_m_per_val:"+d_m_per_val);
+					//如果它们的对方也相等，说明他们是重复的
+					if(d_m_obj_val==d_m_per_val){
+						alert("不能选择相同的匹配关联");
+						$('#selectcolumn_s'+objindex).val("0");
+					}
+				}
+			}
+		}
+	}
+}
+
+
+function checkasscolumn(){
+	var sarr = document.getElementsByName("select_s");
+	var flag = false;
+	for(var i=0;i<sarr.length;i++){
+		//判断它们的对方是否相同
+		var obj = sarr[i];
+		var objvalue = obj.value;
+		var objindex = obj.id.substring(obj.id.lastIndexOf('s')+1,obj.id.length);
+		
+		//获取对方的值
+		var d_m_per_val = $('#selectcolumn_m'+objindex).val();
+		
+		if((objvalue=='0' && d_m_per_val != '0') || (objvalue !='0' && d_m_per_val == '0')){
+			flag = true;
+		}
+		
+	}
+	if(flag){
+		alert("不能存在另一方为空的匹配关系！");
+		return;
+	}else{
+		//关闭匹配窗口
+		$('#dlgasscolumn').dialog('close');
+	}
+	
+}
+
+</script>
+<style type="text/css">
+body{font-size: 12px;}
+
+.asstable{
+            width:100%;
+            border-collapse:collapse;
+        }
+.asstable td{
+            border:1px solid gray;
+        }
+.selectcolumntype{width:150px;}
+</style>
+</head>
+<body>
+<div style="width: 500px;height:350px;margin: 5px;">
+	<div style="width:390px;height:220px;border:1px solid gray;float: left;">
+		<input type="hidden" id="maintablename" value=""/>
+		<input type="hidden" id="sectablename" value=""/>
+		<table>
+			<tr>
+				<td style="width:70px;">主表：</td>
+				<td style="width:220px;"><span id="maintable"></span> </td>
+				<td><button class="button" onclick= "$('#dlgselectcolumn').window('open');">字段</button> </td>
+			</tr>
+			<tr>
+				<td style="width:70px;">条件：</td>
+				<td style="width:220px;"><input type="text" name="condition" id="condition" /> </td>
+				<td><button class="button" onclick="opendlgcondition()">选择</button> </td>
+			</tr>
+			
+			<tr>
+				<td style="width:70px;">副表：</td>
+				<td style="width:220px;"><span id="secondtable"></span> </td>
+				<td><button class="button" onclick="selectsectable()">选择</button> </td>
+			</tr>
+			<tr>
+				<td style="width:70px;" colspan="2"> </td>
+				<td><button class="button" onclick="opendlgsecondcolumn()">字段</button> </td>
+			</tr>
+			<tr>
+				<td style="width:70px;">文件名：</td>
+				<td style="width:220px;"><input type="text" id="filename"/></td>
+				<td><button class="button" onclick="opendlgasscolumn()">匹配</button> </td>
+			</tr>
+		</table>
+	</div>
+	<div style="width:100px;height:220px;border:1px solid gray;float: left;margin-left:5px;">
+		<table>
+			<tr><td><input type="button" value=" 确 定 " style="width:80px;" onclick="associationsubmit()"/></td></tr>
+			<tr><td><input type="button" value=" 取 消 " style="width:80px;" onclick="window.close()"/></td></tr>
+		</table>
+	</div>
+	<div style="width:495px;height:100px;border:1px solid gray;float: left;margin-top:10px;">
+		<table>
+			<tr>
+				<td style="width:185px;"><input type="radio" name="asstype" value="1" checked="checked"/> 完全匹配的记录  </td>
+				<td style="width:185px;"><input type="radio" name="asstype" value="4"/> 主表中的所有记录  </td>
+			</tr>
+			<tr>
+				<td style="width:185px;"><input type="radio" name="asstype" value="2"/> 主表有而副表没有的记录  </td>
+				<td style="width:185px;"><input type="radio" name="asstype" value="5"/> 两个表中的所有记录  </td>
+			</tr>
+			<tr>
+				<td style="width:185px;"><input type="radio" name="asstype" value="3"/> 主表没有而副表有的记录  </td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div id="dlgselectcolumn" class="easyui-window" title="字段"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 450px; height: 250px; padding: 10px;">
+	<div style="width: 340px; height: 190px; padding: 1px; float: left;">
+	要包括的字段为：
+	<br/>
+	<select name="tableselectcolumn" id="tableselectcolumn" multiple="multiple" style="width:330px;height: 170px;">
+	</select>
+	</div>
+	<div style="width: 60px; height: 190px; padding: 1px; float: left;">
+		<input type="button" name="" onclick="$('#dlgselectcolumn').dialog('close')" value=" 确 定 "/>
+	</div>
+</div>
+
+<div id="dlgtabletree" class="easyui-window" title="表"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 250px; height: 300px; padding: 10px;">
+	<div class="easyui-panel" style="padding:0px;" fit="true">
+		<ul id="tabletree" class="easyui-tree" data-options="lines:true"></ul>
+	</div>
+</div>
+
+<div id="dlgsecondcolumn" class="easyui-window" title="副表字段"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 450px; height: 250px; padding: 10px;">
+	<div style="width: 340px; height: 190px; padding: 1px; float: left;">
+	要包括的字段为：
+	<br/>
+	<select name="tablesecselectcolumn" id="tablesecselectcolumn" multiple="multiple" style="width:330px;height: 170px;">
+	</select>
+	</div>
+	<div style="width: 60px; height: 190px; padding: 1px; float: left;">
+		<input type="button" name="" onclick="$('#dlgsecondcolumn').dialog('close')" value=" 确 定 "/>
+	</div>
+</div>
+
+<div id="dlgasscolumn" class="easyui-window" title="匹配关联字段"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 450px; height: 300px; padding: 10px;">
+	<div style="width:330px;height:240px;border:0px solid gray;float:left;">
+		<table class="asstable" id="tb">
+			<tr>
+				<td width="150px;" align="center">主表字段</td>
+				<td width="150px;" align="center">副表字段</td>
+			</tr>
+			<tr>
+				<td>
+					<select id="selectcolumn_m1" class="selectcolumntype" onchange="checkselect1(this)"><option value="0" selected="selected"> </option> </select>
+				</td>
+				<td>
+					<select id="selectcolumn_s1" name="select_s" class="selectcolumntype" onchange="checkselect2(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<select id="selectcolumn_m2" class="selectcolumntype" onchange="checkselect1(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+				<td>
+					<select id="selectcolumn_s2" name="select_s" class="selectcolumntype" onchange="checkselect2(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<select id="selectcolumn_m3" class="selectcolumntype" onchange="checkselect1(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+				<td>
+					<select id="selectcolumn_s3" name="select_s" class="selectcolumntype" onchange="checkselect2(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<select id="selectcolumn_m4" class="selectcolumntype" onchange="checkselect1(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+				<td>
+					<select id="selectcolumn_s4" name="select_s" class="selectcolumntype" onchange="checkselect2(this)"><option value="0" selected="selected"> </option></select>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div style="width:80px;height:240px;border:0px solid gray;float:left;">
+		<table>
+			<tr>
+				<td><input type="button" value=" 确 定 " onclick="checkasscolumn()"/> </td>
+			</tr>
+			<tr>
+				<td><input type="button" value=" 取 消 " onclick="$('#dlgasscolumn').dialog('close')"/> </td>
+			</tr>
+			<tr>
+				<td><input type="button" value=" 添 加 " onclick="addline()"/> </td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,447 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+ <script src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+ <script src="${ctxPath!}/static/tool/easyui/locale/easyui-lang-zh_CN.js" ></script>
+<link rel="stylesheet" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+<link rel="stylesheet" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+<link rel="stylesheet" href="${ctxPath!}/static/tool/easyui/demo.css"/>
+
+</head>
+<body>
+
+
+
+ <div>
+ <table width="936" border="1" cellpadding="0" cellspacing="0" style='width:702.00pt;border-collapse:collapse;table-layout:fixed;'>
+   <col width="72" span="15" style='width:54.00pt;'/>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl66" height="18" width="936" colspan="15" style='height:13.50pt;width:702.00pt;border-right:none;border-bottom:.5pt solid windowtext;' >审计实体档案户籍管理信息表（RAP表）</td>
+   </tr>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl67" height="18" colspan="15" style='height:13.50pt;border-right:1.0pt solid #000000;border-bottom:.5pt solid windowtext;' >业务单位(机构）：${user.organName!}</td>
+   </tr>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl67" height="18" colspan="15" style='height:13.50pt;border-right:1.0pt solid #000000;border-bottom:.5pt solid windowtext;' >编制人：${user.bzr!}</td>
+   </tr>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl67" height="18" colspan="15" style='height:13.50pt;border-right:1.0pt solid #000000;border-bottom:.5pt solid windowtext;' >审批人：${user.spr!}</td>
+   </tr>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl69" height="18" colspan="15" style='height:13.50pt;border-right:1.0pt solid #000000;border-bottom:none;' >报告日期：<font class="font24">${user.repDate!}</font></td>
+   </tr>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl71" height="18" style='height:13.50pt;' >机构名称</td>
+    <td class="xl72" colspan="2" style='border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;'>${user.busOrgan!}</td>
+    <td class="xl71" >开户日期</td>
+    <td class="xl71">${user.openDate!}</td>
+    <td class="xl71" >机构地址</td>
+    <td class="xl72" colspan="2" style='border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;'>${user.address!}</td>
+    <td class="xl71" >邮编</td>
+    <td class="xl71">${user.postCode!}</td>
+    <td class="xl71" >移动电话</td>
+    <td class="xl72" colspan="4" style='border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;'>${user.moveTelNo!}</td>
+   </tr>
+   <tr height="18" style='height:13.50pt;'>
+    <td class="xl73" height="18" colspan="15" style='height:13.50pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;'></td>
+   </tr>
+  
+  
+<tr height="18" style='height:13.50pt;'>
+	   <td class="xl73"  height="18" colspan="15" style='height:13.50pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;'>
+	   <table id="dg" class="easyui-datagrid"  style="width:100%;height:auto"
+					data-options="
+						iconCls: 'icon-edit',
+						singleSelect: true,
+						toolbar: '#tb',
+						url: '${ctxPath!}/entitydoc/main/getDatas',
+						method: 'get',
+						rownumbers:true,
+						onClickRow: onClickRow
+					">
+				<thead>
+					<tr>
+						<th data-options="field:'ck',checkbox:true,width:80"></th>
+						<th data-options="field:'id',editor:'textbox',width:80">序号</th>
+						<th data-options="field:'titleId',editor:'textbox',width:80">项目/联系人</th>
+						<th data-options="field:'name',editor:'textbox',width:80">姓名</th>
+						<th data-options="field:'rzq',width:80,align:'right',editor:'textbox'">任职期</th>
+						<th data-options="field:'apart',width:80,align:'right',editor:'textbox'">分管条线(部门)</th>
+						<th data-options="field:'perTellNo',width:250,editor:'textbox'">固定电话</th>
+						<th data-options="field:'moveTellNo',width:250,editor:'textbox'">移动电话</th>
+						<th data-options="field:'remark',width:250,editor:'textbox'">备注说明</th>
+						<!-- <th data-options="field:'status',width:60,align:'center',editor:{type:'checkbox',options:{on:'P',off:''}}">Status</th> -->
+						
+					</tr>
+				</thead>
+			</table>
+			<div id="tb" style="height:auto">
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">加行</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删行</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="getChanges()">保存</a>
+		<!-- <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">撤销</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges()">提交更改</a> -->
+	</div>	
+	   </td>
+</tr>
+
+   <tr height="18" style='height:33.50pt;'>
+   <td class="xl73" height="18" colspan="15" style='height:33.50pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;' >
+   <table id="dg2" class="easyui-datagrid"  style="width:100%;height:auto" title="经营指标情况" 
+					data-options="rownumbers:true,singleSelect:true,method:'get',toolbar:'#tb2'">
+				<thead>
+					
+				</thead>
+	</table>
+	
+		<div id="tb2" style="padding:5px;height:auto">
+		<div>
+			Date From: <input class="easyui-datebox" style="width:100px" id="startDate">
+			To: <input class="easyui-datebox" style="width:100px" id="endDate">
+			
+			<a href="javaScript:searchMonth()" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+		</div>
+	</div>
+   </td>
+   </tr>
+   
+
+   <tr height="18" style='height:33.50pt;'>
+   <td class="xl73" height="18" colspan="15" style='height:33.50pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;' >
+   	<table class="easyui-datagrid"  style="width:100%;height:auto"  title="历年我行审计部门检查记录"
+						data-options="
+						url: '${ctxPath!}/entitydoc/main/getJcDatas',
+						method: 'get'"
+						>
+  	 <thead>
+					<tr>
+						<th data-options="field:'id',width:80">序号</th>
+						<th data-options="field:'sjDate',width:80">审计时间</th>
+						<th data-options="field:'sjType',width:80,align:'right'">审计类型</th>
+						<th data-options="field:'xmmc',width:250">项目名称</th>
+						<th data-options="field:'zsr',width:250">主审人</th>
+						<th data-options="field:'xmbh',width:250">审计项目编号</th>
+						<th data-options="field:'remark',width:250">备注</th>
+						
+					</tr>
+				</thead>
+  	 </table>
+   </td>
+   </tr>
+   
+   
+   <tr height="18" style='height:33.50pt;'>
+   <td class="xl73" height="18" colspan="15" style='height:33.50pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;' >
+   	<table class="easyui-datagrid"  style="width:100%;height:auto"  title="历年审计过程中发现的问题"
+						data-options="
+						url: '${ctxPath!}/entitydoc/main/getQeDatas',
+						method: 'get'"
+						>
+  	 <thead>
+					<tr>
+						<th data-options="field:'id',width:80">序号</th>
+						<th data-options="field:'jcDate',width:80">检查日期</th>
+						<th data-options="field:'qe',width:80">问题名称</th>
+						<th data-options="field:'ywtx',width:250">业务条线</th>
+						<th data-options="field:'qems',width:250">问题描述</th>
+						<th data-options="field:'result',width:250">预计后果</th>
+						<th data-options="field:'fxfl',width:250">风险分类</th>
+						<th data-options="field:'flxq',width:250">风险分类详情</th>
+						<th data-options="field:'remark',width:250">备注</th>
+						
+					</tr>
+				</thead>
+  	 </table>
+   </td>
+   </tr>
+ 	
+ 
+  
+   <tr height="18" style='height:13.50pt;'>
+	   <td class="xl73"  height="18" colspan="15" style='height:13.50pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;'>
+	   <table id="dg1" class="easyui-datagrid" style="width:100%;height:auto" title="其他需要说明的事项"
+					data-options="
+						iconCls: 'icon-edit',
+						singleSelect: false,
+						toolbar: '#tb1',
+						url: '${ctxPath!}/entitydoc/main/getOtherDatas',
+						method: 'get',
+						onClickRow: onClickRow1">
+				<thead>
+					<tr>
+						<!-- <th data-options="field:'status',width:60,align:'center', editor:{type:'checkbox',options:{on:'P',off:''}}"></th> -->
+						<th data-options="field:'id',editor:'textbox',width:80">序号</th>
+						<th data-options="field:'recd1',width:80,align:'right',editor:'textbox'"></th>
+						<th data-options="field:'recd2',width:80,align:'right',editor:'textbox'"></th>
+						
+						
+					</tr>
+				</thead>
+			</table>
+			<div id="tb1" style="height:auto">
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append1()">加行</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit1()">删行</a>
+		 <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="getChanges1()">保存</a>
+		<!-- <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject1()">撤销</a> -->
+		<!-- <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="getChanges1()">提交更改</a> -->
+			</div>	
+	   </td>
+</tr>
+  </table>
+  </div>
+
+
+
+
+
+ <div style="margin:20px 0;"></div>
+
+	</body>
+	</html>
+	
+	  <script type="text/javascript">
+
+	var editIndex = undefined;
+	function endEditing(){
+		if (editIndex == undefined){return true}
+		if ($('#dg').datagrid('validateRow', editIndex)){
+		//	var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'productid'});
+		//	var productname = $(ed.target).combobox('getText');
+		//	$('#dg').datagrid('getRows')[editIndex]['productname'] = productname;
+			$('#dg').datagrid('endEdit', editIndex);
+			editIndex = undefined;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	function onClickRow(index){
+	
+		if (editIndex != index){
+			if (endEditing()){
+				$('#dg').datagrid('selectRow', index)
+						.datagrid('beginEdit', index);
+				editIndex = index;
+			} else {
+				$('#dg').datagrid('selectRow', editIndex);
+			}
+		}
+	}
+	function append(){
+		if (endEditing()){
+			endIndex = $('#dg').datagrid('getRows').length;
+			$('#dg').datagrid('appendRow',{id:endIndex+1,titleId:'',name:'',rzq:'',apart:'',perTellNo:'',moveTellNo:'',remark:''});
+			editIndex = $('#dg').datagrid('getRows').length-1;
+			$('#dg')
+					.datagrid('beginEdit', editIndex);
+		}
+	}
+	function removeit(){
+		if (editIndex == undefined){return}
+		$('#dg').datagrid('cancelEdit', editIndex)
+				.datagrid('deleteRow', editIndex);
+		editIndex = undefined;
+	}
+	function accept(){
+		if (endEditing()){
+			$('#dg').datagrid('acceptChanges');
+		}
+	}
+	function reject(){
+		$('#dg').datagrid('rejectChanges');
+		editIndex = undefined;
+	}
+	function getChanges(){
+	//	var rows = $('#dg').datagrid('getChanges');
+	//	alert(rows.length+' rows are changed!');
+		var fields = $('#dg').datagrid('getColumnFields', true).concat($("#dg1").datagrid('getColumnFields'))+''; //标题数组
+		var fields_ay=fields.split(',');//转化为数组
+		$('#dg').datagrid('endEdit', editIndex);//结束当前行的编辑，默认提交
+		var rows = $('#dg').datagrid('getChanges');
+		var enQueryProperties = JSON.stringify(rows);
+	     alert(enQueryProperties);
+	// 异步保存数据
+	  $.ajax(  
+              {  
+                  url: '${ctxPath!}/entitydoc/main/saveLinkManDatas',//向后台提交数据  
+                  type: "post",  
+                  async: true,  
+                  dataType: 'json',  
+                  data: { 'enQueryProperties': enQueryProperties},                      
+                  success: function (data) {  
+                      if (data == 'true') {  
+                          alert("更新成功！");  
+                      }  
+
+                  }  
+              }  
+          );
+	}
+	
+	
+	
+	
+	var editIndex1 = undefined;
+	function endEditing1(){
+	//	debugger();
+		if (editIndex1 == undefined){return true}
+		if ($('#dg1').datagrid('validateRow', editIndex1)){
+			$('#dg1').datagrid('endEdit', editIndex1);
+			editIndex1 = undefined;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	function onClickRow1(index){
+	
+		if (editIndex1 != index){
+			if (endEditing1()){
+				$('#dg1').datagrid('selectRow', index)
+						.datagrid('beginEdit', index);
+				editIndex1 = index;
+			} else {
+				$('#dg1').datagrid('selectRow', editIndex1);
+			}
+		}
+	}
+	function append1(){
+		if (endEditing1()){
+			$('#dg1').datagrid('appendRow',{id:'',recd1:'',recd2:''});
+			editIndex1 = $('#dg1').datagrid('getRows').length-1;
+			$('#dg1').datagrid('selectRow', editIndex1)
+					.datagrid('beginEdit', editIndex1);
+		}
+	}
+	function removeit1(){
+		if (editIndex1 == undefined){return}
+		$('#dg1').datagrid('cancelEdit', editIndex1)
+				.datagrid('deleteRow', editIndex1);
+		editIndex1 = undefined;
+	}
+	function accept1(){
+		if (endEditing1()){
+			$('#dg1').datagrid('acceptChanges');
+		}
+	}
+	function reject1(){
+		$('#dg1').datagrid('rejectChanges');
+		editIndex1 = undefined;
+	}
+	function getChanges1(){
+		var fields = $('#dg1').datagrid('getColumnFields', true).concat($("#dg1").datagrid('getColumnFields'))+''; //标题数组
+		var fields_ay=fields.split(',');//转化为数组
+		//	alert(fields);
+	//	alert(editIndex1);
+		$('#dg1').datagrid('endEdit', editIndex1);//结束当前行的编辑，默认进行提交
+		var rows = $('#dg1').datagrid('getChanges');
+		//for(var i=0;i<rows.length;i++){
+		//	alert(rows[i].recd1)
+		//}
+	var enQueryProperties = JSON.stringify(rows);
+	     alert(enQueryProperties);
+	//	alert(rows.length+' rows are changed!');
+	// 异步保存数据
+	  $.ajax(  
+              {  
+                  url: '${ctxPath!}/entitydoc/main/saveOtherDatas',//向后台提交数据  
+                  type: "post",  
+                  async: true,  
+                  dataType: 'json',  
+                  data: { 'enQueryProperties': enQueryProperties},                      
+                  success: function (data) {  
+                      if (data == 'true') {  
+                          alert("更新成功！");  
+                      }  
+
+                  }  
+              }  
+          ); 
+	
+	}
+function onAfterEdit(index,row){
+	var fields = $('#dg1').datagrid('getColumnFields', true).concat($("#dg1").datagrid('getColumnFields'));  
+	  var controlId = row.ControlId;
+	 alert(row.field);
+}
+  
+  function searchMonth(){
+	  var sv = $('#startDate').datebox('getValue');
+      var ev=$('#endDate').datebox('getValue');
+      if(sv=='' || ev==''){
+    	  $('#dg2').datagrid({  
+ 	         url:'${ctxPath!}/entitydoc/main/getJyzbDatas',  
+ 	         columns: [[  
+ 	          { field: 'id', title:'序号', width: 80 },  
+ 	          { field: 'proName',title: '项目', width: 80 },  
+ 	          { field: 'january',title: '1月', width: 60 },  
+ 	          { field: 'february',title: '2月', width: 60 },
+ 	          { field: 'march',title: '3月', width: 60 },
+ 	          { field: 'april',title: '4月', width: 60 },
+ 	          { field: 'may',title: '5月', width: 60 },
+ 	          { field: 'june',title: '6月', width: 60 },
+ 	          { field: 'july',title: '7月', width: 60 },
+ 	          { field: 'aujust',title: '8月', width: 60 },
+ 	          { field: 'september',title: '9月', width: 60 },
+ 	          { field: 'october',title: '10月', width: 60 },
+ 	          { field: 'november',title: '11月', width: 60 },
+ 	          { field: 'december',title: '12月', width: 60 }
+ 	         ]]  
+ 	  
+ 	     })  
+      }else{
+	   $.ajax(  
+              {  
+                  url: '${ctxPath!}/entitydoc/main/getJyzbDatas', //向后台提交数据  
+                  type: "GET",  
+                  async: true,  
+                  dataType: 'json', 
+                  data:{startDate:sv,endDate:ev},
+                  success: function (rows) {  
+                	//  alert(rows.cols);
+                	  var array =[];
+                	  var columns=[];
+                	  var titles=rows.titles;
+            		 var cols=rows.cols;
+					var datas=rows.dataList;
+					//alert(titles);
+					//var columns="";
+					 array.push({field:'name',title:'项目',width:'80'});
+					$(cols).each(function(index,value){
+					//	alert(index+","+value);
+						 array.push({field:value,title:'',width:'80'});
+					});
+					columns.push(array);
+					//columns[0][0]= {};
+					$(titles).each(function(index,value){
+						 columns[0][index+1]['title']= value;
+					});
+					//alert(columns); 
+					 $('#dg2').datagrid({  
+						 	url:'',
+				        	data:datas,  
+				         	columns: columns 
+				  
+				     })  
+					
+                  }  
+              }  
+          ); 
+      } 
+          
+          
+  }
+  
+  
+  
+  
+   $(function(){
+	  searchMonth();
+  }) 
+  </script>		

@@ -1,0 +1,234 @@
+
+  
+   
+  <div class="row">
+        <div class="col-xs-12">
+             	@layout("/verify/360/top.html"){}
+				
+        </div>
+  </div> 
+  <div class="row">
+       <div class="col-xs-12">
+          <!--    <img id="img" src="./static/img/360.png" style="max-width: 100%;max-height: 100%;">    -->
+           <div  class="col-xs-3">
+           @layout("/verify/360/commom.html"){}
+		
+		      <div style="position:absolute;left:5px;top:200px;width:320px;">
+                <div class="widget-box widget-color-green">
+                    <div class="widget-header">
+                        <h4>客户基本信息</h4>
+                        <input type="hidden" id="custId" name="custId" value="${custId!}">
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main padding-8">
+                                <dl id="dt-list-2" class="dl-horizontal" >
+                                <table>
+                                @for(item in cust){
+                                	@for(e in item){
+                                	<tr>
+                                <td><strong>${e.key!}:</strong> ${e.value!}</td>
+                                 </tr>
+                                @}
+                                @}
+                                </table>
+                                </dl>
+
+                        </div>
+                    </div>
+                </div>
+           </div>
+            </div> 
+            
+            <div  class="col-xs-9">
+             
+                 <div class="widget-box widget-color-green">
+                    <div class="widget-header">
+                        <h4>存款账户基本信息</h4>
+                    </div>
+                    <div class="widget-body">
+                    <span id="dsp_span"></span>
+                      <div class="widget-main padding-8">
+                                <dl id="dt-list-2" class="dl-horizontal">
+                                
+                                 
+                                  <table id="table3" calss="table_responsive" data-pagination="true" data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true">
+                               <thead>
+                               <tr id="rollTable3">
+                                <td><div>数据正在加载。。。</div></td>
+                               </tr>
+                               </thead>
+                               </table>  
+                                 
+                                 
+                                </dl>
+                                <div>
+                                <span id="dsp_span1"></span>
+                                </div>
+
+                        </div> 
+                    </div>
+                </div> 
+               <div class="widget-box widget-color-green">
+                        <div class="widget-header">
+                        <h4>贷款账户基本信息</h4>
+                        </div>
+                 <div class="widget-body">
+                        <div class="widget-main padding-8">
+                                <dl id="dt-list-2" class="">
+                          	 <table id="table2" calss="table_responsive"  data-smart-display="true" data-pagination="true" data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true">
+                               <thead>
+                               <tr id="rollTable2">
+                               <td><div>数据正在加载。。。</div></td>
+                               </tr>
+                               </thead>
+                               </table>  
+                               
+                                </dl>
+
+                        </div>
+                    </div>   
+            </div>
+            </div>
+      </div>        
+        </div>
+
+<script>
+
+
+    function changeImg(path){
+     // $("#img").attr("src",'./static/img/'+path);
+    var custId=$("#custId").val();
+    var isPublic=${isPublic!};
+   	 $("#fill-main-content").html(loadHtmlPage(path+"?isPublic="+isPublic+"&custId="+custId));
+    }
+    
+    $(function(){
+    	var isPublic=${isPublic!};
+    	var custid='';
+    	@if(isEmpty(custId)){
+    		custid = '';
+    	@}else{
+    		custid = '${custId!}';
+    	@}
+    	var $dsp_span;
+    	$dsp_span=$("#dsp_span");
+    	$.post("${ctxPath}/cust360/main/dspSumData",{custId:custid,isPublic:isPublic,model_id:2},function(data){
+    		var sumacc=data.BALANCE;
+    		if(sumacc.length=0 ||sumacc==undefined){
+    			sumacc=0;
+    		}
+    		$("#dsp_span").html("存款总额:<font color='red' size='middle'>"+sumacc+"</font>");
+    		$("#dsp_span1").html("存款总额:<font color='red' size='middle'>"+sumacc+"</font>");
+    	});
+    	
+    	 //获取客户公共信息 
+    	  $.getJSON("${ctxPath}/cust360/main/commonCust",{custId:custid,isPublic:isPublic,model_id:8},function(data){
+    		  $("#com_custname").append(data.custName);
+   			$("#commonInfo").html("");
+   			var htmls="<p><span>客户号：</span><span>"+data.custId+"</span></p>"+"<p><span>客户类型：</span><span>"+data.custType+"</span></p>"
+   			+"<p><span>证件类型：</span><span>"+data.idtType+"</span></p>"
+   			+"<p><span>证件号码：</span><span>"+data.idNo+"</span></p>";
+   			$("#commonInfo").html(htmls);
+   		});  
+ 		
+ 		//存款账户信息
+ 		 $.post("${ctxPath}/cust360/main/getDspAccnoInfo",{custId:custid,isPublic:isPublic},function(data){
+ 			var str="";
+ 			var parsedJson = jQuery.parseJSON(data); 
+ 			var colName='';
+ 			$("#rollTable3").html("");
+ 			 $.each(parsedJson.cols, function(i, item) {
+ 				// alert(i);
+ 				str="<th data-field='"+i+"' data-align='center' data-width='30' data-sortable='true'>";
+ 				 $.each(item,function(n,obj){
+ 					if("alise"==n){
+ 					colName=obj;
+ 					//alert(colName);
+ 					}
+ 				 });
+ 		    	 str+=colName+"</th>";
+ 		    	 //alert(str);
+ 		  			$("#rollTable3").append(str);
+      	 });
+ 			var dataList=parsedJson.list
+ 		// $('#table3').bootstrapTable('load',dataList);
+ 			$('#table3').bootstrapTable('showLoading');
+ 				$('#table3').bootstrapTable({
+ 	                iconSize:'sm',
+ 	               data:dataList
+ 	            }); 
+ 			 
+		});
+ 		
+ 		
+ 		
+ 	//贷款账户信息
+ 		 $.post("${ctxPath}/cust360/main/getLoanAccnoInfo",{custId:custid,isPublic:isPublic},function(data){
+    			var str="";
+    			var parsedJson = jQuery.parseJSON(data); 
+    			var colName='';
+    			$("#rollTable2").html("");
+    			 $.each(parsedJson.cols, function(i, item) {
+    				// alert(i);
+    				str="<th data-field='"+i+"' data-align='center' data-width='30' data-sortable='true'>";
+    				 $.each(item,function(n,obj){
+    					if("alise"==n){
+    					colName=obj;
+    					//alert(colName);
+    					}
+    				 });
+    		    	 str+=colName+"</th>";
+    		    	 //alert(str);
+    		  			$("#rollTable2").append(str);
+         	 });
+    			var dataList=parsedJson.list
+    		// $('#table2').bootstrapTable('load',dataList);
+    			$('#table2').bootstrapTable('showLoading');
+    				$('#table2').bootstrapTable({
+    	                iconSize:'sm',
+    	               data:dataList
+    	            }); 
+    			 
+  		});
+ 		
+ 		
+ 		
+ 		
+ 		
+ 		//其他联系人基本信息
+ 		  
+ 		 $.post("${ctxPath}/cust360/main/bigCust",{custId:custid,isPublic:isPublic},function(data){
+   			var str="";
+   			var parsedJson = jQuery.parseJSON(data); 
+   			var colName='';
+   			$("#rollTable").html("");
+   			 $.each(parsedJson.cols, function(i, item) {
+   				// alert(i);
+   				str="<th data-field='"+i+"' data-align='center' data-width='30' data-sortable='true'>";
+   				 $.each(item,function(n,obj){
+   					if("alise"==n){
+   					colName=obj;
+   					//alert(colName);
+   					}
+   				 });
+   		    	 str+=colName+"</th>";
+   		    	 //alert(str);
+   		  			$("#rollTable").append(str);
+        	 });
+   			var dataList=parsedJson.list
+   		// $('#table1').bootstrapTable('load',dataList);
+   			$('#table1').bootstrapTable('showLoading');
+   				$('#table1').bootstrapTable({
+   	                iconSize:'sm',
+   	             	striped:true,
+   	               data:dataList
+   	            }); 
+   			 
+ 		});
+    })
+   			
+     
+</script>
+  
+
+

@@ -1,0 +1,801 @@
+<div class="row">
+	<div class="col-sm-3">
+		<div class="widget-box">
+			<div class="widget-header clearfix">
+				<h5 class="widget-title"></h5>
+				<div class="widget-toolbar width-30">
+					<label>
+						<input type="checkbox" id="change_tree" class="ace ace-switch ace-switch-4 btn-flat" name="">
+						<span data-lbl="机构&nbsp;&nbsp;条线" class="lbl middle"></span>
+					</label>
+				</div>
+				<div class="widget-toolbar no-border width-70" style="padding-top: 2px;">
+					<form method="post" class="form-search" id="search-form" target="list-page"
+						  action="dic-list.html">
+						<div class="input-group" style="line-height: 0px;">
+							<input type="text" class="form-control search-query"
+								   name="name" placeholder="关键词" id="search-input">
+								<span class="input-group-btn">
+									<span class="btn  btn-success btn-sm"
+										  id="search-btn">
+										 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+									</span>
+								</span>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main padding-8">
+					<ul id="ztree" class="ztree" style="min-height: 480px;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-4" id="layer11">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="widget-box transparent">
+					<div class="widget-header widget-header-flat widget-header-small">
+						<h5 class="widget-title">上月跑批</h5>
+						<div class="widget-toolbar">
+							<span class="btn btn-purple btn-xs"
+								  onclick="Angel.downloadFile('','${ctxPath}/risk/detection/exportDataRunModel?flag=1')">
+							<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+							导出Excel</span>
+						</div>
+					</div>
+					
+					<div class="widget-body">
+						<div class="widget-main padding-0">
+							<ul class="item-list ui-sortable" id="tasks">
+								@var total;
+								@for(map in lastMonthRunList){
+									@total = map.total;
+								@}
+								@if(total == 0){
+									<li class="item-red clearfix ui-sortable-handle"><span
+									class="lbl">上月无跑批模型！</span>
+									<div data-percent="42"
+										class="pull-right easy-pie-chart percentage">
+										<span class="badge badge-important ">0</span>
+									</div></li>
+								@}else{
+									@for(map in lastMonthRunList){
+										@if(!mapLP.last){
+											@if(mapLP.odd){
+												<li class="item-orange clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}" href="javascript:(0);" onclick="clickGoto('${map.name!}')">
+														${map.name!}</a>上月跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart percentage">
+														<span class="badge badge-success ">${map.value!}/${total!}</span>
+													</div>
+												</li>
+											@}else{
+												<li class="item-blue clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}" href="javascript:(0);" onclick="clickGoto('${map.name!}')">
+														${map.name!}</a>上月跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart">
+													<span class="badge badge-info">${map.value!}/${total!}</span>
+													</div>
+											</li>
+											@}
+										@}
+									@}
+								@}
+							</ul>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div><!--row end-->
+
+		<div class="hr hr32 hr-dotted"></div>
+
+		<div class="row">
+			<div class="col-xs-12 ">
+				<div class="widget-box transparent">
+					<div class="widget-header widget-header-flat widget-header-small">
+						<h5 class="widget-title">昨日跑批</h5>
+						<div class="widget-toolbar">
+							<span class="btn btn-purple btn-xs"
+								   onclick="Angel.downloadFile('','${ctxPath}/risk/detection/exportDataRunModel?flag=0')">
+							<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+							导出Excel</span>
+						</div>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main padding-0">
+							<ul class="item-list ui-sortable" id="tasks1">
+								@var total1;
+								
+								@for(map in yesterdayRunList){
+									@total1 = map.total;
+								@}
+								@if(total1 == 0){
+									<li class="item-red clearfix ui-sortable-handle"><span
+									class="lbl">昨日无跑批模型！</span>
+									<div data-percent="42"
+										class="pull-right easy-pie-chart percentage">
+										<span class="badge badge-important ">0</span>
+									</div></li>
+								@}else{
+									@for(map in yesterdayRunList){
+										@if(!mapLP.last){
+											@if(mapLP.odd){
+												<li class="item-orange clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}_1" href="javascript:(0);" onclick="clickGoto_1('${map.name!}')">
+													${map.name!}</a>昨日跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart percentage">
+														<span class="badge badge-success ">${map.value!}/${total1!}</span>
+													</div>
+												</li>
+											@}else{
+												<li class="item-blue clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}_1" href="javascript:(0);" onclick="clickGoto_1('${map.name!}')">
+													${map.name!}</a>昨日跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart">
+													<span class="badge badge-info">${map.value!}/${total1!}</span>
+													</div>
+											</li>
+											@}
+										@}
+									@}
+								@}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--row-->
+	</div>	
+
+	<div class="col-xs-5" id="layer11">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">图表</h5>
+				<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs"
+						  onclick="countByBar()">
+					<i class="ace-icon fa fa-pie bigger-130"></i>柱状图</span>
+				</div>
+				<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs"
+						  onclick="countByPie(0)">
+					<i class="ace-icon fa fa-pie bigger-130"></i>昨日饼图</span>
+				</div>
+				<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs"
+						  onclick="countByPie(1)">
+					<i class="ace-icon fa fa-pie bigger-130"></i>上月饼图</span>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div class="widget-main padding-0">
+					<div id="picBody" style="height: 500px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="col-xs-4" id="layer2"  style="display: none;">
+		<div class="widget-box transparent">
+			<div class="widget-header widget-header-flat">
+				<h4 class="widget-title lighter" id="title1"></h4>
+				<div class="widget-toolbar no-border">
+							<span class="btn btn-purple btn-xs"
+								  onclick="Angel.downloadFile('search-form','${ctxPath}/area/export')">
+							<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+							导出Excel</span>
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main no-padding">
+					<table id="table"     data-smart-display="true" data-striped="true"
+									  data-toggle="table"
+									  class="table table-bordered table-striped">
+						<thead class="thin-border-bottom">
+							<tr>
+								<th data-field="key" data-width="160"><i class="ace-icon fa fa-caret-right blue"></i>统计项</th>
+								<th data-field="value1" data-width="125"><i class="ace-icon fa fa-caret-right blue"></i>上月</th>
+								<th data-field="value2" class="hidden-480" data-width="125"><i class="ace-icon fa fa-caret-right blue"></i>昨日</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-5" id="layer21">
+		<div class="row">
+			<div class="col-xs-16">
+				<div class="widget-box transparent">
+					<div class="widget-header widget-header-flat">
+						<h4 class="widget-title lighter">
+							<i class="ace-icon fa fa-signal"></i>
+							<font  id="title2">上月跑批模型机构排行榜</font>
+						</h4>
+
+						<div class="widget-toolbar">
+							<a data-action="collapse" href="#">
+								<i class="ace-icon fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main padding-4">
+							<div id="picBody1" style="height:220px;"></div>
+						</div><!-- /.widget-main -->
+					</div><!-- /.widget-body -->
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-14">
+				<div class="widget-box transparent">
+					<div class="widget-header widget-header-flat">
+						<h4 class="widget-title lighter">
+							<i class="ace-icon fa fa-signal"></i>
+							<font  id="title3">昨日跑批模型机构排行榜</font>
+						</h4>
+
+						<div class="widget-toolbar">
+							<a data-action="collapse" href="#">
+								<i class="ace-icon fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main padding-4">
+							<div id="picBody2" style="height:220px;"></div>
+						</div><!-- /.widget-main -->
+					</div><!-- /.widget-body -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+<style>
+	.ztree{
+		overflow: auto;
+	}
+</style>
+<script>
+
+//树初始化
+	var treeObj;
+	var key = null,nodeList=[];
+	var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		},
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : 'id',
+				pIdKey :'parentId',
+			},
+			key:{
+				name:"name"
+			}
+		},
+		callback: {
+			onClick: onClickNode
+		}
+	};
+
+
+
+	var loadWay = "buzLine"
+	$(function(){
+		$("#layer2,#layer21").hide();
+		$("#layer1,#layer11").show();
+		loadByBuzLine();
+		key = $("#search-input");
+		$("#search-btn").on("click",function(e){
+			treeObj.cancelSelectedNode();
+			searchNode(e);
+		})
+
+		// 路径配置
+		require.config({
+			paths: {
+				echarts : '${ctxPath}/static/echarts-2.1.10/build/dist'
+			}
+		});
+		countByPie(1);
+
+
+		$('#change_tree').removeAttr('checked').on('click', function(){
+			if(this.checked) {
+				loadByBuzOrg();
+				loadWay = "org";
+			}
+			else {
+				loadByBuzLine();
+				loadWay = "buzLine";
+			}
+		})
+
+	})
+
+	//加载机构
+	function loadByBuzOrg(){
+		$.ajax({
+			url: "${ctxPath}/risk/detection/tree",
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				var treeData = [];
+				$.each(data,function(i,obj){
+					treeData.push(obj);
+				})
+
+				$.fn.zTree.init($("#ztree"), setting, treeData);
+				treeObj = $.fn.zTree.getZTreeObj("ztree");
+
+				var nodes = treeObj.getNodesByParam("parentId", 1);
+				for(var i=0; i<nodes.length; i++) {
+					treeObj.expandNode(nodes[i].getParentNode(), true, false, false, false);
+				}
+			}
+		});
+	}
+	
+	function searchNode(e) {
+		// 取得输入的关键字的值
+		var value = $.trim(key.get(0).value);
+
+		// 按名字查询
+		var keyType = "name";
+		if (key.hasClass("empty")) {
+			value = "";
+		}
+
+		// 如果要查空字串，就退出不查了。
+		if (value === "") {
+			return;
+		}
+		updateNodes(false);
+		nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+		updateNodes(true);
+	}
+
+	function updateNodes(highlight) {
+		for(var i=0, l=nodeList.length; i<l; i++) {
+			nodeList[i].highlight = highlight;
+			treeObj.updateNode(nodeList[i]);
+			treeObj.expandNode(nodeList[i].getParentNode(), true, false, false);
+		}
+	}
+
+	//饼形图
+	function countByPie(flag){
+		var data; 
+		var models = [];
+		var title;
+		$.ajax({
+			url: "${ctxPath}/risk/detection/countByPie?flag="+flag,
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(result) {
+				data = result
+				$.each(result,function(i,obj){
+					models.push(obj.name);
+				})
+			}
+		}); 
+		if(flag == 1){
+			title = '上月模型新增饼图';
+		}else{
+			title = '昨日模型新增饼图';
+		}
+		var option = {
+			title : {
+				text: '',
+				subtext: '',
+				x:'center'
+			},
+			tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend: {
+				orient : 'vertical',
+				x : 'left',
+				data : models
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {
+						show: true,
+						type: ['pie', 'funnel'],
+						option: {
+							funnel: {
+								x: '25%',
+								width: '50%',
+								funnelAlign: 'left',
+								max: 1548
+							}
+						}
+					},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			calculable : true,
+			
+			series : [
+				{
+					name: title,
+					type:'pie',
+					radius : '55%',
+					center: ['50%', '60%'],
+					data: data
+				}
+			]
+			
+		};
+		require(
+				[
+					'echarts',
+					'echarts/chart/pie',
+					'echarts/chart/funnel'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+
+
+	function countModelBarByYestday(property,buzLine){
+		var ogranid = [];
+		var count = [];
+		$.ajax({
+			url: "${ctxPath}/risk/detection/findByOrgan?flag=0&property="+property+"&buzLine="+buzLine,
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				$.each(data,function(i,obj){
+					ogranid.push(obj.organid);
+					count.push(obj.count);
+				})
+			}
+		});
+		var option = {
+			title : {
+				text: '',
+				subtext: ''
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {show: true, type: ['line', 'bar']},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			yAxis : [
+				{
+					type : 'value',
+					boundaryGap : [0, 0.01]
+				}
+			],
+			calculable : true,
+			xAxis : [
+				{
+					type : 'category',
+					data:ogranid
+				}
+			],
+			series : [
+				{
+					type:'bar',
+					data:count
+				}
+			]
+		};
+
+		require(
+				[
+					'echarts',
+					'echarts/chart/line',
+					'echarts/chart/bar'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody2'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+
+	function countModelBarByMonth(property,buzLine){
+		var ogranid = [];
+		var count = [];
+		$.ajax({
+			url: "${ctxPath}/risk/detection/findByOrgan?flag=1&property="+property+"&buzLine="+buzLine,
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				$.each(data,function(i,obj){
+					ogranid.push(obj.organid);
+					count.push(obj.count);
+				})
+			}
+		});
+		var option = {
+			title : {
+				text: '',
+				subtext: ''
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {show: true, type: ['line', 'bar']},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			yAxis : [
+				{
+					type : 'value',
+					boundaryGap : [0, 0.01]
+				}
+			],
+			calculable : true,
+			xAxis : [
+				{
+					type : 'category',
+					data:ogranid
+				}
+			],
+			series : [
+				{
+					type:'bar',
+					data:count
+				}
+			]
+		};
+
+		require(
+				[
+					'echarts',
+					'echarts/chart/line',
+					'echarts/chart/bar'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody1'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+
+	function countByBar(){
+		var models = []; 
+		var value1 = [];
+		var value2 = [];
+		$.ajax({
+			url: "${ctxPath}/risk/detection/countByBar",
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(result) {
+				$.each(result,function(i,obj){
+					models.push(obj.key);
+					value1.push(obj.value1);
+					value2.push(obj.value2);
+				})
+			}
+		}); 
+		
+		var option = {
+			title : {
+				text: '',
+				subtext: ''
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			legend: {
+				data:['上月','昨日'],
+				y:'bottom'
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {show: true, type: ['line', 'bar']},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			xAxis : [
+				{
+					type : 'value',
+					boundaryGap : [0, 0.01]
+				}
+			],
+			calculable : true,
+			yAxis : [
+				{
+					type : 'category',
+					data : models
+				}
+			],
+
+			series : [
+				{
+					name:'上月',
+					type:'bar',
+					data:value1
+				},
+				{
+					name:'昨日',
+					type:'bar',
+					data:value2
+				}
+			]
+		};
+
+		require(
+				[
+					'echarts',
+					'echarts/chart/line',
+					'echarts/chart/bar'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+
+	//点击树加载数据
+	function onClickNode(event, treeId, treeNode){
+		if(treeNode.id == 0){
+			
+			$("#layer2,#layer21").hide();
+			$("#layer1,#layer11").show();
+		}else{
+			if(loadWay = "buzLine"){
+				if(treeNode.parentId == 0){
+					if(treeNode.type == "buzline"){//点击模型业务属性
+						$("#layer2,#layer21").show();
+						$("#layer1,#layer11").hide();
+						queryByStatus(treeNode.id,treeNode.parentId);
+						querytotal(treeNode.name,treeNode.id,treeNode.parentId);
+						countModelBarByMonth(treeNode.id,treeNode.parentId);
+						countModelBarByYestday(treeNode.id,treeNode.parentId);
+						$("#title2").text("上月新增"+treeNode.name +"机构排行榜");
+						$("#title3").text("昨日新增"+treeNode.name +"机构排行榜");
+	
+					}
+				}else{
+					if(treeNode.type == "buzline"){//点击模型业务属性
+						$("#layer2,#layer21").show();
+						$("#layer1,#layer11").hide();
+						queryByStatus(treeNode.parentId,treeNode.value);
+						querytotal(treeNode.name,treeNode.parentId,treeNode.value);
+						countModelBarByMonth(treeNode.parentId,treeNode.value);
+						countModelBarByYestday(treeNode.parentId,treeNode.value);
+						$("#title2").text("上月新增"+treeNode.name +"机构排行榜");
+						$("#title3").text("昨日新增"+treeNode.name +"机构排行榜");
+	
+					}
+				}
+			}
+
+		}
+	}
+	
+	//加载业务条线树
+	var zTreeNodes;
+	function loadByBuzLine(){
+		$.ajax({
+			url: "${ctxPath}/risk/detection/buzLine",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				var treeData = [];
+				$.each(data,function(i,obj){
+					treeData.push(obj);
+				})
+				
+				zTreeNodes = {id:0,name:'风险预警',open:true};
+				treeData.push(zTreeNodes);
+				$.fn.zTree.init($("#ztree"), setting, treeData);
+				treeObj = $.fn.zTree.getZTreeObj("ztree");
+			}
+		});
+	}
+
+	//点击业务条线查询
+	function queryByStatus(property,buzLine){
+		$.ajax({
+			url: "${ctxPath}/risk/detection/status?property="+property+"&buzLine="+buzLine,
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				$('#table').bootstrapTable('load',data);
+				$('#table').bootstrapTable({
+                    iconSize:'sm',
+                    data:data
+                });
+			}
+		});
+	}
+	
+	function clickGoto(name) {
+		var a = document.getElementById(name);
+		var link = a.getAttribute('href');
+		if (name == "合规模型") {
+			a.href = "#/ajax/risk/detection/hg";
+		} else if (name == "监管模型") {
+			a.href = "#/ajax/risk/detection/jg";
+		} else if (name == "重大风险模型") {
+			a.href = "#/ajax/risk/detection/big";
+		} else if (name == "审计专项模型") {
+			a.href = "#/ajax/risk/detection/sjzx";
+		} else if (name == "二次分析模型") {
+			a.href = "#/ajax/second/model";
+		}
+	}
+
+	function clickGoto_1(name) {
+		var a = document.getElementById(name + "_1");
+		var link = a.getAttribute('href');
+		if (name == "合规模型") {
+			a.href = "#/ajax/risk/detection/hg";
+		} else if (name == "监管模型") {
+			a.href = "#/ajax/risk/detection/jg";
+		} else if (name == "重大风险模型") {
+			a.href = "#/ajax/risk/detection/big";
+		} else if (name == "审计专项模型") {
+			a.href = "#/ajax/risk/detection/sjzx";
+		} else if (name == "二次分析模型") {
+			a.href = "#/ajax/second/model";
+		}
+	}
+	
+	
+</script>

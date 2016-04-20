@@ -1,0 +1,74 @@
+
+<div class="layer">
+        <table class="EditTable" width="100%">
+            <tbody>
+                <tr class="FormData">
+                    <td class="CaptionTD">附件名：</td>
+                    <td class="DataTD width-100">
+                        <font color="green">${sysAccessory.fileName!}</font>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">后缀名：</td>
+                    <td class="DataTD width-100">
+                        ${sysAccessory.extName!}
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">操作：</td>
+                    <td class="DataTD">
+                       &nbsp;<button class="btn btn-primary btn-sm" id="downloadFile" 
+                       onclick="Angel.downloadFile('','${ctxPath}/sysAccessory/download?id=${sysAccessory.docId!}')">下载附件</button>
+                       &nbsp;&nbsp;
+                   @if(mode != 'detail'){
+                       		<button class="btn btn-primary btn-sm" id="deleteFile" onclick="deleteFile()">删除附件</button>
+                    </td>
+                  @}
+                </tr>
+                 <tr class="FormData">
+                    <td >
+                    <div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+                       <span class="btn btn-yellow btn-sm bigger-110 width-100 pull-right" id="back">
+							<i class="ace-icon fa fa-times align-top  bigger-125"></i> 返 回
+						</span>
+                    </div>    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+    //描述框自动扩张高度
+    $('textarea[class*=autosize]').autosize({append: "\n"});
+    var index = layer.index;
+	$("#back").click(function(){
+	    layer.close(index);
+	});
+	
+	var re = /^[1-9]+[0-9]*]*$/ ; 
+	function deleteFile(){
+		if(confirm("你确定要删除此附件吗？")){
+			$.ajax({
+				url: "${ctxPath}/sysAccessory/delete?id=${sysAccessory.docId!}",
+				method:"post",
+				async: false,
+				success: function(data) {
+					 if(data !=null && re.test(data)) {
+                         layer.msg('删除成功', 1, 1,function(){
+                             layer.close(index);
+                         });
+                     }else{
+                         layer.msg('删除失败', 3, 1);
+                     }
+				}
+			});
+		}
+	}
+	
+</script>

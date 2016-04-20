@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.all360.mapper.QueryModelMapper">
+	<sql id="phycols"> MODEL_ID, MODEL_NAME, MODEL_PATH  
+	</sql>
+	
+	<select id="getPhyTable" resultType="com.krm.dbaudit.web.all360.model.QueryModel" parameterType="java.util.Map">
+	select 
+	<include refid="phycols"/>
+	from SYS360_MODELS_CONFIG
+	<where>
+	1=1 
+	<if test="@Ognl@isNotBlank(modelId)">
+	and MODEL_ID=#{modelId}
+	</if>
+	</where>
+	
+	</select>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.all360.model.QueryModel"  parameterType="java.util.Map" >
+		select
+		<include refid="phycols" />
+		from 	SYS360_MODELS_CONFIG
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(modelId)">
+				and MODEL_ID=#{modelId}
+			</if>
+			
+		</where>
+		
+	</select>
+	<insert id="saveQueryModel" parameterType="com.krm.dbaudit.web.all360.model.QueryModel">
+	insert into SYS360_MODELS_CONFIG (
+	<include refid="phycols" />
+	)
+	values(#{modelId},#{modelName},#{modelPath})
+	</insert>
+</mapper>

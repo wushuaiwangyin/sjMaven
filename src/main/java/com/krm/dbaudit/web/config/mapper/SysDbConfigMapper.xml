@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.config.mapper.SysDbConfigMapper">
+
+	<sql id="sysDbConfigColumns">
+		id,name,description,host,port,dbname,type,username,pwd,url,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasSysDbConfigColumns">
+		b.id,b.name,b.description,b.host,b.port,b.dbname,b.type,b.username,b.pwd,b.url,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.config.model.SysDbConfig">
+		select  <include refid="aliasSysDbConfigColumns" />  
+			from sys_db_config  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(description)">
+			    and b.description like '%' || #{description} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(host)">
+			    and b.host like '%' || #{host} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(port)">
+			    and b.port =  #{port}
+			 </if>
+			 <if test="@Ognl@isNotBlank(dbname)">
+			    and b.dbname like '%' || #{dbname} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(type)">
+			    and b.type =  #{type}
+			 </if>
+			 <if test="@Ognl@isNotBlank(username)">
+			    and b.username like '%' || #{username} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(pwd)">
+			    and b.pwd like '%' || #{pwd} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(url)">
+			    and b.url like '%' || #{url} ||'%' 
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

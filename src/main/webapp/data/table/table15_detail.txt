@@ -1,0 +1,104 @@
+<div class="profile-info-row">
+<div class="profile-info-name">城市号</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">机构号</div>
+<div class="profile-info-value" id='base_b'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">结算账号</div>
+<div class="profile-info-value" id='base_c'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">货币符号</div>
+<div class="profile-info-value" id='base_d'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">流水号前缀</div>
+<div class="profile-info-value" id='base_e'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">机构菜单类别</div>
+<div class="profile-info-value" id='base_f'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">机构全称</div>
+<div class="profile-info-value" id='base_g'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">机构简码</div>
+<div class="profile-info-value" id='base_h'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">机构简称</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交换机构</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">状态</div>
+<div class="profile-info-value" id='base_k'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">部门平帐标志</div>
+<div class="profile-info-value" id='base_l'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">报表机构号</div>
+<div class="profile-info-value" id='base_m'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">机构层次</div>
+<div class="profile-info-value" id='base_n'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">特殊部门编码</div>
+<div class="profile-info-value" id='base_o'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">营业地址</div>
+<div class="profile-info-value" id='base_p'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">联系电话A</div>
+<div class="profile-info-value" id='base_q'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">联系电话B</div>
+<div class="profile-info-value" id='base_r'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">联系电话C</div>
+<div class="profile-info-value" id='base_s'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">对公帐号前缀</div>
+<div class="profile-info-value" id='base_t'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">强制标志</div>
+<div class="profile-info-value" id='base_u'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">柜员拥有角色</div>
+<div class="profile-info-value" id='base_v'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">是否与当地人民银行清算</div>
+<div class="profile-info-value" id='base_w'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">上级行</div>
+<div class="profile-info-value" id='base_x'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">总行清算中心机构</div>
+<div class="profile-info-value" id='base_y'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">部门属性</div>
+<div class="profile-info-value" id='base_z'></div>
+</div>

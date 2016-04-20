@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 源数据库，行云  数据库调用,源数据非行云，需要屏蔽掉，扩展名修改为非XML -->
+<mapper namespace="com.krm.dbaudit.web.modeltool.mapper.ToolOperateMapper">
+	<!-- 获取查询表数据sql -->
+	<select id="getTableShowDataSql" resultType="java.lang.String">
+			select X_MK_TABLESHOWSQL(#{tablename},#{condition},#{page},#{rows}) as runsql from dual
+		</select>
+	
+	<!-- 获取查询表数据数量 -->
+	<select id="getTableShowDataCountSql" resultType="java.lang.String">
+		select F_MK_TABLESHOWCOUNT(#{tablename},#{condition}) as runsql from dual
+		</select>
+</mapper>

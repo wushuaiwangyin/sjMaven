@@ -1,0 +1,143 @@
+<div class="widget-box widget-color-green2">
+	<div class="widget-header widget-header-small clearfix">
+		<h5 class="widget-title">指标监测</h5>
+		<div class="widget-toolbar">
+			<a href="#" data-action="fullscreen" class="btn-minier orange2"> <i
+				class="ace-icon fa fa-expand"></i>
+			</a>
+		</div>
+		 
+		<div class="widget-toolbar no-border width-40" style="padding-top: 2px;">
+			<form method="post" class="form-search" id="search-form"  action="">
+				<div class="input-group" style="line-height: 0px;">
+					<span class="input-group-btn">
+						<span  class=" btn  btn-success btn-minier "
+							id="search-all-btn">
+							 显示全部 
+						</span> 
+					</span>
+					<input type="text" class="form-control search-query input-minier"
+						name="name" placeholder="报表名称" id="search-input">
+						<span class="input-group-btn">
+						<span class="btn  btn-success btn-minier"
+							id="search-btn">
+							搜索 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+						</span>
+					</span>
+				</div>
+				<input type="hidden" name="id" />
+			</form>
+		</div>
+	</div>
+	<div class="widget-body">
+		<div class="widget-main padding-2">
+			<div class="row">
+				<div class="col-sm-3">
+					<div id="tree-menu-div" style="overflow: auto;">
+						<ul id="treeRepository" class="ztree"></ul>
+					</div>
+				</div>
+			<div class="widget-box" id="y_box1">
+				<div class="table-responsive">
+					<div class="col-sm-9" id="list-page">
+						<iframe width="100%" height="500" src="" id="reportframe" name="reportframe"></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		},
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : "id",
+				pIdKey : "parentId"
+			}
+		},
+		callback: {
+			onClick: onClickNode,
+			beforeDrag: function(){return false;}
+		}
+	};
+	
+	
+	
+	//节点点击事件
+	function onClickNode(event, treeId, treeNode) {
+	}
+	
+	var key = $("#search-input"),nodeList = [];
+	function searchNode(e) {
+		// 取得输入的关键字的值
+		var value = $.trim(key.get(0).value);
+		
+		// 按名字查询
+		var keyType = "name";
+		if (key.hasClass("empty")) {
+			value = "";
+		}
+		
+		// 如果要查空字串，就退出不查了。
+		if (value === "") {
+			return;
+		}
+		updateNodes(false);
+		nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+		var type = "";
+		var parentId = "";
+		$.each(nodeList,function(i,obj){
+			type = (type + obj.id) + (((i + 1)== nodeList.length) ? '':','); 
+			parentId = obj.parentId;
+		})
+		loadData(type,parentId);
+		updateNodes(true);
+	};
+	function updateNodes(highlight) {
+		for(var i=0, l=nodeList.length; i<l; i++) {
+			nodeList[i].highlight = highlight;				
+			treeObj.updateNode(nodeList[i]);
+			treeObj.expandNode(nodeList[i].getParentNode(), true, false, false);
+		}
+	};
+	
+	var treeObj;
+	$(function(){
+		//树结构初始化
+		nodeList=[]; //清除缓存
+		var treeData = ${treeList};
+		
+		$.fn.zTree.init($("#treeRepository"), setting,treeData);
+		treeObj = $.fn.zTree.getZTreeObj("treeRepository");
+		// 默认展开一级节点
+		var nodes = treeObj.getNodesByParam("level", 1);
+			for(var i=0; i<nodes.length; i++) {
+				treeObj.expandNode(nodes[i].getParentNode(), true, false, false, false);
+			}
+		
+		$("#search-all-btn").click(function(){
+			loadData(1503,null);
+		});
+		
+		$("#search-btn").click(function(e){
+			$("#search-form").find("input[name=id]").val("");
+			$("#search-form").val("");
+			var treeObj = $.fn.zTree.getZTreeObj("treeRepository");
+			treeObj.cancelSelectedNode();
+			paging("search-form",1);
+			searchNode(e);
+		});
+		
+	});
+</script>

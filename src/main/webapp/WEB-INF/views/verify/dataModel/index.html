@@ -1,0 +1,265 @@
+<div class="row">
+    <div class="col-xs-3">
+        <div class="widget-box">
+            <div class="widget-header clearfix">
+                <h5 class="widget-title"></h5>
+                <div class="widget-toolbar no-border width-90" style="padding-top: 2px;">
+                    <form method="post" class="form-search" id="search-form" target="list-page"
+                          action="dic-list.html">
+                        <div class="input-group" style="line-height: 0px;">
+                            <input type="text" class="form-control search-query"
+                                   name="name" placeholder="关键词" id="search-input">
+								<span class="input-group-btn">
+									<span class="btn  btn-success btn-sm"
+                                          id="search-btn">
+										 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+									</span>
+								</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main padding-8">
+                    <ul id="ztree" class="ztree" style="min-height: 480px;"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-9">
+        <div class="widget-box">
+            <div class="widget-header clearfix">
+                <h5 class="widget-title" id="grid_title">请点击左边的模型</h5>
+                <div class="widget-toolbar">
+                    <a href="#" data-action="fullscreen" class="orange2"> <i
+                            class="ace-icon fa fa-expand"></i>
+                    </a>
+                </div>
+                <div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+                          onclick="Angel.downloadFile('search-form','${ctxPath}/area/export')">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导出Excel</span>
+                </div>
+            </div>
+            <div class="widget-toolbar no-border width-40" >
+
+            </div>
+            <div class="widget-body">
+                <div class="widget-main padding-8">
+                    <table id="table"    data-pagination="true"
+                           data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+                           data-toolbar="#toolbar"
+                           data-smart-display="true">
+                        <thead>
+
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div id="toolbar" style="display: none;">
+    <div class="form-inline" role="form">
+
+        <div class="form-group">
+            <div class="form-group">
+                <span>字段</span>
+                <select name="property"  class="chosen-select form-control w70" id="column-select" >
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <select name="property"  class="chosen-select form-control w70" id="operator-select" >
+                <option value="等于" selected="">等于</option>
+                <option value="大于">大于</option>
+                <option value="小于">小于</option>
+                <option value="大于等于">大于等于</option>
+                <option value="小于登记">小于登记</option>
+                <option value="区间">区间</option>
+                <option value="包含">包含</option>
+                <option value="不包含">不包含</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input name="property" class="form-control w70" type="text" >
+        </div>
+
+        <button id="ok" type="submit" class="btn btn-primary btn-sm">查询</button>
+    </div>
+</div>
+
+<style>
+    .ztree{
+        overflow: auto;
+    }
+</style>
+<script>
+    var treeObj;
+    var key = null,nodeList=[];
+    var id = null;
+    var tid = null;
+    var setting = {
+        view:{
+            expandSpeed:100,
+            showTitle:true,
+            selectedMulti : false,
+            fontCss:function(treeId, treeNode) {
+                return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+            }
+        },
+        data : {
+            simpleData : {
+                enable : true,
+                idKey : 'id',
+                pIdKey :'pid',
+                title:'title'
+            },
+            key:{
+                name:"name"
+            }
+        },
+        callback: {
+            onClick: onClickNode
+        }
+    };
+
+
+    var key = null,nodeList=[];
+    var $table;
+
+    $(function(){
+
+        key = $("#search-input");
+        $table = $('#table');
+
+
+
+        $("#search-btn").on("click",function(e){
+            treeObj.cancelSelectedNode();
+            searchNode(e);
+        })
+
+        loadTree();
+
+        $("#column-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+        $("#operator-select").chosen({width: "100px", search_contains: true, disable_search_threshold: 10});
+    })
+
+
+
+
+
+    function loadTree(){
+        $.ajax({
+            url: "./data/data_model.json",
+            dataType: "json",
+            async: false,
+            success: function(data) {
+
+                $.fn.zTree.init($("#ztree"), setting,data);
+                treeObj = $.fn.zTree.getZTreeObj("ztree");
+                // 默认展开一级节点
+                var nodes = treeObj.getNodesByParam("level", 0);
+                for(var i=0; i<nodes.length; i++) {
+                    treeObj.expandNode(nodes[i], true, false, false);
+                }
+            }
+        });
+    }
+
+    function onClickNode(event, treeId, treeNode){
+        if(treeNode.tid != undefined){
+            $.ajax({
+                url: "./data/table/table"+treeNode.tid+"_column.txt",
+                dataType: "text",
+                async: false,
+                success: function (data) {
+                    $table.bootstrapTable("destroy");
+                    $table.find("thead").html(data);
+                    $("#column-select").chosen("destroy");
+                    $("#column select").html("");
+                    $.ajax({
+                        url: "./data/table/table"+treeNode.tid+"_option.txt",
+                        dataType: "text",
+                        async: false,
+                        success: function (option) {
+                            $("#column-select").html(option);
+                            $("#column-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+                        }
+                    });
+
+                    tid = treeNode.tid;
+                    $("#grid_title").text(treeNode.name);
+                    $.ajax({
+                        url: "./data/table/table"+treeNode.tid+"_data.json",
+                        dataType: "json",
+                        async: false,
+                        success: function (json) {
+                            $("#toolbar").show();
+                            $table.bootstrapTable({
+                                iconSize:'sm',
+                                data:json,
+                                onDblClickRow:function(){
+                                    $.cuslayer({mode:"page",url:"./view/query/dataModel/detail.html",width:'50%',title:'详细信息'});
+                                    //id = row.id;
+                                },
+                                onClickCell:function(field,value,row){
+
+                                }
+                            });
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+
+    function searchNode(e) {
+        // 取得输入的关键字的值
+        var value = $.trim(key.get(0).value);
+
+        // 按名字查询
+        var keyType = "name";
+        if (key.hasClass("empty")) {
+            value = "";
+        }
+
+        // 如果要查空字串，就退出不查了。
+        if (value === "") {
+            return;
+        }
+        updateNodes(false);
+        nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+        updateNodes(true);
+    }
+
+    function updateNodes(highlight) {
+        for(var i=0, l=nodeList.length; i<l; i++) {
+            nodeList[i].highlight = highlight;
+            treeObj.updateNode(nodeList[i]);
+            treeObj.expandNode(nodeList[i].getParentNode(), true, false, false);
+        }
+    }
+
+    function formatter1(value,row,index){
+        return ' <a  href="javascript:void(0);"'+
+                ' data-mode="detail" data-title="'+value+'    关联信息"'+
+                ' data-url="view/query/resourceData/relation.html?id='+row.id+ '"'+
+                'data-width="50%"'+
+                'data-data="{id:'+row.id+'}" >'+
+                value +
+                '</a>';
+
+    }
+
+
+</script>

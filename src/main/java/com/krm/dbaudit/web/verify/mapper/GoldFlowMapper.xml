@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.GoldFlowMapper">
+
+	<sql id="goldFlowColumns">
+		id,cid,cname,card,amount,item,oid,oname,ocard,operate_time
+	</sql>
+
+	<sql id="aliasGoldFlowColumns">
+		b.id,b.cid,b.cname,b.card,b.amount,b.item,b.oid,b.oname,b.ocard,b.operate_time
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.verify.model.GoldFlow">
+		select  <include refid="aliasGoldFlowColumns" />  
+			from gold_flow  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(cname)">
+			    and b.cname like '%' || #{cname} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(card)">
+			    and b.card like '%' || #{card} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(amount)">
+			    and b.amount =  #{amount}
+			 </if>
+			 <if test="@Ognl@isNotBlank(item)">
+			    and b.item like '%' || #{item} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(oname)">
+			    and b.oname like '%' || #{oname} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(ocard)">
+			    and b.ocard like '%' || #{ocard} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(operateTimeStart)">
+			    and b.operate_time &gt;=  #{operateTimeStart}
+			 </if>
+			 <if test="@Ognl@isNotBlank(operateTimeEnd)">
+			    and b.operate_time &lt;=  #{operateTimeEnd}
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

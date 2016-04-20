@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/tool/styles/table.css" />
+		
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+<title>数据去重</title>
+<script type="text/javascript">
+
+//alert("您传递的参数为：" +window.dialogArguments);
+var dlgargs = window.dialogArguments;
+
+//副表字段数组
+var sectablecols=null;
+var flowid;
+var srctable;
+var condition1;
+var edit_srctable;
+$(function(){
+	//window.returnValue="hahaha!";
+	var args0 = dlgargs[0];
+	if(args0=='edit_distinct_data'){
+		var action_data = dlgargs[1];
+		$.each(action_data,function(index1,info1){
+			var tablealias = info1.tablealias;
+			var condition = info1.contition;
+			condition1 = condition;
+			var edittablename = info1.tablename;
+			var srctable1 = info1.srctable1;
+			flowid = info1.flowid;
+			srctable = srctable1;
+			edit_srctable = srctable1;
+			$('#condition').val(condition);
+			$('#tablename').val(tablealias);
+			
+			//加载源表字段
+			//字段
+			var ecolumns = new Array();
+			var ecols = new Array();
+			var colData = new Object();
+			$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+srctable1, 
+				success: function(data){
+					var resfiled=data;
+					
+					for(var i=0;i<resfiled.length;i++){
+						var fieldalias = resfiled[i].fieldalias;
+						var fieldname = resfiled[i].fieldname;
+						var fieldtype = resfiled[i].fieldtype;
+						var fieldid = resfiled[i].id;
+						var fieldentitytype = resfiled[i].fieldentitytype;
+						
+						colData = new Object();
+						colData.field = fieldalias;
+					    colData.title = fieldalias;
+					    colData.fieldtype = fieldtype;
+					    colData.fieldid = fieldid;
+					    colData.fieldentitytype=fieldentitytype;
+					    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+					    
+					    colData.resizable=true;
+					    ecols.push(colData);
+					}
+					ecolumns.push(ecols);
+					
+					$("#tablecollist").empty();
+					$("#tableselectcolumn").empty();
+					
+					
+    				
+					$.each(ecols,function(n,node) {
+						//加载数据提取字段
+			            $("#discols").append("<option value='" +node.fieldid+"'>" + node.title + "</option>");
+						$("#tableselectcolumn").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+					});
+					
+					
+					
+					var efield = info1.field;
+					$("#tableselectcolumn option").each(function(index,opt) {
+						$.each(efield,function(i,field){
+        					if(opt.value==field.id){
+        						opt.selected=true;
+        					}
+        				});
+					});
+					
+					
+					//处理用户选择的去重字段
+					var distinctinfo = info1.distinctinfo;
+					$("#discols option").each(function(i,o) {
+						$.each(distinctinfo[0].distinctfield,function(k,f){
+							if(o.value==f.id){
+								o.selected=true;
+							}
+						});
+					});
+					
+					//去重复的方式
+					var mode =distinctinfo[0].mode;
+					$.each($('input[name=distype]'),function(dtindex,dtinfo){
+						dtinfo.checked=false;
+						if(dtinfo.value==mode){
+							dtinfo.checked=true;
+						}
+					});
+		    }});
+			
+			
+			
+		});
+	}else{
+		flowid="";
+		$.each(dlgargs[1],function(n,node) {
+		    //加载数据提取字段
+	    	$("#discols").append("<option value='" +node.fieldid+"'>" + node.title + "</option>");
+	    	$("#tableselectcolumn").append("<option value='" +node.fieldid+"' selected='selected'>" + node.title + "</option>");
+	    });
+	}
+	
+});
+
+
+//主表条件
+function opendlgcondition(){
+	if(flowid==''||flowid==null){
+		str = window.showModalDialog("${ctxPath!}/model/flow/condition",dlgargs[0],"dialogWidth=650px;dialogHeight=560px");
+		if(str!=''&&str!=null){
+			$('#condition').val(str);
+		}
+	}else{
+		var arr = new Array();
+		arr.push("edit_table_condition");
+		arr.push(srctable);
+		arr.push($('#condition').val());
+		str = window.showModalDialog("${ctxPath!}/model/flow/condition",arr,"dialogWidth=650px;dialogHeight=560px");
+		if(str!=''&&str!=null){
+			$('#condition').val(str);
+		}
+	}
+	
+	
+}
+
+function distinctsubmit(){
+	var field="";
+	var distinctfield = "";
+	var tablename = $('#tablename').val();
+	var condition = $('#condition').val();
+	var mode = $('input:radio[name=distype]:checked').val();
+	var srctable;
+	if(dlgargs[0]=='edit_distinct_data'){
+		srctable = edit_srctable;
+	}else{
+		srctable = dlgargs[0];
+	}
+	
+	if($('#tablename').val()==''){
+		alert('请输入文件名！');
+		return;
+	}
+	
+	//相符的字段
+	var selectobj = document.getElementById("discols");
+	 
+	 for(var i=0;i<selectobj.length;i++){
+		 if(selectobj.options[i].selected == true){
+			 var value = selectobj.options[i].value;
+			 var text = selectobj.options[i].text;
+			 distinctfield = distinctfield + "{\"id\":"+value+"},";
+		 }
+	 }
+	 if(distinctfield!=''){
+		 distinctfield = distinctfield.substring(0,distinctfield.length-1);
+		 distinctfield = "[" +distinctfield+ "]";
+	 }else{
+		 alert('请选择相符的字段');
+		 return;
+	 }
+	 
+	 //显示字段
+	 var selectobj2 = document.getElementById("tableselectcolumn");
+	 for(var i=0;i<selectobj2.length;i++){
+		 if(selectobj2.options[i].selected == true){
+			 var value = selectobj2.options[i].value;
+			 var text = selectobj2.options[i].text;
+			 field = field + "{\"id\":"+value+",\"fieldname\":\"item1\",\"fieldalias\":\""+text+"\"},";
+		 }
+	 }
+	 if(field!=''){
+		 field = field.substring(0,field.length-1);
+		 field = "[" +field+ "]";
+	 }else{
+		 alert('请选择显示的字段');
+		 return;
+	 }
+	 
+	 
+	 var action_data = "[{\"modelid\":1,\"flowid\":\""+flowid+"\",\"tablealias\":\""+tablename+"\",\"mode\":\""+mode+"\",\"srctable\":\""+srctable+"\",\"field\":"+field+",\"distinctfield\":"+distinctfield+",\"condition\":\""+condition+"\"}]";
+	 var submitJson = "[{\"action_id\":\"distinct_data\",\"action_data\":"+action_data+"}]";
+	 window.returnValue=submitJson;
+	 window.close();
+	 
+	
+	
+}
+
+</script>
+<style type="text/css">
+body{font-size: 12px;}
+</style>
+</head>
+<body>
+<div style="width: 400px;height:330px;margin: 5px; ">
+	<div style="width: 250px;height:250px;float:left;">
+		相符的字段：
+		<select name="discols" id="discols" style="width:248px; height:235px;" multiple="multiple"></select>
+	</div>
+	<div style="width: 100px;height:250px;float:left;margin-left: 20px;">
+		<table>
+			<tr><td><input type="button" value=" 确 定 " style="width:80px;" onclick="distinctsubmit()"/> </td></tr>
+			<tr><td><input type="button" value=" 取 消 " style="width:80px;" onclick="window.close()"/></td></tr>
+			<tr><td><input type="button" value=" 字 段 " style="width:80px;" onclick="$('#dlgselectcolumn').window('open');"/></td></tr>
+			<tr><td><input type="button" value=" 条 件 " style="width:80px;" onclick="opendlgcondition()"/></td></tr>
+		</table>
+	</div>
+	<div style="width: 352px;height:110px; float:left;">
+		<table>
+			<tr><td>条件：</td><td><input type="text" id="condition" /> </td> </tr>
+			<tr><td>文件名：</td><td><input type="text" id="tablename" /> </td> </tr>
+			<tr><td><input type="radio" name="distype" value="1" checked="checked"/>所有重复记录</td><td><input type="radio" name="distype" value="2"/>所有不重复记录 </td> </tr>
+			<tr><td><input type="radio" name="distype" value="3"/>重复数据排重</td><td><input type="radio" name="distype" value="4"/>所有数据取唯一值 </tr>
+		</table>
+	</div>
+	
+</div>
+<div id="dlgselectcolumn" class="easyui-window" title="字段"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 350px; height: 250px; padding: 10px;">
+	<div style="width: 240px; height: 190px; padding: 1px; float: left;">
+	要包括的字段为：
+	<br/>
+	<select name="tableselectcolumn" id="tableselectcolumn" multiple="multiple" style="width:230px;height: 170px;">
+	</select>
+	</div>
+	<div style="width: 60px; height: 190px; padding: 1px; float: left;">
+		<input type="button" name="" onclick="$('#dlgselectcolumn').dialog('close')" value=" 确 定 "/>
+	</div>
+</div>
+</body>
+</html>

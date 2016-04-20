@@ -1,0 +1,27 @@
+<tr><th data-field="a" data-sortable="true">城市号</th>
+<th data-field="b" data-sortable="true">机构号</th>
+<th data-field="c" data-sortable="true">结算账号</th>
+<th data-field="d" data-sortable="true">货币符号</th>
+<th data-field="e" data-sortable="true">流水号前缀</th>
+<th data-field="f" data-sortable="true">机构菜单类别</th>
+<th data-field="g" data-sortable="true">机构全称</th>
+<th data-field="h" data-sortable="true">机构简码</th>
+<th data-field="i" data-sortable="true">机构简称</th>
+<th data-field="j" data-sortable="true">交换机构</th>
+<th data-field="k" data-sortable="true">状态</th>
+<th data-field="l" data-sortable="true">部门平帐标志</th>
+<th data-field="m" data-sortable="true">报表机构号</th>
+<th data-field="n" data-sortable="true">机构层次</th>
+<th data-field="o" data-sortable="true">特殊部门编码</th>
+<th data-field="p" data-sortable="true">营业地址</th>
+<th data-field="q" data-sortable="true">联系电话A</th>
+<th data-field="r" data-sortable="true">联系电话B</th>
+<th data-field="s" data-sortable="true">联系电话C</th>
+<th data-field="t" data-sortable="true">对公帐号前缀</th>
+<th data-field="u" data-sortable="true">强制标志</th>
+<th data-field="v" data-sortable="true">柜员拥有角色</th>
+<th data-field="w" data-sortable="true">是否与当地人民银行清算</th>
+<th data-field="x" data-sortable="true">上级行</th>
+<th data-field="y" data-sortable="true">总行清算中心机构</th>
+<th data-field="z" data-sortable="true">部门属性</th>
+</tr>

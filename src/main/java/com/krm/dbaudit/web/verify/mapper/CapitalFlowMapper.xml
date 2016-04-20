@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.CapitalFlowMapper">
+
+	<sql id="capitalFlowColumns">
+		id, trandate, acctno, serseqno, name, acctno1, cusid, tranamt, cdflag, cashtranflag, trancode, brc, teller, search_seq, search_step, search_flow 
+	</sql>
+
+	<sql id="aliasCapitalFlowColumns">
+		a.id, a.trandate, trim(a.acctno) acctno, a.serseqno, a.name, trim(a.acctno1) acctno1, trim(a.cusid) cusid, a.tranamt, a.cdflag, a.cashtranflag, a.trancode, a.brc, a.teller, a.search_seq, a.search_step, a.search_flow 
+	</sql>
+	
+	<sql id="aliasCapitalDpsFlowColumns">
+		a.trandate, trim(a.acctno) acctno, a.serseqno, a.name, trim(a.acctno1) acctno1, trim(a.cusid) cusid, a.tranamt, a.cdflag, a.cashtranflag, a.trancode, a.brc, a.teller,a.search_user
+	</sql>
+	
+	<sql id="aliasGroupColumns">
+		acctno, name, search_step, search_flow 
+	</sql>
+	
+	<resultMap id="capitalFlow" type="com.krm.dbaudit.web.verify.model.CapitalFlow">  
+        <result column="id" property="id" />
+        <result column="trandate" property="trandate" />
+        <result column="acctno" property="acctno" />
+        <result column="serseqno" property="serseqno" />
+        <result column="name" property="name" />
+        <result column="acctno1" property="acctno1" />
+        <result column="cusid" property="cusid" />
+        <result column="tranamt" property="tranamt" />
+        <result column="cdflag" property="cdflag" />
+        <result column="cashtranflag" property="cashtranflag" />
+        <result column="trancode" property="trancode" />
+        <result column="brc" property="brc" />
+        <result column="teller" property="teller" />
+        <result column="searchSeq" property="search_seq" />
+        <result column="searchStep" property="search_step" />
+        <result column="searchFlow" property="search_flow" />
+    </resultMap>
+    
+    <resultMap id="CapitalFlowDps" type="com.krm.dbaudit.web.verify.model.CapitalFlowDps">  
+        <result column="trandate" property="trandate" />
+        <result column="acctno" property="acctno" />
+        <result column="serseqno" property="serseqno" />
+        <result column="name" property="name" />
+        <result column="acctno1" property="acctno1" />
+        <result column="cusid" property="cusid" />
+        <result column="tranamt" property="tranamt" />
+        <result column="cdflag" property="cdflag" />
+        <result column="cashtranflag" property="cashtranflag" />
+        <result column="trancode" property="trancode" />
+        <result column="brc" property="brc" />
+        <result column="teller" property="teller" />
+        <result column="searchSeq" property="search_seq" />
+        <result column="searchStep" property="search_step" />
+        <result column="searchFlow" property="search_flow" />
+        <result column="searchUser" property="search_user" />
+    </resultMap>
+    
+    <resultMap id="CapitalFlowDpsGroup" type="com.krm.dbaudit.web.verify.model.CapitalFlowGroup">  
+        <result column="acctno" property="acctno" />
+        <result column="name" property="name" />
+        <result column="search_step" property="searchStep" />
+        <result column="search_flow" property="searchFlow" />
+    </resultMap>
+
+	<select id = "callProSerachFlow" parameterType="java.util.Map" 
+		statementType="CALLABLE" resultType="Integer"> 
+		{call P_GET_STEP_BY_CONDITION(
+		#{IN_ACCTNO,mode=IN,jdbcType=VARCHAR},
+		#{IN_STEP,mode=IN,jdbcType=INTEGER},
+		#{IN_SEARCH_ID,mode=IN,jdbcType=INTEGER},
+		#{IN_TRAN_DATE,mode=IN,jdbcType=VARCHAR},
+		#{OUT_STEP,mode=OUT,jdbcType=INTEGER}
+		)}
+	</select>
+	
+	<select id = "callProSerachFlowNotAcctno" parameterType="java.util.Map" 
+		statementType="CALLABLE" resultType="Integer"> 
+		{call P_GET_STEP_NOT_ACCTNO(
+		#{IN_USER,mode=IN,jdbcType=VARCHAR},
+		#{IN_AMT,mode=IN,jdbcType=INTEGER},
+		#{IN_TRAN_DATE,mode=IN,jdbcType=VARCHAR},
+		#{OUT_ROWNUM,mode=OUT,jdbcType=INTEGER}
+		)}
+	</select>
+	
+	<select id = "callProSerachFlowDps" parameterType="java.util.Map" 
+		statementType="CALLABLE" resultType="Integer"> 
+		{call P_GET_STEP_BY_CONDITION_USER(
+		#{IN_ACCTNO,mode=IN,jdbcType=VARCHAR},
+		#{IN_STEP,mode=IN,jdbcType=INTEGER},
+		#{IN_SEARCH_ID,mode=IN,jdbcType=INTEGER},
+		#{IN_TRAN_DATE,mode=IN,jdbcType=VARCHAR},
+		#{IN_SEARCH_USER,mode=IN,jdbcType=VARCHAR},
+		#{OUT_STEP,mode=OUT,jdbcType=INTEGER}
+		)}
+	</select>
+	
+	
+	<select id = "listCapitalFlow" resultMap="capitalFlow"> 
+		select  <include refid="aliasCapitalFlowColumns" />  
+			from SYSMONEY_FLOW_TEMP_1  a 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and a.search_flow =  #{search_flow}
+			 </if>
+		</where>
+	</select>
+	
+	<select id = "getDpsList" resultMap="CapitalFlowDps"> 
+		select  <include refid="aliasCapitalDpsFlowColumns" />  
+			from SYSMONEY_FLOW_TEMP_2  a 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_user)">
+			    and a.search_user =  #{search_user}
+			 </if>
+		</where>
+	</select>
+	
+	<select id = "getDpsSearchFlowGroup" resultMap="CapitalFlowDpsGroup"> 
+		select search_flow,search_step,
+			(select name from sysmoney_flow_temp_1 b where b.search_flow=a.search_flow and search_user = #{search_user} and search_step=1 and rownum=1) name,
+			(select acctno from sysmoney_flow_temp_1 b where b.search_flow=a.search_flow and search_user = #{search_user} and search_step=1 and rownum=1) acctno
+		 from(
+			select search_flow,max(search_step) search_step from sysmoney_flow_temp_1  a where search_user = #{search_user} group by search_flow
+			 ) a 
+			 where a.search_step > #{search_step}
+	</select>
+	
+	<select id = "getDpsSearchFlowGroup2" resultMap="CapitalFlowDpsGroup"> 
+		select search_flow,max(name) name,max(acctno) acctno,max(search_step) search_step from sysmoney_flow_temp_1 where search_flow=#{search_flow} and search_step=1  group by search_flow
+	</select>
+	
+	<select id = "getSearchFlowMaxStep" parameterType="java.util.Map" resultType="java.lang.Integer"> 
+		select  max(search_step) search_step
+			from SYSMONEY_FLOW_TEMP_1  a 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and a.search_flow =  #{search_flow}
+			 </if>
+		</where>
+	</select>
+	
+	<select id = "getSearchFlowNodes" parameterType="java.util.Map" resultType="java.util.Map"> 
+		SELECT trim(acctno) acctno,trim(name) name,trim(cusid) cusid,search_flow FROM  SYSMONEY_FLOW_TEMP_1 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and search_flow =  #{search_flow}
+			 </if>
+		</where>
+		union
+		select trim(a.acctno1) acctno,trim(c.CUSTOMNAME) name,trim(c.CUSTOMID) cusid,search_flow FROM  SYSMONEY_FLOW_TEMP_1 a
+		                     left join ciscustaccinfo b on a.ACCTNO1 = b.ACCTNO
+		                     left join ciscustomerinfo c on c.CUSTOMID = b.CUSTOMID
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and search_flow =  #{search_flow}
+			 </if>
+		</where>
+	</select>
+	
+	
+	<select id="getDataByAcctno" resultType="com.krm.dbaudit.web.verify.model.CapitalFlowList">
+		select  <include refid="aliasCapitalFlowColumns" />,t3.CUSTOMNAME name1
+			from SYSMONEY_FLOW_TEMP_1  a 	
+			left join  CISCUSTACCINFO t2 on a.ACCTNO1=t2.ACCTNO
+			left join CISCUSTOMERINFO t3 on t2.CUSTOMID=t3.CUSTOMID
+		<where>
+			1=1 
+			<if test="@Ognl@isNotBlank(acctno)">
+				and trim(a.acctno) = #{acctno}
+			</if>
+			<if test="@Ognl@isNotBlank(search_flow)">
+				and a.search_flow =  #{search_flow}
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+	
+</mapper>

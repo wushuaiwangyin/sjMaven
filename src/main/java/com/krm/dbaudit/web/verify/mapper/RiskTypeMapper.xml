@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.RiskTypeMapper">
+
+	<sql id="riskTypeColumns">
+		id,name,parent_id,sort,description,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasRiskTypeColumns">
+		b.id,b.name,b.parent_id,b.sort,b.description,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.verify.model.RiskType">
+		select  <include refid="aliasRiskTypeColumns" />  
+			from risk_type  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(parentId)">
+			    and b.parent_id =  #{parentId}
+			 </if>
+			 <if test="@Ognl@isNotBlank(sort)">
+			    and b.sort =  #{sort}
+			 </if>
+			 <if test="@Ognl@isNotBlank(description)">
+			    and b.description like '%' || #{description} ||'%' 
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

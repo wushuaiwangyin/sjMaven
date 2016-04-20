@@ -1,0 +1,80 @@
+.clcnapitable
+{
+            border-collapse:collapse;  
+			border-spacing:0;  
+			padd:expression(this.cellPadding=0);
+            border: solid #CCCCCC 1px;
+          	
+          	
+          	font-size:12px;
+          	font-family:"Microsoft YaHei",Î¢ÈíÑÅºÚ,"Microsoft JhengHei",»ªÎÄÏ¸ºÚ,STHeiti,MingLiu;
+          	
+ }
+.clcnapitable td
+{
+         
+         /* border: solid #B0E0E6 1px;*/
+         
+         border: dotted #CCCCCC 1px;line-height:22px;padding:2px;
+
+}
+.clcnapitable th
+{
+         
+          background-color:#F0F0F0;white-space:nowrap;line-height:24px;border: dotted #CCCCCC 1px;
+}
+.clcnapitable tr:hover
+ {
+     background:#D1EEEE;
+}
+.clcnapitable tr:hover td {background:none;}
+.dsptable
+{
+          border-collapse:collapse;  
+			border-spacing:0;  
+			padd:expression(this.cellPadding=0);
+            border: solid #CCCCCC 1px;
+          	
+          	font-size:12px;
+          	font-family:"Microsoft YaHei",Î¢ÈíÑÅºÚ,"Microsoft JhengHei",»ªÎÄÏ¸ºÚ,STHeiti,MingLiu;
+          	
+ }
+.dsptable td
+{
+         
+         /* border: solid #B0E0E6 1px;*/
+         
+         border: dotted #CCCCCC 1px;line-height:22px;padding:2px;
+
+}
+.dsptable th
+{
+         
+          background-color:#F0F0F0;white-space:nowrap;line-height:24px;border: dotted #CCCCCC 1px;
+}
+
+.pagetable
+{
+          border-collapse:collapse;  
+			border-spacing:0;  
+			padd:expression(this.cellPadding=0);
+            border: solid #CCCCCC 1px;
+          	
+          	font-size:12px;
+          	font-family:"Microsoft YaHei",Î¢ÈíÑÅºÚ,"Microsoft JhengHei",»ªÎÄÏ¸ºÚ,STHeiti,MingLiu;
+          	
+ }
+.pagetable td
+{
+         
+         /* border: solid #B0E0E6 1px;*/
+         
+         border: dotted #CCCCCC 1px;line-height:22px;padding:2px;
+
+}
+.pagetable th
+{
+         
+          background-color:#CAE1FF;white-space:nowrap;line-height:24px;border: dotted #CCCCCC 1px;
+}
+

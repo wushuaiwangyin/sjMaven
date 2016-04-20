@@ -1,0 +1,88 @@
+
+<div class="layer">
+   <div class="profile-user-info profile-user-info-striped wordbreak" >
+      <div class="profile-info-row">
+          <div class="profile-info-name">数据编号</div>
+          <div class="profile-info-value">${dataDealModel.id!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">模型名称</div>
+          <div class="profile-info-value">${dataDealModel.modelname!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">交易机构</div>
+          <div class="profile-info-value">${dataDealModel.organName!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">交易日期</div>
+          <div class="profile-info-value">${dataDealModel.tranDate!}</div>
+      </div>
+	      <div class="profile-info-row">
+	          <div class="profile-info-name">交易类型</div>
+	          <div class="profile-info-value">${dataDealModel.tranType!}</div>
+	      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">预警原因</div>
+          <div class="profile-info-value">${dataDealModel.reason!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理情况简述</div>
+          <div class="profile-info-value">${dataDealModel.dealEscription!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理措施</div>
+          <div class="profile-info-value">${dataDealModel.dealDetail}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理方式</div>
+          <div class="profile-info-value">${dataDealModel.dealtype}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理时间</div>
+          <div class="profile-info-value">${dataDealModel.dealTime}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理人</div>
+          <div class="profile-info-value">${dataDealModel.dealUser}</div>
+      </div>
+	      <div class="profile-info-row">
+	          <div class="profile-info-name">联系人</div>
+	          <div class="profile-info-value">${dataDealModel.relative}</div>
+	      </div>
+	      <div class="profile-info-row">
+	          <div class="profile-info-name">电话或邮件</div>
+	          <div class="profile-info-value">${dataDealModel.phoneOrMail}</div>
+	      </div>
+		 @if(modelDataFile != null){
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">处理依据</div>
+          <div class="profile-info-value">已上传附件&nbsp;&nbsp;&nbsp;<button class="btn btn-primary btn-sm" id="downloadFile" 
+                       onclick="Angel.downloadFile('','${ctxPath}/data/download?id=${modelDataFile.id!}')">点击下载</button>
+          </div>
+      	</div>
+      @}else{
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">处理依据</div>
+          <div class="profile-info-value">未上传附件</div>
+      	 </div>
+      @}
+      @if(currentOrgan.orgLevel == '33001'){
+	      <div class="profile-info-row">
+		          <div class="profile-info-name">添加典型问题</div>
+		          <div class="profile-info-value"><a class="btn btn-purple btn-minier" href="javascript:void(0);"
+	               data-mode="page" data-title="添加典型问题"
+	               data-url="${ctxPath}/repository/add?parentId=1503&title=典型问题&codePre=WT&type=150302"
+	               data-width="50%"
+	               data-reloadurl="true"
+	               >
+					<i class="ace-icon fa fa-plus-circle bigger-130"></i>
+					<span>点击添加</span>
+				</a></div>
+		      </div>
+	  @}
+   </div>   
+</div>
+
+
+
+

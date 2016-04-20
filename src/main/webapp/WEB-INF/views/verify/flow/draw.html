@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>绘制图形</title>
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/static/draw/styles/grapheditor.css"/>
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/ztree/metro.css"/>
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/layer/skin/layer.css"/>
+	<!--[if !IE]> -->
+	<script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	<!-- <![endif]-->
+
+	<!--[if IE]>
+	<script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+	<![endif]-->
+	<script type="text/javascript" src="${ctxPath!}/static/ztree/jquery.ztree.all-3.5.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/layer/layer.min.js"></script>
+	<script type="text/javascript">
+	@if(!isEmpty(flow)){
+		var flow_obj = ${flow!}
+	@}else{
+		var flow_obj = null;
+	@}
+	var ctxPath = '${ctxPath}';
+	</script>
+	<script type="text/javascript" src="${ctxPath}/static/draw/js/config.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/draw/js/diagramly.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/draw/js/jscolor/jscolor.js"></script>
+	<script type="text/javascript">
+
+	// 流程分类树
+	var processTypeTree;
+
+	var processTypeSetting = {
+		
+		callback: {
+			beforeClick: function(){
+				
+			},
+			onClick:function(envet,nodeId,node){
+				$("#processTypeTree_id").val(node.id);
+				$("#processTypeTree_text").val(node.name);
+				hideProcessTypeTree();
+			}
+		},
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : "id",
+				pIdKey : "parentId",
+				rootPId : 0
+			}
+		},
+		view : {
+			dblClickExpand : true,
+			expandSpeed : "fast",
+			fontCss : {},
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		}
+	};
+		
+		
+		
+		function hideProcessTypeTree() {
+			$("#processTypeTreeWrap").fadeOut("fast");
+			$("body").unbind("mousedown", onBodyDownByProcessTypeTree);
+		}
+		
+		function onBodyDownByProcessTypeTree(event) {
+			if (!(event.target.id == "processTypeTreeWrap" || $(event.target).parents("#processTypeTreeWrap").length>0)) {
+				hideProcessTypeTree();
+			}
+		}
+				
+		/******************************相关的扩展和重写操作****************************************************************************/
+		/**
+		 * 保存对话框
+		 */
+		function SaveDialog(a,isSaveAs) {	
+			
+			var tr, td, table = document.createElement("table"),
+		    tbody = document.createElement("tbody");
+		    
+		  //文件名
+		  	tr = document.createElement("tr");
+		    td = document.createElement("td");
+		    td.style.fontSize = "10pt";
+		    td.style.width = "70px";
+		    mxUtils.write(td, mxResources.get("filename"));
+		    tr.appendChild(td);    
+		    
+		    var input = document.createElement("input");
+		    input.setAttribute("class", "formText")
+		    input.style.width = "180px";
+		    td = document.createElement("td");
+		    td.appendChild(input);
+		    tr.appendChild(td);
+		    tbody.appendChild(tr);
+		    
+		    var pId = null;
+			//流程类型
+		  	tr = document.createElement("tr");
+		    td = document.createElement("td");
+		    td.style.fontSize = "10pt";
+		    td.appendChild(td.ownerDocument.createTextNode("类型"));
+		    tr.appendChild(td);
+		    
+		    pId = document.createElement("input");
+		    pId.setAttribute("type", "hidden");
+		    pId.setAttribute("id", "processTypeTree_id");
+		    var pText = document.createElement("input");
+		    pText.setAttribute("id", "processTypeTree_text");
+		    pText.setAttribute("readonly", "readonly");
+		    pText.setAttribute("class", "formText")
+		    pText.style.width = "180px";
+		    td = document.createElement("td");
+		    td.appendChild(pId);
+		    td.appendChild(pText);
+		    tr.appendChild(td);
+		    tbody.appendChild(tr);
+		    
+		    if(flow_obj != undefined && flow_obj != null){
+		    	input.value = flow_obj.name;
+		    	pId.value = flow_obj.type;
+		    	var nodes = processTypeTree.getNodesByParam("id", flow_obj.type);
+		    	processTypeTree.selectNode(nodes[0]);
+		    	pText.value = nodes[0].name;
+		    }
+		    
+		   //按钮 
+		    tr = document.createElement("tr");
+		    td = document.createElement("td");
+		    td.colSpan = 2;
+		    if(urlParams['processType'] != null && urlParams['processType'] == 2){
+		//    	td.style.paddingTop = "0px";
+		    }else{
+		    	td.style.paddingTop = "30px";
+		    }
+		    td.style.whiteSpace = "nowrap";
+		    td.setAttribute("align", "right");
+		    var saveBtn = mxUtils.button(mxResources.get("save"),
+		    function() {
+		    	
+		    	if(input.value == null || $.trim(input.value) == ""){
+		    		layer.msg('名称不能为空', 2,8);
+		    		return;
+		    	}
+		    	
+		    	if(pId != null){
+		    		if(pId.value == null || pId.value == ""){
+		    			layer.msg('类型不能为空', 2,8);
+			    		return;
+		    		}
+		    	}   
+		    	
+		    	a.save(input.value,pId.value,a,isSaveAs);
+		    });   
+		   
+		    
+		    td.appendChild(saveBtn);
+		    td.appendChild(mxUtils.button(mxResources.get("cancel"),
+		    function() {
+		        a.hideDialog()
+		    }));
+		    tr.appendChild(td);
+		    tbody.appendChild(tr);
+		    
+		    table.appendChild(tbody);
+		    this.container = table
+		}
+		
+		
+		
+		/**
+		 * 保存
+		 * 该方法重写
+		 */
+		EditorUi.prototype.save = function(name,type,a,isSaveAs) {
+			    var xml = mxUtils.getPrettyXml(a.editor.getGraphXml());
+			
+		       // var xml = mxUtils.getXml(this.editor.getGraphXml());
+		      
+		        var f = a.editor.graph
+			 	g = f.getGraphBounds(),
+			    h = f.view.scale,
+			    i = Math.ceil(g.width / h);
+		        var t = new mxImageExport;
+		        var r = document.createElement("input");
+		   		r.setAttribute("value", i);
+		   		r.style.width = "180px";
+		   		var u = document.createElement("input");
+				u.setAttribute("value", i);
+				u.style.width = "180px";
+				u.value = "0";
+				var h = Math.max(0, parseInt(u.value)) + 1,
+			    l = parseInt(r.value) / i,
+			    m = f.getGraphBounds(),
+			    w = f.view.scale,
+			    v = mxUtils.createXmlDocument(),
+			    g = v.createElement("output");
+			    v.appendChild(g);
+			    v = new mxXmlCanvas2D(g);
+			    v.translate(Math.floor((h / l - m.x) / w), Math.floor((h / l - m.y) / w));
+			    v.scale(l / w);
+			    t.drawState(f.getView().getState(f.model.root), v);
+			    v = Math.ceil(m.width * l / w + 2 * h);
+			    h = Math.ceil(m.height * l / w + 2 * h);
+			    g = mxUtils.getXml(g);
+			    
+		        var save_url = ctxPath + "/verify/flow/save";
+		        
+		        
+		        var id = ''
+		        if(isSaveAs){//如果是另存为，不允许传id
+		        	id = '';
+		        }else{
+		        	if(flow_obj != undefined && flow_obj != null){
+			        	id = flow_obj.id;
+			        }
+		        }
+		        var params = {"name":name,"xml":xml,"type":type,"id":id,"imageXml":g};
+		       
+		        
+		        $.post(save_url,params,function(data){
+		        	var data = eval("("+data+")");
+		        	if(data <= 0){
+		        	   layer.msg('保存失败,为了保证您的数据安全，请打开文件编辑窗口，将内容先保存到本地！', 2,8);
+		        	}else{
+		        		var timestamp = (new Date()).valueOf();  
+		        		layer.msg('保存成功！', 1,1);
+		        		a.hideDialog();
+		        		window.onbeforeunload = null;
+		        		try{
+		        			window.top.reloadTree(type);
+		        		}catch(e){
+		        			try{
+		        			window.opener.reloadTree(type);
+		        			}catch(e){}
+		        		}
+		        		window.location.href=ctxPath+"/verify/flow/"+data+"/edit";
+		        	}
+		        },"html");
+		   // }
+		};
+		
+		EditorUi.prototype.saveFile = function(a) { 	
+			this.showDialog((new SaveDialog(this,a)).container, 300, 100, !0, !0);
+		};
+
+		$(function(){
+			new EditorUi(new Editor());
+			
+			
+			var treeData = ${treeList};
+			
+			
+			processTypeTree = $.fn.zTree.init($("#processTypeTree"), processTypeSetting,treeData);
+			var nodes = processTypeTree.getNodesByParam("level", 0);
+			for(var i=0; i<nodes.length; i++) {
+				processTypeTree.expandNode(nodes[i], true, false, false);
+			}
+			
+			// 加载流程分类树
+			$(document).on("click","#processTypeTree_text",function(){
+				$("#processTypeTreeWrap").css({left:$(this).offset().left + "px", top:$(this).offset().top + $(this).outerHeight() + "px"}).slideDown("fast");
+				$("body").bind("mousedown",onBodyDownByProcessTypeTree);
+			})
+			
+		})
+		
+	</script>
+</head>
+
+<body class="geEditor">
+	<div id="geInfo">
+		<div class="geBlock"
+			style="margin-top: 20px; padding: 0px; text-align: center;">
+			<h3 id="geStatus">
+				截入中... 请稍等
+			</h3>
+		</div>
+	</div>
+	
+	<!-- 流程分类树 -->
+	<div id="processTypeTreeWrap" style="display:none; position: absolute;z-index:99999; ">
+		<ul id="processTypeTree" class="ztree" style="margin-top:0; min-width:150px;border: 1px solid #617775;background: #f0f6e4;"></ul>
+	</div>
+		
+	<noscript>
+		<br/>
+			<p>
+				您的计算机不能运行javaScript!
+			</p>
+	</noscript>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.sys.mapper.SysAccessoryMapper">
+	<sql id="sysAccessoryColumns">
+		doc_id, doc_title, file_name, random_name, accessory, ext_name, disporder, description, status, creator_id, create_time, editor_id, edit_time, doc_type
+	</sql>
+	
+	<select id="findById" resultType="com.krm.dbaudit.web.sys.model.SysAccessory">
+		select <include refid="sysAccessoryColumns"/>
+		from sys_accessory sy
+		<where>
+			sy.doc_id = #{id}
+		</where>
+	</select>
+</mapper>

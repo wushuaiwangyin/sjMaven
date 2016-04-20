@@ -1,0 +1,200 @@
+
+<div class="layer">
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">图表</h5>
+					<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs"
+						  onclick="countByLine()">
+					<i class="ace-icon fa fa-pie bigger-130"></i>折线图</span>
+				</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main padding-0">
+						<div id="picBody" style="height: 400px;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-6">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">图表</h5>
+					<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs"
+						  onclick="countByPie()">
+					<i class="ace-icon fa fa-pie bigger-130"></i>饼图</span>
+				</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main padding-0">
+						<div id="barBody" style="height: 400px;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<script type="text/javascript">
+$(function(){
+	countByLine();
+	countByPie();
+})
+
+function countByLine(){
+		var option = {
+		    title : {
+		        text: '',
+		        subtext: ''
+		    },
+		    tooltip : {
+		        trigger: 'axis'
+		    },
+		    legend: {
+		        data:[]
+		    },
+		    toolbox: {
+		        show : true,
+		        feature : {
+		            mark : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            magicType : {show: true, type: ['line', 'bar']},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		    calculable : true,
+		    xAxis : [
+		        {
+		        	axisLabel : {
+						rotate : -18,
+						}, 
+		        	type : 'category',
+		            boundaryGap : false,
+		            data : ['2010081000041580','2010081000041396','201008100004139','2010081000041321','2010081000041472']
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value',
+		            axisLabel : {
+		                formatter: function (value){
+		                	if(value == 0){return '';}
+		                	if(value == 1){return '正常';}
+		                	if(value == 2){return '关注';}
+		                	if(value == 3){return '次及';}
+		                	if(value == 4){return '可疑';}
+		                	if(value == 5){return '损失';}
+		                	//return "  ".charAt(value);
+		                }
+		            }
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'',
+		            type:'line',
+		            data:[2,4,3,4,3],
+		            markPoint : {
+		                data : [
+		                    {type : 'max', name: '最大值'},
+		                    {type : 'min', name: '最小值'}
+		                ]
+		            },
+		            markLine : {
+		                data : [
+		                    {type : 'average', name: '标准值'}
+		                ]
+		            }
+		        }
+		    ]
+		};
+
+		require(
+				[
+					'echarts',
+					'echarts/chart/line',
+					'echarts/chart/bar'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+	
+function countByPie(){
+	var option = {
+		title : {
+			text: '',
+			subtext: '',
+			x:'center'
+		},
+		tooltip : {
+			trigger: 'item',
+			formatter: "{a} <br/>{b} : {c}万元 ({d}%)"
+		},
+		legend: {
+			orient : 'vertical',
+			x : 'left',
+			data:['正常','不良']
+		},
+		toolbox: {
+			show : true,
+			feature : {
+				mark : {show: true},
+				dataView : {show: true, readOnly: false},
+				magicType : {
+					show: true,
+					type: ['pie', 'funnel'],
+					option: {
+						funnel: {
+							x: '25%',
+							width: '100%',
+							funnelAlign: 'left',
+							max: 1548
+						}
+					}
+				},
+				restore : {show: true},
+				saveAsImage : {show: true}
+			}
+		},
+		calculable : true,
+		series : [
+			{
+				name:'标题',
+				type:'pie',
+				radius : '55%',
+				center: ['50%', '60%'],
+				data:[ 
+					{name:'不良', value:'2010081000041580'},
+					{name:'正常', value:'2010081000041396'},
+					{name:'正常', value:'201008100004139'},
+					{name:'正常', value:'2010081000041321'},
+					{name:'正常', value:'2010081000041472'}
+				]
+			}
+		]
+	};
+	require(
+			[
+				'echarts',
+				'echarts/chart/pie',
+				'echarts/chart/funnel'
+			],
+			function (ec) {
+				var myChart = ec.init(document.getElementById('barBody'));
+				var ecConfig = require('echarts/config');
+				myChart.setOption(option,true);
+			}
+	);
+}
+</script>

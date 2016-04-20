@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>index.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+    <meta name="description" content="index" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        <!-- bootstrap & fontawesome -->
+        <link rel="stylesheet" href="${ctxPath!}/static/bootstrap/bootstrap.min.css" />
+        <link rel="stylesheet" href="${ctxPath!}/static/css/font-awesome.min.css" />
+        
+        <link rel="stylesheet" href="${ctxPath!}/static/chosen/chosen.min.css" />
+        
+        <!-- ace styles -->
+        <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace.min.css" id="main-ace-style" />
+        <link rel="stylesheet" type="text/css" href="${ctxPath}/static/uploadify/css/uploadify.css">
+        
+        <!--[if lte IE 9]>
+            <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-part2.min.css" />
+        <![endif]-->
+        <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-skins.min.css" />
+        <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-rtl.min.css" />
+        <link rel="stylesheet" href="${ctxPath!}/static/table/bootstrap-table.css" />
+
+        <!--[if lte IE 9]>
+            <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-ie.min.css" />
+        <![endif]-->
+        
+        ${layoutContent!}
+
+        <!-- ace settings handler -->
+        <script src="${ctxPath!}/static/ace/js/ace-extra.min.js"></script>
+        
+        
+        <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+        
+        <!--[if lte IE 8]>
+            <script src="${ctxPath!}/static/bootstrap/html5shiv.min.js"></script>
+            <script src="${ctxPath!}/static/bootstrap/respond.min.js"></script>
+            <script>var ie8 = "ie8";</script>
+        <![endif]-->
+        
+        <!-- basic scripts -->
+
+        <!--[if !IE]> -->
+        <script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+        <!-- <![endif]-->
+
+        <!--[if IE]>
+        <script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+        <![endif]-->
+
+       
+        <script src="${ctxPath!}/static/bootstrap/bootstrap.min.js"></script>
+
+        <!-- ace scripts -->
+        <script src="${ctxPath!}/static/ace/js/ace-elements.min.js"></script>
+        <script src="${ctxPath!}/static/ace/js/ace.min.js"></script>
+        <script src="${ctxPath!}/static/table/bootstrap-table-all.min.js"></script>
+        <script src="${ctxPath!}/static/table/bootstrap-table-zh-CN.min.js"></script>
+        
+        
+        
+        <script src="${ctxPath!}/static/js/history.js"></script>
+        <script type="text/javascript" src="${ctxPath!}/static/layer/layer.min.js"></script>
+        <script type="text/javascript" src="${ctxPath!}/static/js/spin.min.js"></script>
+        <script type="text/javascript" src="${ctxPath!}/static/ztree/jquery.ztree.all-3.5.min.js"></script>
+        <script type="text/javascript" src="${ctxPath!}/static/js/jquery.autosize.min.js"></script>
+        <script type="text/javascript" src="${ctxPath!}/static/chosen/chosen.jquery.min.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/validate/Validform_v5.3.2_min.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/validate/Validform_Datatype.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/js/jquery.form.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/js/bootstrap-contextmenu.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/js/jquery.nicescroll.min.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/uploadify/scripts/jquery.uploadify.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/js/public.js"></script>
+        <script type="text/javascript" src="${ctxPath}/static/echarts-2.1.10/build/dist/echarts.js"></script>
+
+  </head>
+  
+  <body>
+    <div >
+                    <a class="btn btn-purple btn-minier" href="javascript:void(0);"
+                       data-mode="page" data-title="导入Excel(批量插入表名)"
+                       data-url="${ctxPath}/upload/showimportlayer?ws=1"
+                       data-width="50%"
+                       data-data="{}">
+                    <span class="btn btn-purple btn-xs">
+                    <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                    导入Excel(批量插入表名)</span>
+                    </a>
+        </div>
+        <br>
+        <br>
+        <br>
+        
+         <div >
+                    <a class="btn btn-purple btn-minier" href="javascript:void(0);"
+                       data-mode="page" data-title="导入Excel(批量插入表字段)"
+                       data-url="${ctxPath}/upload/showimportlayer?ws=2"
+                       data-width="50%"
+                       data-data="{}">
+                    <span class="btn btn-purple btn-xs">
+                    <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                    导入Excel(批量插入表字段)</span>
+                    </a>
+        </div>
+        <br><br><br>
+        <div class="widget-toolbar">
+			<span class="btn btn-purple btn-minier"
+                  onclick="Angel.downloadFile('search-form','${ctxPath}/model/base/export')">
+			<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+			导出Excel</span>
+        </div>
+        <!-- <div class="widget-body">
+        <div class="widget-main padding-2">
+            <div class="row">
+                <div class="col-sm-12" id="list-page"> -->
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="id" data-align="center" data-width="30" data-sortable="true">编号</th>
+                            <th data-field="name"   data-sortable="true" data-formatter="modelNameFormatter">模型名称</th>
+                            <th data-field="propertyname" data-sort-name="property" data-sortable="true">业务属性</th>
+                            <th data-field="buzlinename" data-sort-name="buzLine" data-sortable="true">业务条线</th>
+                            <th data-field="subjectname" data-sort-name="subject" data-sortable="true">专题</th>
+                            <th data-field="risklevelname" data-sort-name="riskLevel" data-sortable="true" data-cell-style="riskLevelCellStyle">风险级别</th>
+                            <th data-field="statusname"  data-sort-name="status" data-align="center" data-sortable="true" data-formatter="modelStatusFormatter">状态</th>
+                            <!-- <th data-field="id" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn">操作</th> -->
+                        </tr>
+                        </thead>
+                    </table>
+                <!-- /div>
+            </div>
+        </div>
+    </div> -->
+    <script type="text/javascript">
+    $('#table').bootstrapTable({
+    	iconSize:'sm',
+		pagination:true,
+		method:"post",
+		toolbar:"#toolbar",
+		pageSize:5,
+		 queryParamsType:'limit',
+		striped:true,
+		pageNumber:1,
+		 sidePagination:'server', 
+		url:'${ctxPath}/model/base/list?'
+    });
+    </script>
+  </body>
+</html>

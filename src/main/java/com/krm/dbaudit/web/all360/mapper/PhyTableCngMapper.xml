@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.all360.model.PhyTableCngModel">
+	<sql id="phycols"> PKID, PHY_TABLE, IS_PUBLIC 
+	</sql>
+	
+	<select id="getPhyTable" resultType="com.krm.dbaudit.web.all360.model.PhyTableCngModel" parameterType="java.util.Map">
+	select 
+	<include refid="phycols"/>
+	from SYS360_PHYTABLES_CONFIG 
+	<where>
+	1=1 
+	<if test="@Ognl@isNotBlank(pkid)">
+	and PKID=#{pkid}
+	</if>
+	</where>
+	
+	</select>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.all360.model.PhyTableCngModel" >
+		select
+		<include refid="phycols" />
+		from SYS360_PHYTABLES_CONFIG
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(pkid)">
+				and PKID=#{pkid}
+			</if>
+			
+		</where>
+		order by pkid
+	</select>
+</mapper>

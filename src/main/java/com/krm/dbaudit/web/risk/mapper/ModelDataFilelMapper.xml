@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.risk.mapper.ModelDataFileMapper">
+
+	
+	<sql id="dataFileColumns">
+		id,data_id,file_name,ext_name,file_content
+	</sql>
+	
+	<select id="generateId" resultType="java.lang.Long">
+		select model_data_file_seq.nextval as docId from dual
+	</select>
+	
+	<!-- 保存附件 -->
+	<insert id="saveFile">
+		insert into model_data_file (<include refid="dataFileColumns" />)
+		values(
+		#{id,jdbcType=INTEGER},
+		#{dataId,jdbcType=INTEGER},
+		#{fileName,jdbcType=VARCHAR},
+		#{extName,jdbcType=VARCHAR},
+		#{fileContent,jdbcType=BLOB}
+		)
+	</insert>
+	
+	
+</mapper>

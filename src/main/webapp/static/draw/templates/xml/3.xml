@@ -1,0 +1,38 @@
+<mxGraphModel dx="800" dy="800" grid="1" guides="1" tooltips="1" connect="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" style="default-style2">
+    <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="客户准入信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#99CCFF" parent="1" vertex="1">
+            <mxGeometry x="80" y="120" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="客 户审批信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#66B2FF" parent="1" vertex="1">
+            <mxGeometry x="290" y="120" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="货款合同信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#66FFB3" parent="1" vertex="1">
+            <mxGeometry x="510" y="120" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="放款交易流水表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#FFE6CC" parent="1" vertex="1">
+            <mxGeometry x="511" y="367" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="贷款出账信息表" style="shape=mxgraph.flowchart.process;fillColor=#ffffff;strokeColor=none;strokeWidth=2;gradientColor=#66FF66" parent="1" vertex="1">
+            <mxGeometry x="510" y="240" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="" style="endArrow=block;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#5F59FF" parent="1" source="2" target="3" edge="1">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="" style="endArrow=classic;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#7363FF" parent="1" source="3" target="4" edge="1">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="" style="endArrow=classic;entryX=0.5;entryY=0;entryPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#7363FF" parent="1" target="6" edge="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="570" y="180" as="sourcePoint"/>
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="10" value="" style="endArrow=classic;exitX=0.5;exitY=1;exitPerimeter=0;endFill=1;strokeWidth=4;strokeColor=#7363FF" parent="1" source="6" target="5" edge="1">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="贷款流程" style="text;spacingTop=-5;fontSize=36" vertex="1" parent="1">
+            <mxGeometry x="330" y="30" width="30" height="20" as="geometry"/>
+        </mxCell>
+    </root>
+</mxGraphModel>

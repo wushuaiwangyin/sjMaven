@@ -1,0 +1,40 @@
+<div class="profile-info-row">
+<div class="profile-info-name">科目号</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">科目名称</div>
+<div class="profile-info-value" id='base_b'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">是否明细科目</div>
+<div class="profile-info-value" id='base_c'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">余额性质</div>
+<div class="profile-info-value" id='base_d'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">报表启用标志</div>
+<div class="profile-info-value" id='base_e'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">损益表项目归属项目</div>
+<div class="profile-info-value" id='base_f'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">损益表项目归属方法</div>
+<div class="profile-info-value" id='base_g'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">科目级次</div>
+<div class="profile-info-value" id='base_h'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">UPITEM</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">IOSHTG</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>

@@ -1,0 +1,116 @@
+
+<div class="widget-box widget-color-green2">
+    <div class="widget-header clearfix">
+        <h5 class="widget-title">业务属性管理</h5>
+        <div class="widget-toolbar">
+            <a href="#" data-action="fullscreen" class="orange2"> <i
+                    class="ace-icon fa fa-expand"></i>
+            </a>
+        </div>
+        <div class="widget-toolbar  width-40" style="padding-top: 2px;">
+            <form method="post" class="form-search" id="search-form" target="list-page"
+                  action="dic-list.html">
+                <div class="input-group" style="line-height: 0px;">
+					<span class="input-group-btn">
+						<span  class=" btn  btn-success btn-sm"
+                               id="search-all-btn">
+							 显示全部 
+						</span> 
+					</span>
+                    <input type="text" class="form-control search-query"
+                           name="name" placeholder="属性名称或描述" id="search-input">
+						<span class="input-group-btn">
+						<span class="btn  btn-success btn-sm"
+                              id="search-btn">
+							搜索 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+						</span>
+					</span>
+                </div>
+                <input type="hidden" name="id" />
+                <input type="hidden" name="sortColumn" value="sort" />
+                <input type="hidden" name="sortWay" value="asc"/>
+            </form>
+        </div>
+        <div class="widget-toolbar">
+            <a class="btn btn-purple btn-xs"
+               data-mode="del" data-title="删除"
+               data-msg="你确定删除选中数据吗?"
+               data-url="delete"
+               data-data="{id:'{row.id}'}"
+                    >
+                <i class="ace-icon fa fa-remove bigger-130"></i>
+                <span>删除</span>
+            </a>
+        </div>
+
+        <div class="widget-toolbar no-border">
+            <a class="btn btn-purple btn-xs" href="javascript:void(0);"
+               data-mode="page" data-title="添加业务属性"
+               data-url="view/mconfig/property/save.html"
+               data-width="50%"
+               data-data="{id:'{row.id}'}">
+                <i class="ace-icon fa fa-plus-circle bigger-130"></i>
+                <span>添加</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="table" data-url="./data/property.json" data-height="500"   data-pagination="true"
+                           data-search="false" data-page-list="[10, 20, 50, 100, 200]"  >
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="id" data-align="center"  data-width="80"  data-sortable="true">编号</th>
+                            <th data-field="name"  data-sortable="true">名称</th>
+                            <th data-field="index" data-sortable="true" data-align="center"  data-width="40">序号</th>
+                            <th data-field="hasLine" data-sortable="true" data-align="center"  data-width="40">是否有条线</th>
+                            <th data-field="hasTopic" data-sortable="true" data-align="center"  data-width="40">是否有专题</th>
+                            <th data-field="remark" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="rowBtn_edit" style="display: none;">
+    <div class="hidden-sm hidden-xs action-buttons">
+        <a class="green" href="javascript:void(0);"
+           data-mode="page" data-title="编辑"
+           data-url="view/mconfig/property/save.html"
+           data-width="50%"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-pencil bigger-130"></i>编辑
+        </a>
+
+        <a class="red" href="javascript:void(0);"
+           data-mode="del" data-title="删除操作"
+           data-msg="你确定删除此数据吗?"
+           data-url="delete"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-trash-o bigger-130"></i>删除
+        </a>
+    </div>
+</div>
+
+
+
+<script style="text/javascript">
+
+    $(function(){
+        var $table = $('#table');
+        $table.bootstrapTable({
+            iconSize:'sm'
+        });
+    })
+
+</script>
+

@@ -1,0 +1,44 @@
+<tr>
+    <th data-field="a" data-sortable="true" data-width="200">付款人名称</th>
+    <th data-field="b" data-sortable="true" data-width="200">收款人名称</th>
+    <th data-field="c" data-sortable="true">委托日期</th>
+    <th data-field="d" data-sortable="false" data-formatter="formatter1">所属部门</th>
+    <th data-field="e" data-sortable="true">业务种类</th>
+    <th data-field="f" data-sortable="true">电汇委托书号码</th>
+    <th data-field="j" data-sortable="true">发起行支付系统号</th>
+    <th data-field="h" data-sortable="true">支付交易序号</th>
+    <th data-field="i" data-sortable="true">发起清算行行号</th>
+    <th data-field="j" data-sortable="true">收款人支付系统号</th>
+    <th data-field="k" data-sortable="true">接受清算行行号</th>
+    <th data-field="l" data-sortable="true">接受行支付系统号</th>
+    <th data-field="m" data-sortable="true">货币符号</th>
+    <th data-field="i" data-sortable="true">金额</th>
+    <th data-field="o" data-sortable="true">收报中心号码</th>
+    <th data-field="p" data-sortable="true">发报中心号码</th>
+    <th data-field="q" data-sortable="true">付款行支付系统号</th>
+    <th data-field="r" data-sortable="true">付款人账号</th>
+    <th data-field="s" data-sortable="true">付款人地址</th>
+    <th data-field="t" data-sortable="true">收款人账号</th>
+    <th data-field="u" data-sortable="true">收款人地址</th>
+    <th data-field="v" data-sortable="true">附言</th>
+    <th data-field="w" data-sortable="true">交易日期</th>
+    <th data-field="x" data-sortable="true">业务受理交易流水</th>
+    <th data-field="y" data-sortable="true">资金清算交易流水</th>
+    <th data-field="a" data-sortable="true">状态</th>
+    <th data-field="aa" data-sortable="true">对账标志</th>
+    <th data-field="ab" data-sortable="true">业务回执处理码</th>
+    <th data-field="ac" data-sortable="true">票据日期</th>
+    <th data-field="ad" data-sortable="true">凭证种类</th>
+    <th data-field="ae" data-sortable="true">赔偿金额</th>
+    <th data-field="af" data-sortable="true">拒付金额</th>
+    <th data-field="ag" data-sortable="true">报文参考号</th>
+    <th data-field="ah" data-sortable="true">业务类型</th>
+    <th data-field="ai" data-sortable="true">支付优先级</th>
+    <th data-field="aj" data-sortable="true">错误内容</th>
+    <th data-field="ak" data-sortable="true">凭证号</th>
+    <th data-field="al" data-sortable="true">交易用户</th>
+    <th data-field="am" data-sortable="true">发送人</th>
+    <th data-field="sn" data-sortable="true">交易时间</th>
+    <th data-field="so" data-sortable="true">AAA</th>
+    <th data-field="sp" data-sortable="true">AAASWWW</th>
+</tr>

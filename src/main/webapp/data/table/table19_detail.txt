@@ -1,0 +1,124 @@
+<div class="profile-info-row">
+<div class="profile-info-name">客户号</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">子户号</div>
+<div class="profile-info-value" id='base_b'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">账号</div>
+<div class="profile-info-value" id='base_c'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">帐户部门</div>
+<div class="profile-info-value" id='base_d'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">柜组号</div>
+<div class="profile-info-value" id='base_e'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">账户名称</div>
+<div class="profile-info-value" id='base_f'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">专户类别</div>
+<div class="profile-info-value" id='base_g'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">最后交易日期</div>
+<div class="profile-info-value" id='base_h'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">最后交易流水</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">科目代码</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">期限代码</div>
+<div class="profile-info-value" id='base_k'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">通存通兑标志</div>
+<div class="profile-info-value" id='base_l'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">起息日期</div>
+<div class="profile-info-value" id='base_m'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">到期日期</div>
+<div class="profile-info-value" id='base_n'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">开户日期</div>
+<div class="profile-info-value" id='base_o'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">销户日期</div>
+<div class="profile-info-value" id='base_p'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">余额方向</div>
+<div class="profile-info-value" id='base_q'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">联机余额</div>
+<div class="profile-info-value" id='base_r'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">上日余额日期</div>
+<div class="profile-info-value" id='base_s'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">上日余额方向</div>
+<div class="profile-info-value" id='base_t'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">上日余额</div>
+<div class="profile-info-value" id='base_u'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">结账发生额</div>
+<div class="profile-info-value" id='base_v'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">利率</div>
+<div class="profile-info-value" id='base_w'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">积数日期</div>
+<div class="profile-info-value" id='base_x'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">积数</div>
+<div class="profile-info-value" id='base_y'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">最低余额</div>
+<div class="profile-info-value" id='base_z'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">睡眠户标记</div>
+<div class="profile-info-value" id='base_aa'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">账户类别</div>
+<div class="profile-info-value" id='base_ab'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">计息标志</div>
+<div class="profile-info-value" id='base_ac'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">帐户状态</div>
+<div class="profile-info-value" id='base_ad'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">USERDT</div>
+<div class="profile-info-value" id='base_ae'></div>
+</div>

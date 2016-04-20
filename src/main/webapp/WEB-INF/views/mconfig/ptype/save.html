@@ -1,0 +1,106 @@
+
+<div class="layer">
+	<form name="FormPost" id="top-type-save" class="FormGrid"  method="post" 
+	    action="${ctx}/system/dicAct.do?method=save">
+		<input type="hidden" value="${dic.id}" name="id"/>
+		<input type="hidden" value="${dic.parentIds}" name="parentIds"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr style="display: none;">
+					<td class="ui-state-error" id="FormError"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="label" datatype="*"  nullmsg="请输入名称！"
+						value=""></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">序号</td>
+					<td class="DataTD width-100">
+						<input type="text" value="" datatype="n1-10" ignore="ignore" style="max-width: 200px;" name="sort"/>
+					</td>
+				</tr>
+
+				<tr class="FormData">
+					<td class="CaptionTD">描述</td>
+					<td class="DataTD">
+						<textarea name="remark" class="autosize-transition form-control "
+						style="resize: none;"></textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="top-type-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+
+<script type="text/javascript">
+//描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+
+$(function(){
+	//提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交
+	var ajaxS = $("#top-type-save input[ajaxurl]");
+	$.each(ajaxS,function(i,obj){
+		$(obj).focus();
+	})
+
+	var validId = $("#top-type-save").Validform({
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#top-type-save").data('loadi',loadi);
+		},
+		callback:function(data){
+			layer.close($("#top-type-save").data('loadi'));
+			if(data.code == 1) {
+				layer.msg('操作成功', 1, 1,function(){
+					if("${reload}" == "true"){
+						location.reload();
+					}else{
+						$curmenu.trigger('click');
+					}
+					layer.closeAll();
+				});
+			}else{
+				layer.msg('操作失败', 3, 1);
+			}
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true
+	});
+
+	$("#submitForm").click(function() {
+
+		validId.submitForm(false);
+		return false;
+	});
+
+	$("#top-type-save-cancel").click(function(){
+		layer.closeAll();
+		return false;
+	});
+
+	$("#top-type-save input,#top-type-save textarea").blur(function(){
+		layer.closeTips();
+		return false;
+	})
+
+});
+
+</script>

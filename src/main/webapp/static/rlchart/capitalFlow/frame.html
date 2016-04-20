@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+	
+	<script src="./jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="./echarts-2.1.10/build/dist/echarts.js"></script>
+	<script src="./bootstrap/bootstrap.min.js"></script>
+	<script src="./table/bootstrap-table-all.min.js"></script>
+	<script src="./table/bootstrap-table-zh-CN.min.js"></script>
+	<link rel="stylesheet" href="./bootstrap/bootstrap.min.css" />
+	<link rel="stylesheet" href="./table/bootstrap-table.css" />
+</head>
+<body>
+
+	 	<div class="layer">
+    <ul class="nav nav-tabs"  id="myTab">
+        <li class="active"><a data-toggle="tab" href="#baseInfo"> 
+              <i  class="green ace-icon fa fa-graduation-cap bigger-120"></i>  贷款信息
+        </a></li>
+
+        <li class=""><a data-toggle="tab" href="#stepInfo">
+            <i class="green ace-icon fa fa-send bigger-120"></i>担保基本信息
+        </a></li>
+
+    </ul>
+
+    <div class="tab-content">
+     <div id="baseInfo" class="tab-pane active clearfix">
+     <div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="picBody" style="height: 400px;"></div>
+			</div>
+		</div>
+		
+		<div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="lineBody" style="height: 400px;"></div>
+			</div>
+			
+		</div>
+		
+		<div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="pieBody" style="height: 400px;"></div>
+			</div>
+			
+		</div>
+     
+     </div>
+     
+     <div id="stepInfo" class="tab-pane active  clearfix">
+      <div class="panel-group accordion-style1 aaccordion-style2" id="faq-list-1">
+     	<div class="widget-body">
+			<div class="widget-main padding-0">
+			
+			<div id="scBody1" style="height: 550px;width:550px;float:left;margin-right:50px;border-right:1px solid #cccccc;"></div>
+			
+			<div id="scBody2" style="height: 550px;width:550px;float:left;margin-right:50px;"></div>
+				
+				
+			</div>
+			
+		</div>
+		
+		<div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="tableBody" style="height: 400px;">
+				
+				<table id="table"   data-pagination="true"   data-click-to-select="false"
+									  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+									  data-toolbar="#toolbar"  data-page-size="10" data-click-to-select="false" 
+									  data-smart-display="true"  data-url="./data/data.json"
+									  data-toggle="table" 
+									  >
+							<thead>
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="custNo">客户</th>
+							<th data-field="linkCustNo"  data-sortable="false" data-toggle="tooltip" ">关联客户</th>
+							<th data-field="type"  data-sort-name="buzLine" data-sortable="false">黑名单类型</th>
+							<th data-field="id" data-align="center" data-sortable="false" >操作</th>
+						</tr>
+						</thead>
+					</table>
+				
+				
+				</div>
+			</div>
+			
+		</div>
+     
+     </div>
+     </div>
+    </div>
+    
+    </div> 
+
+
+</body>
+
+<script type="text/javascript">
+
+$(function(){
+	loadData();
+	var $table = $('#table');
+    $table.bootstrapTable({
+    	iconSize:'sm',
+		pagination:true,
+		pageSize:10,
+		queryParamsType:'limit',
+		striped:true,
+		pageNumber:1,
+    });
+	// 路径配置
+    require.config({
+        paths: {
+            echarts : './echarts-2.1.10/build/dist'
+        }
+    });
+	
+	countModelBarByMonth();
+	countByLine();
+	countByPie();
+	countByScatter();
+	countByScatter1();
+})
+
+
+	function loadData(){
+
+		$.ajax({
+			url: "./data/data.json",
+			dataType: "json",
+			async: false,
+			success: function (data) {
+				$('#table').bootstrapTable("load",{data:data});
+			}
+		});
+	}
+	function countModelBarByMonth(){
+			var option = {
+				title : {
+					text: '贷款金额柱状图(单位：万元)',
+					subtext: ''
+				},
+				tooltip : {
+					trigger: 'axis'
+				},
+				toolbox: {
+					show : true,
+					feature : {
+						mark : {show: true},
+						dataView : {show: true, readOnly: false},
+						magicType : {show: true, type: ['line', 'bar']},
+						restore : {show: true},
+						saveAsImage : {show: true}
+					}
+				},
+				yAxis : [
+					{
+						type : 'value',
+						boundaryGap : [0, 0.01]
+					}
+				],
+				calculable : true,
+				xAxis : [
+					{
+						axisLabel : {
+						rotate : -18,
+						}, 
+						type : 'category',
+						data:['2010081000041580','2010081000041396','201008100004139','2010081000041321','2010081000041472']
+					}
+				],
+				series : [
+					{
+						type:'bar',
+						data:[4,6,10,20,5]
+					}
+				]
+			};
+	
+			require(
+					[
+						'echarts',
+						'echarts/chart/line',
+						'echarts/chart/bar'
+					],
+					function (ec) {
+						var myChart = ec.init(document.getElementById('picBody'));
+						var ecConfig = require('echarts/config');
+						myChart.setOption(option,true);
+					}
+			);
+		}
+		
+function countByLine(){
+	var option = {
+	    title : {
+	        text: '担保客户贷款及五级分类情况',
+	        subtext: ''
+	    },
+	    tooltip : {
+	        trigger: 'axis'
+	    },
+	    legend: {
+	        data:[]
+	    },
+	    toolbox: {
+	        show : true,
+	        feature : {
+	            mark : {show: true},
+	            dataView : {show: true, readOnly: false},
+	            magicType : {show: true, type: ['line', 'bar']},
+	            restore : {show: true},
+	            saveAsImage : {show: true}
+	        }
+	    },
+	    calculable : true,
+	    xAxis : [
+	        {
+	        	axisLabel : {
+					rotate : -18,
+					}, 
+	        	type : 'category',
+	            boundaryGap : false,
+	            data : ['2010081000041580','2010081000041396','201008100004139','2010081000041321','2010081000041472']
+	        }
+	    ],
+	    yAxis : [
+	        {
+	            type : 'value',
+	            axisLabel : {
+	                formatter: function (value){
+	                	if(value == 0){return '';}
+	                	if(value == 1){return '正常';}
+	                	if(value == 2){return '关注';}
+	                	if(value == 3){return '次及';}
+	                	if(value == 4){return '可疑';}
+	                	if(value == 5){return '损失';}
+	                	//return "  ".charAt(value);
+	                }
+	            }
+	        }
+	    ],
+	    series : [
+	        {
+	            name:'',
+	            type:'line',
+	            data:[2,4,3,4,3],
+	            markPoint : {
+	                data : [
+	                    {type : 'max', name: '最大值'},
+	                    {type : 'min', name: '最小值'}
+	                ]
+	            },
+	            markLine : {
+	                data : [
+	                    {type : 'average', name: '标准值'}
+	                ]
+	            }
+	        }
+	    ]
+	};
+
+	require(
+			[
+				'echarts',
+				'echarts/chart/line',
+				'echarts/chart/bar'
+			],
+			function (ec) {
+				var myChart = ec.init(document.getElementById('lineBody'));
+				var ecConfig = require('echarts/config');
+				myChart.setOption(option,true);
+			}
+	);
+}
+
+
+function countByPie(){
+/* 	var option = {
+		title : {
+			text: '不良贷款客户的贷款占比',
+			subtext: '',
+			x:'center'
+		},
+		tooltip : {
+			trigger: 'item',
+			formatter: "{a} <br/>{b} : {c}万元 ({d}%)"
+		},
+		legend: {
+			orient : 'vertical',
+			x : 'left',
+			data:['2010081000041580','2010081000041396','201008100004139','2010081000041321','2010081000041472']
+		},
+		toolbox: {
+			show : true,
+			feature : {
+				mark : {show: true},
+				dataView : {show: true, readOnly: false},
+				magicType : {
+					show: true,
+					type: ['pie', 'funnel'],
+					option: {
+						funnel: {
+							x: '25%',
+							width: '100%',
+							funnelAlign: 'left',
+							max: 1548
+						}
+					}
+				},
+				restore : {show: true},
+				saveAsImage : {show: true}
+			}
+		},
+		calculable : true,
+		series : [
+			{
+				name:'标题',
+				type:'pie',
+				radius : '55%',
+				center: ['50%', '60%'],
+				data:[ 
+					{value:4, name:'2010081000041580'},
+					{value:6, name:'2010081000041396'},
+					{value:10, name:'201008100004139'},
+					{value:20, name:'2010081000041321'},
+					{value:5, name:'2010081000041472'}
+				]
+			}
+		]
+	};
+	require(
+			[
+				'echarts',
+				'echarts/chart/pie',
+				'echarts/chart/funnel'
+			],
+			function (ec) {
+				var myChart = ec.init(document.getElementById('pieBody'));
+				var ecConfig = require('echarts/config');
+				myChart.setOption(option,true);
+			}
+	); */
+	
+	var labelTop = {
+		    normal : {
+		        label : {
+		            show : true,
+		            position : 'center',
+		            formatter : '{b}',
+		            textStyle: {
+		                baseline : 'bottom'
+		            }
+		        },
+		        labelLine : {
+		            show : false
+		        }
+		    }
+		};
+		/* var labelFromatter = {
+		    normal : {
+		        label : {
+		            formatter : function (params){
+		                return 100 - params.value + '%'
+		            },
+		            textStyle: {
+		                baseline : 'top'
+		            }
+		        }
+		    },
+		} */
+		var labelBottom = {
+		    normal : {
+		        color: '#ccc',
+		        label : {
+		            show : true,
+		            position : 'center'
+		        },
+		        labelLine : {
+		            show : false
+		        }
+		    },
+		    emphasis: {
+		        color: 'rgba(255,215,215,0.4)'
+		    }
+		};
+		var radius = [40, 55];
+		option = {
+		    legend: {
+		        y : 'top',
+		        orient : 'vertical',
+				x : 'left',
+				data:['2010081000041472','2010081000041396','201008100004139','2010081000041321','2010081000041580']
+		    },
+		    title : {
+		        text: '不良贷款客户的贷款占比',
+		        subtext: '',
+		        x: 'center'
+		    },
+		    toolbox: {
+		        show : true,
+		        feature : {
+		            dataView : {show: true, readOnly: false},
+		            magicType : {
+		                show: true, 
+		                type: ['pie'],
+		                option: {
+		                    funnel: {
+		                        width: '20%',
+		                        height: '30%',
+		                        itemStyle : {
+		                            normal : {
+		                                label : {
+		                                    formatter : function (params){
+		                                        return 'other\n' + params.value + '%\n'
+		                                    },
+		                                    textStyle: {
+		                                        baseline : 'bottom'
+		                                    }
+		                                }
+		                            },
+		                        } 
+		                    }
+		                }
+		            },
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		    series : [
+		              
+					{
+					    type : 'pie',
+					    center : ['10%', '30%'],
+					    radius : radius,
+					    x:'80%', // for funnel
+					    itemStyle : {
+					    	normal : {
+						        label : {
+						        	position:'outer',
+						            formatter : '0%',
+						            textStyle: {
+						                baseline : 'top'
+						            }
+						        }
+						    }
+					    },
+					    data : [
+					        
+					        {name:'2010081000041580', value:0,itemStyle :labelTop },
+					        {name:'', value:10, itemStyle : labelBottom}
+					    ]
+					}
+		        ,
+		        {
+		            type : 'pie',
+		            center : ['30%', '30%'],
+		            radius : radius,
+		            x:'20%', // for funnel
+		            itemStyle : {
+		            	normal : {
+					        label : {
+					        	
+					            formatter : '40%',
+					            textStyle: {
+					                baseline : 'top'
+					            }
+					        }
+					    }
+			        },
+		            data : [
+		                {name:'', value:60, itemStyle : labelBottom},
+		                {name:'2010081000041396', value:40,itemStyle : labelTop }
+		            ]
+		        },
+		        {
+		            type : 'pie',
+		            center : ['50%', '30%'],
+		            radius : radius,
+		            x:'40%', // for funnel
+		            itemStyle : {
+		            	normal : {
+					        label : {
+					            formatter : '20%',
+					            textStyle: {
+					                baseline : 'top'
+					            }
+					        }
+					    }
+			        },
+		            data : [
+		                {name:'', value:80, itemStyle : labelBottom},
+		                {name:'201008100004139', value:20,itemStyle : labelTop}
+		            ]
+		        },
+		        {
+		            type : 'pie',
+		            center : ['70%', '30%'],
+		            radius : radius,
+		            x:'60%', // for funnel
+		            itemStyle : {
+		            	normal : {
+					        label : {
+					            formatter : '40%',
+					            textStyle: {
+					                baseline : 'top'
+					            }
+					        }
+					    }
+			        },
+		            data : [
+		                {name:'', value:60, itemStyle : labelBottom},
+		                {name:'2010081000041321', value:40,itemStyle : labelTop}
+		            ]
+		        },
+		        {
+		            type : 'pie',
+		            center : ['90%', '30%'],
+		            radius : radius,
+		            x: '0%', // for funnel
+		            itemStyle : {
+		            	normal : {
+				        label : {
+				            formatter : '20%',
+				            textStyle: {
+				                baseline : 'top'
+				            }
+				        }
+				    }
+		        },
+		            data : [
+		                    {name:'', value:80, itemStyle : labelBottom},
+		                {name:'2010081000041472', value:20,itemStyle : labelTop}
+		               
+		            ]
+		        }
+		        
+		    ]
+		};
+	
+		require(
+				[
+					'echarts',
+					'echarts/chart/pie',
+					'echarts/chart/funnel'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('pieBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		); 
+		
+		
+}
+
+function countByScatter(){
+
+
+	        var option = {
+	            title : {
+	                text: '担保客户关系人情况',
+	                subtext: '',
+	                x:'right',
+	                y:'top'
+	            },
+	            tooltip : {
+	                trigger: 'item',
+	                formatter: '{a} : {b}'
+	            },
+	           
+	            series : [
+	                {
+	                    type:'force',
+	                    name : "担保人群组",
+	                    ribbonType: false,
+	                    itemStyle: {
+	                        normal: {
+	                            label: {
+	                                show: true,
+	                                textStyle: {
+	                                    color: '#cccccc'
+	                                }
+	                            },
+	                            nodeStyle : {
+	                                brushType : 'both',
+	                               // borderColor : 'rgba(255,215,0,0.4)',
+	                               color:'#000000',
+	                                borderWidth : 1
+	                            },
+	                            linkStyle: {
+	                                type: 'curve',
+	                                shadowBlur: 10
+	                            }
+	                        },
+	                        emphasis: {
+	                            label: {
+	                                show: false
+	                                // textStyle: null      // 默认使用全局文本样式，详见TEXTSTYLE
+	                            },
+	                            nodeStyle : {
+	                                //r: 30
+	                            },
+	                            linkStyle : {}
+	                        }
+	                    },
+	                    useWorker: false,
+	                    minRadius : 1,
+	                    maxRadius : 25,
+	                    gravity: 1.1,
+	                    scaling: 1.1,
+	                    linkSymbol: 'arrow',
+	                    roam: 'move',
+	                    nodes:[
+	                        {category:0, name: '20100810000415801', value : 25,},
+	                        {category:0, name: '2010081000041396',value : 24},
+	                        {category:0, name: '201008100004139',value : 24},
+	                        {category:0, name: '2010081000041321',value : 24},
+	                        {category:0, name: '2010081000041472',value : 24},
+	                        {category:0, name: '1',value : 2}
+	                       
+	                    ],
+	                    links : [
+	                        
+	                    ]
+	                }
+	            ]
+	        };
+
+
+	        require(
+	                [
+	                    'echarts',
+	                    'echarts/chart/force',
+	                    'echarts/chart/chord'
+	                ],
+	                function (ec) {
+	                    var myChart = ec.init(document.getElementById('scBody1'));
+	                    var ecConfig = require('echarts/config');
+	                    myChart.setOption(option,true);
+	                }
+	        );
+
+}
+
+
+function countByScatter1(){
+
+
+    var option = {
+      
+        tooltip : {
+            trigger: 'item',
+            formatter: '{a} : {b}'
+        },
+        legend: {
+        	orient : 'horizontal',
+            x: 'right',
+            data:['正常','银监会公示黑名单客户','信用卡多次逾期黑名单客户','有贷款核销记录的黑名单客户','法院公示老赖黑名单客户']
+        },
+        series : [
+            {
+                type:'force',
+                name : "关系人群组",
+                ribbonType: false,
+                categories : [
+								{
+								    name:'正常'
+								},
+                              {
+                                  name: '银监会公示黑名单客户'
+                              },
+                              {
+                                  name: '信用卡多次逾期黑名单客户'
+                              },
+                              {
+                                  name:'有贷款核销记录的黑名单客户'
+                              },
+                              {
+                                  name: '法院公示老赖黑名单客户'
+                              }
+                              
+                ],
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,
+                            textStyle: {
+                                color: '#333'
+                            }
+                        },
+                        nodeStyle : {
+                            brushType : 'both',
+                            borderColor : 'rgba(255,215,0,0.4)',
+                            borderWidth : 1
+                        },
+                        linkStyle: {
+                            type: 'curve',
+                            shadowBlur: 10
+                        }
+                    },
+                    emphasis: {
+                        label: {
+                            show: false
+                            // textStyle: null      // 默认使用全局文本样式，详见TEXTSTYLE
+                        },
+                        nodeStyle : {
+                            //r: 30
+                        },
+                        linkStyle : {}
+                    }
+                },
+                useWorker: false,
+                minRadius : 24,
+                maxRadius : 25,
+                gravity: 1.1,
+                scaling: 1.1,
+                linkSymbol: 'arrow',
+                roam: 'move',
+                nodes:[
+                    {category:1, name: '2010081000041581', value : 24, },
+                    {category:2, name: '2010081000041500',value : 25},
+                    {category:3, name: '2010081000041280',value : 3},
+                    {category:4, name: '2010081000041781',value : 4},
+                    {category:0, name: '2010081000041510',value : 5},
+                    {category:0, name: '2010081000041220', value : 24, },
+                    {category:0, name: '2010081000041111',value : 25},
+                    {category:0, name: '2010081000041491',value : 3},
+                    {category:0, name: '2010081000041231',value : 4},
+                    {category:0, name: '2010081000041112',value : 5}
+                   
+                ],
+                links : [
+                    
+                ]
+            }
+        ]
+    };
+
+
+    require(
+            [
+                'echarts',
+                'echarts/chart/force',
+                'echarts/chart/chord'
+            ],
+            function (ec) {
+                var myChart = ec.init(document.getElementById('scBody2'));
+                var ecConfig = require('echarts/config');
+                myChart.setOption(option,true);
+            }
+    );
+
+}
+</script>
+</html>

@@ -1,0 +1,52 @@
+<div class="layer">
+    <div class="profile-user-info profile-user-info-striped wordbreak" >
+    				<div class="profile-info-row">
+	         			<div class="profile-info-name">通知状态</div>
+			            <div class="profile-info-value" id='通知状态'></div>
+			        </div>
+			        <div class="profile-info-row">
+	         			<div class="profile-info-name">处理状态</div>
+			            <div class="profile-info-value" id='处理状态'></div>
+			        </div>
+			        <div class="profile-info-row">
+	         			<div class="profile-info-name">数据编号</div>
+			            <div class="profile-info-value" id='数据编号'></div>
+			        </div>
+			        <div class="profile-info-row">
+			            <div class="profile-info-name">模型编号</div>
+			            <div class="profile-info-value" id='模型编号'></div>
+			        </div>
+		            <div class="profile-info-row">
+			            <div class="profile-info-name">机构编号</div>
+			            <div class="profile-info-value" id='机构编号'></div>
+			        </div>
+			        <div class="profile-info-row">
+			            <div class="profile-info-name">会计日期</div>
+			            <div class="profile-info-value" id='会计日期'></div>
+			        </div>
+         	@for(headerMap in headerList){
+         		<div class="profile-info-row">
+		            <div class="profile-info-name">${headerMap.fields!}</div>
+		            <div class="profile-info-value" id='${headerMap.fields!}'></div>
+		        </div>
+        	@}
+        
+       
+    </div>
+</div>
+
+<script>
+
+$.ajax({
+    url: "${ctxPath}/data/queryDetailsContents?modelId=${modelId!}&dataId=${dataId!}",
+    dataType: "json",
+    type : 'post',
+    async: false,
+    success: function (data) {
+        $.each(data,function(i,obj){
+        	//alert(row.数据编号);
+            $("#"+obj.key).text(obj.value);
+        })
+    }
+})
+</script>

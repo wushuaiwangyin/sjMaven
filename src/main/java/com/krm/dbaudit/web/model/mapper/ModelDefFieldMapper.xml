@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelDefFieldMapper">
+	<sql id="modelDefFieldColumns">
+		id,model_id,field_alias,field_column,field_order,status,field_type,field_length,field_dictype,src_field_id
+	</sql>
+	
+	<select id="findFieldByModelId" resultType="com.krm.dbaudit.web.model.model.ModelFieldDef">
+		select <include refid="modelDefFieldColumns" />
+		from model_def_field
+		<where>
+			model_id=#{modelid}
+		</where>
+		order by field_order
+	</select>
+</mapper>

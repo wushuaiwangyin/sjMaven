@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.sys.mapper.KbStdMapper">
+	
+	<sql id="kbstdColumns">
+		std_id, std_code, std_type, file_no, file_name, file_type, file_src, publisher, file_date, keyword, file_version, disporder, public_flag, public_date, start_date, end_date, contact, telephone, memo, doc_id, status, creator_id, create_time, editor_id, edit_time, bus_type
+	</sql>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.sys.model.KbStd">
+		select <include refid="kbstdColumns"/>, sd.label as kbstdType, sl.label as filetype, sy.label as businessType
+		from kb_std kb
+		left join sys_dict sd on kb.std_type = sd.id and sd.type = 'kbstd_type'
+		left join sys_dict sl on kb.FILE_TYPE = sl.id and sl.type = 'file_type'
+		left join sys_dict sy on kb.bus_type = sy.id and sy.type = 'business_type'
+		<where>
+			kb.status = 1
+			<if test="@Ognl@isNotBlank(type)">
+				and kb.std_type in 
+				<foreach item="item" index="index" collection="type" open="(" separator="," close=")">  
+ 					#{item}
+ 				</foreach>
+			</if>
+			<if test="@Ognl@isNotBlank(name)">
+				and kb.file_name like '%' || #{name} ||'%'
+			</if>
+		</where>
+		order by kb.create_time desc
+	</select>
+	
+	<select id="findById"  resultType="com.krm.dbaudit.web.sys.model.KbStd">
+		select <include refid="kbstdColumns"/>, sd.label as kbstdType, sl.label as filetype, sy.label as businessType
+		from kb_std kb
+		left join sys_dict sd on kb.std_type = sd.id and sd.type = 'kbstd_type'
+		left join sys_dict sl on kb.FILE_TYPE = sl.id and sl.type = 'file_type'
+		left join sys_dict sy on kb.bus_type = sy.id and sy.type = 'business_type'
+		<where>
+			kb.std_id = #{id}
+		</where>
+	</select>
+	
+</mapper>

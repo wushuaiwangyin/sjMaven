@@ -1,0 +1,285 @@
+
+<div class="layer">
+	 <div class="alert-success">提示信息：红色星号为必填选项</div>
+    <form name="FormPost" id="dic-save" class="FormGrid"  method="post" enctype="multipart/form-data"
+          action="">
+        <input type="hidden" name="creatorId" value="${kbstd.creatorId!}">
+		<input type="hidden" name="createTime" value="${kbstd.createTime!}">
+        <input type="hidden" name="editorId" value="${kbstd.editorId!}">
+		<input type="hidden" name="editTime" value="${kbstd.editTime!}">
+		<input type="hidden" name="disporder" value="${kbstd.disporder!}">
+		<input type="hidden" name="status" value="${kbstd.status!}">
+		<input type="hidden" name="stdId" value="${kbstd.stdId!}">
+		<input type="hidden" name="docId" value="${kbstd.docId!}">
+        <table class="EditTable" width="100%">
+            <tbody>
+                <tr class="FormData">
+                    <td class="CaptionTD">审计依据编码</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="stdCode" readonly  datatype="*"  
+                        	value="${kbstd.stdCode!}"/>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">依据出处</td>
+                    <td class="DataTD width-100">
+                        <input type="text" readonly value="${kbstd.kbstdtype!}"/>
+                        <input type="hidden" name="stdType" value="${kbstd.stdType!}">
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+               
+                <tr class="FormData">
+                    <td class="CaptionTD">标准文号</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="fileNo" datatype="*"  
+                        	nullmsg="请输入标准文号！"  value="${kbstd.fileNo!}">
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">文件名称</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="fileName" datatype="*"  
+                        	nullmsg="请输入文件名称！"  value="${kbstd.fileName!}">
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">依据类型</td>
+                    <td class="DataTD width-100">
+                    	@var fileTypeList = dict.getDictListByType("file_type");
+                    	<#select name="fileType" id="select5">
+                    		@for(item in fileTypeList){
+	                    		<option value="${item.id!}" ${decode(item.label,kbstd.filetype!,"selected","")}>
+		                    		${item.label!}                                                 
+		                    	</option>
+	                    	@}
+                    	</#select>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">业务类型</td>
+                    <td class="DataTD width-100">
+                    	@var businessTypeList = dict.getDictListByType("business_type");
+                    	<#select name="busType" id="select2">
+                    		@for(item in businessTypeList){
+	                    		@if(item.id != 1401){
+		                    		<option value="${item.id!}" ${decode(item.label,kbstd.businesstype!,"selected","")}>
+			                    		${item.label!}
+			                    	</option>
+		                    	@}
+	                    	@}
+                    	</#select>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">文件出处作者</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="fileSrc"  value="${kbstd.stdCode!}">
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">出版单位</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="publisher" value="${kbstd.stdCode!}">
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">出版日期</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="fileDate" 
+                        	onClick="WdatePicker({maxDate:'%y-%M-%d'})" 
+                        	value="${kbstd.fileDate!}"value="${kbstd.stdCode!}">
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">关键字</td>
+                    <td class="DataTD">
+                            <textarea name="keyword" 
+                            		  class="autosize-transition form-control "
+                                       style="resize: none;">${kbstd.keyword!}</textarea>
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">版次</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="fileVersion"  value="${kbstd.fileVersion!}">
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">发布标志</td>
+                    <td class="DataTD width-100">
+                    	<#select name="publicFlag" id="select1">
+                    		<option value="1" ${decode("1",kbstd.publicFlag!,"selected","")}>
+	                    		已发布
+	                    	</option>
+                    		<option value="0" ${decode("0",kbstd.publicFlag!,"selected","")}>
+	                    		未发布
+	                    	</option>
+                    	</#select>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">启用日期</td>
+                    <td class="DataTD width-100">
+                        <input type="text" id="startDate" class="Wdate"  name="startDate"  
+                        	onFocus="WdatePicker({maxDate: '#F{$dp.$D(\'endDate\')||\'2020-10-01\'}' })"
+ 							value="${kbstd.startDate!}">
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">废止日期</td>
+                    <td class="DataTD width-100">
+                        <input type="text" id="endDate" class="Wdate" name="endDate"   
+                        	onFocus="WdatePicker({minDate: '#F{$dp.$D(\'startDate\')||\'%y-%M-%d\'}' ,maxDate:'2020-10-01' })"
+                        	value="${kbstd.endDate!}" >
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">文件联系人</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="contact"  value="${kbstd.contact!}">
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">联系电话</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="telephone"  value="${kbstd.telephone!}">
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">备注</td>
+                    <td class="DataTD">
+                            <textarea name="memo" 
+                            		  class="autosize-transition form-control "
+                                      style="resize: none;">${kbstd.memo!}</textarea>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">审计依据文件</td>
+                    <td class="DataTD">
+                           <input type="file" id="inputfile" name="file" class="file" >
+                    </td>
+                </tr>
+                 @if(fileName != null){
+                <tr class="FormData">
+                    <td class="CaptionTD"><font color="green">已上传附件</font></td>
+                    <td class="DataTD">
+                          <a href="#" class="btn btn-primary btn-sm " role="button"
+                          	title="查看附件"
+							data-mode="page" data-title="查看附件"
+							data-url="${ctxPath}/sysAccessory/file/showlayer?id=${kbstd.docId!}&mode=edit" 
+							data-width="50%"
+                          >查看附件</a>
+                    </td>
+                </tr>
+                @}else{
+	                 <tr class="FormData">
+	                    <td class="CaptionTD"></td>
+	                    <td class="DataTD">
+	                    	<font color="red">未上传附件</font>
+	                    </td>
+	                </tr>
+                @}
+                <tr class="FormData">
+                    <td >
+                    <div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+                        <button class="btn btn-primary btn-sm bigger-110 width-50  pull-left" id="submitForm" >保存</button>
+                        <span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="dic-save-cancel">
+							<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+						</span>
+                    </div>    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+    //描述框自动扩张高度
+    $('textarea[class*=autosize]').autosize({append: "\n"});
+    var index;
+    var treeObj = $.fn.zTree.getZTreeObj('treeRepository');
+	var parentId = '';
+	var type = '';
+	var nodes = treeObj.getSelectedNodes();
+	$.each(nodes,function(i,obj){
+		parentId = obj.parentId;
+		type = obj.id;
+	})
+    
+$(function(){
+    	index = layer.index;
+    	var re = /^[1-9]+[0-9]*]*$/ ; 
+        //提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交
+        var ajaxS = $("#dic-save input[ajaxurl]");
+        $.each(ajaxS,function(i,obj){
+            $(obj).focus();
+        })
+
+        var validId = $("#dic-save").Validform({
+        	tiptype : 4,
+            ajaxPost : true,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#dic-save").data('loadi',loadi);
+                curform.ajaxSubmit({
+                	type:'post',
+                	url:'${ctxPath}/repository/kbstd/save',
+                	success:function(data){
+                        layer.close($("#dic-save").data('loadi'));
+                        if(data !=null && re.test(data)) {
+                            layer.msg('修改成功', 1, 1,function(){
+                            	layer.closeAll();
+                                $('#table').bootstrapTable("refresh",{url:"${ctxPath!}/repository/kbstd/list?type="+type+"&parentId="+parentId})
+                            });
+                        }else{
+                            layer.msg('修改失败', 3, 1);
+                        }
+                    }
+                	
+                });
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+
+        $("#submitForm").click(function() {
+            validId.submitForm(false);
+            return false;
+        });
+
+        $("#dic-save-cancel").click(function(){
+        	layer.closeAll();
+        });
+
+        $("#dic-save input,#dic-save textarea").blur(function(){
+            layer.closeTips();
+            return false;
+        })
+
+    });
+
+
+	$("#dic-save-cancel").click(function(){
+		layer.closeAll();
+	});
+	
+	
+</script>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.sys.mapper.KbProfitMapper">
+	
+	<sql id="kbProfitColumns">
+		profit_id, profit_code, profit_title, profit_type, keyword, profit_src, public_flag, public_date, profit_desc, disporder, memo, doc_id, status, creator_id, create_time, editor_id, edit_time
+	</sql>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.sys.model.KbProfit">
+		select <include refid="kbProfitColumns"/>,sy.label as type
+		from kb_profit kb
+		left join sys_dict sy on kb.profit_type = sy.id
+		<where>
+			kb.status = 1
+			<if test="@Ognl@isNotBlank(type)">
+				and kb.profit_type in 
+				<foreach item="item" index="index" collection="type" open="(" separator="," close=")">  
+ 					#{item}
+ 				</foreach>
+			</if>
+ 			<if test="@Ognl@isNotBlank(name)">
+				and kb.profit_title like '%' || #{name} ||'%'
+			</if>
+			order by kb.create_time desc
+		</where>
+		
+	</select>
+	
+	<select id="findById"  resultType="com.krm.dbaudit.web.sys.model.KbProfit">
+		select <include refid="kbProfitColumns"/>,sy.label as type
+		from kb_profit kb
+		left join sys_dict sy on kb.profit_type = sy.id and sy.type = 'kbprofit_type'
+		<where>
+			kb.profit_id = #{id}
+		</where>
+	</select>
+	
+</mapper>

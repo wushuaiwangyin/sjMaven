@@ -1,0 +1,11 @@
+<tr><th data-field="a" data-sortable="true">科目号</th>
+<th data-field="b" data-sortable="true">科目名称</th>
+<th data-field="c" data-sortable="true">是否明细科目</th>
+<th data-field="d" data-sortable="true">余额性质</th>
+<th data-field="e" data-sortable="true">报表启用标志</th>
+<th data-field="f" data-sortable="true">损益表项目归属项目</th>
+<th data-field="g" data-sortable="true">损益表项目归属方法</th>
+<th data-field="h" data-sortable="true">科目级次</th>
+<th data-field="i" data-sortable="true">UPITEM</th>
+<th data-field="j" data-sortable="true">IOSHTG</th>
+</tr>

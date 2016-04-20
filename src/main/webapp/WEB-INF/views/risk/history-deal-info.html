@@ -1,0 +1,73 @@
+<div class="layer">
+    <div class="widget-main padding-3">
+       <table id="history_deal_info" data-url="" data-height="500"  data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true"
+               data-click-to-select="true"    data-toggle="table"
+               data-smart-display="true"> 
+            <thead>
+                <tr>
+                    <th data-field="dataId" data-formatter="status">数据编号</th>
+                    <th data-field="reason" >预警原因</th>
+                    <th data-field="organName" >交易机构</th>
+                    <th data-field="tranDate" >交易日期</th>
+                    <th data-field="tranType" >交易类型</th>
+                    <th data-field="dealEscription" >处理情况简述</th>
+                    <th data-field="dealDetail" >处理措施</th>
+                    <th data-field="dealtype" >处理方式</th>
+                    <th data-field="dealTime"  data-visible="false">处理时间</th>
+                    <th data-field="dealUser"  data-visible="false">处理人</th>
+                    <th data-field="relative"  data-visible="false">联系人</th>
+                    <th data-field="phoneOrMail"  data-visible="false">电话或邮件</th>
+                    <th data-align="center" data-width="80" data-formatter="operatorBtn4">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+   <div id="rowBtn_edit4" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="btn btn-primary btn-xs" href="javascript:void(0);"
+               data-mode="fastDeal" data-title="快速处理"
+               data-url="${ctxPath}/data/fastDeal?dataId=${dataId!}&flag=${flag!}&noticeId=${noticeId!}"
+               data-data="{id:'{row.id}'}"
+               data-width="80%"
+               data-reloadurl="xxxxx"
+               data-msg="${ctxPath}/data/queryDetailsHeaders"
+               >
+				<span>快速处理</span>
+			</a>
+	</div>
+  </div>
+
+<script>
+   
+    $(function(){
+    	var $table = $('#history_deal_info');
+	    $table.bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:'${ctxPath}/data/historyDealInfo?modelId=${modelId!}&organId=${organId}&dealType=${dealType}'
+	    });
+	})
+    function operatorBtn4(value, row){
+        return $("#rowBtn_edit4").html().replace(new RegExp("{row.id}","g"),row.id);
+    }
+    
+    function status(value,row,index){
+			return ' <a  href="javascript:void(0);"'+
+					' data-mode="detail" data-title="处理信息详细"'+
+					' data-url="${ctxPath}/data/dealDetails/showlayer" '+
+					'data-width="50%"'+
+					'data-data="{id:'+row.dataId+'}" >'+
+					value +
+					'</a>';
+	}
+</script>

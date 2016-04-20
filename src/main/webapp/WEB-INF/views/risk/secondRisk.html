@@ -1,0 +1,279 @@
+<div class="widget-box">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">查询条件</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+
+                <div role="form" class="form-inline">
+                    <div class="form-group">
+                        <span>客户号</span>
+                        <input type="text" value="" class="form-control w100" name="custNo" id="cNo">
+                    </div>
+                    <div class="form-group">
+                        <span>出现次数</span>
+                        <input type="text"  class="form-control w70" name="times" id="queryCount">
+                    </div>
+                    <button class="btn btn-primary btn-sm"  id="ok">查询</button>
+                </div>
+
+        </div>
+    </div>
+</div>
+
+<br/>
+<div class="widget-box" id="y_box1">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">当月结果</h5>
+        <div class="widget-toolbar no-border">
+                <span class="btn btn-purple btn-xs"
+                      onclick="downloadSecondRisk('y_table1','${ctxPath}/second/risk/exportByNo')">
+                <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                导出Excel</span>
+        </div>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+            <table id="y_table1" data-height="300"  data-url="${ctxPath}/second/risk/month"  data-pagination="true"
+                   data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-page-size="50" data-striped="true"
+                   data-toolbar="#toolbar1"
+                   data-smart-display="true">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="custno" data-sortable="true">客户号</th>
+                    <th data-field="custname" data-sortable="true" >客户名</th>
+                    <th data-field="amount" data-sortable="true" data-formatter="modelNumberFormatter">模型个数</th>
+
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- 
+<div class="widget-box" id="y_box2" style="display: none">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">当月结果</h5>
+        <div class="widget-toolbar no-border">
+                <span class="btn btn-purple btn-xs"
+                      onclick="Angel.downloadFile('y_table2','${ctxPath}/second/risk/exportDetails')">
+                <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                导出Excel</span>
+        </div>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+            <table id="y_table2" data-height="300"  data-pagination="true" 
+                   data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-page-size="50" data-striped="true"
+                   data-toolbar="#toolbar1"
+                   data-smart-display="true">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="custno" data-sortable="true">客户号</th>
+                    <th data-field="custname" data-sortable="true">客户名</th>
+                    <th data-field="modelname" data-sortable="true">模型</th>
+                    <th data-field="id" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn">操作</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+-->
+
+<br/>
+<div class="widget-box" id="d_box1">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">昨日分析</h5>
+        <div class="widget-toolbar no-border">
+                <span class="btn btn-purple btn-xs"
+                      onclick="downloadSecondRisk('d_table1','${ctxPath}/second/risk/exportByNo')">
+                <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                导出Excel</span>
+        </div>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+
+            <table id="d_table1" data-height="300"   data-pagination="true" data-url="${ctxPath}/second/risk/day"
+                   data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-page-size="50" data-striped="true"
+                   data-toolbar="#toolbar1"
+                   data-smart-display="true">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="custno" data-sortable="true">客户号</th>
+                    <th data-field="custname" data-sortable="true">客户名</th>
+                    <th data-field="amount" data-sortable="true" data-formatter="modelNumberFormatter">模型个数</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<!--
+<div class="widget-box" id="d_box2" style="display: none">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">昨日分析</h5>
+        <div class="widget-toolbar no-border">
+                <span class="btn btn-purple btn-xs"
+                      onclick="Angel.downloadFile('search-form','${ctxPath}/second/risk/exportDetails?flag=0')">
+                <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                导出Excel</span>
+        </div>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+
+            <table id="d_table2" data-height="300"   data-pagination="true"
+                   data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-page-size="50" data-striped="true"
+                   data-toolbar="#toolbar1"
+                   data-smart-display="true">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="custno"  data-sortable="true">客户号</th>
+                    <th data-field="custname" data-sortable="true">客户名</th>
+                    <th data-field="modelname"  data-sortable="true">模型</th>
+                    <th data-field="id" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn">操作</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+-->
+
+
+<div id="rowBtn_edit" style="display: none;">
+    <div class="hidden-sm hidden-xs action-buttons">
+        <a class="green" href="javascript:void(0);" title="详细"
+           data-mode="page" data-title="详细"
+           data-url="${ctxPath}/data/queryHeaders"
+           data-width="80%"
+           data-height="100%"
+           data-data="{modelId:'{row.id}',custNo:'{row.custno}'}"
+                >
+            <i class="ace-icon fa fa-list bigger-130"></i>
+        </a>
+    </div>
+</div>
+
+<script>
+    var loadWay = "buzLine"
+    var $y_table1 = $('#y_table1');
+    var $d_table1 = $('#d_table1');
+    $y_table1.bootstrapTable({
+        iconSize:'sm'
+    });
+    $d_table1.bootstrapTable({
+        iconSize:'sm'
+    });
+
+    $("#ok").on("click",function(){
+        var cNo = $("#cNo").val();
+        var cCount = $("#queryCount").val();
+        /*
+        if(cNo.length <= 0 && cCount.length <= 0 ){
+            alert("请输入次数或者客户号")
+            return;
+        }
+	*/
+        $.ajax({
+            url: "${ctxPath}/second/risk/month?custNo="+cNo+"&times="+cCount,
+            dataType: "json",
+            async: false,
+            method:"post",
+            success: function(data) {
+                $("#y_box1,#d_box1").show();
+                $("#y_box2,#d_box2").hide();
+                var d = [];
+                $.each(data,function(i,obj){
+                        d.push(obj);
+                  //  if((obj.custno == cNo &&  cNo.length > 0 )|| (cCount.length > 0 && obj.amount*1 >= cCount)){
+                  //   }
+                })
+                $y_table1.bootstrapTable("load",{data:d});
+                //$d_table2.bootstrapTable("load",{data:d});
+            }
+        });
+        
+        $.ajax({
+            url: "${ctxPath}/second/risk/day?custNo="+cNo+"&times="+cCount,
+            dataType: "json",
+            async: false,
+            method:"post",
+            success: function(data) {
+                $("#y_box1,#d_box1").show();
+                $("#y_box2,#d_box2").hide();
+                var d = [];
+                $.each(data,function(i,obj){
+                        d.push(obj);
+                    //if((obj.custno == cNo &&  cNo.length > 0 )|| (cCount.length > 0 && obj.amount*1 >= cCount)){
+                    //}
+                })
+                //$y_table2.bootstrapTable("load",{data:d});
+                $d_table1.bootstrapTable("load",{data:d});
+            }
+        });
+
+
+    });
+
+    function cardFormatter2(value,row,index){
+        return ' <a  href="javascript:queryCust('+row.custno+')">'+
+       			 value +
+                '</a>';
+    }
+
+    function  queryCust(id){
+    	var custid=''+id;
+    	   var isPublic="0";	
+    	   $("#fill-main-content").html(loadHtmlPage("cust360/main/query?custId="+custid+"&isPublic="+isPublic));
+       }
+    
+    function modelNumberFormatter(value,row,index){
+        return ' <a  href="javascript:void(0);"'+
+                ' onclick="modelLayer('+row.flag+','+row.custno+',\''+row.custname+'\')" >'+
+                value +
+                '</a>';
+
+    }
+
+	var flag = '';
+	var custNo = '';
+    var custName = '';
+    function modelLayer(flag_1,custno,name){
+    	flag = flag_1;
+    	custNo = custno;
+    	custName = name;
+        $.cuslayer({mode:'detail',url:'${ctxPath}/risk/detail3',width:'70%',title:name});
+    }
+
+    function downloadSecondRisk(formid, action) {
+    	var table = $("#" + formid);
+    	var rows = table.bootstrapTable("getAllSelections");
+    	var $tempForm = $("<form style='display:none;'></form>");
+    	if (rows.length <= 0) {
+    		layer.msg('<span class="red bigger-120">请选择数据</span>');
+    		return;
+    	} else {
+    		var custNo = '';
+    		var custName = '';
+    		for (var i = 0; i < rows.length; i++) {
+    			custNo = rows[i].custno;
+    			custName = rows[i].custname;
+		    	var $input = $("<input name='"+custNo+ "' value='" + custName+ "'/>");
+		    	$tempForm.append($input);
+    		}
+    	}
+    	
+    	$("body").append($tempForm);
+    	$tempForm.attr("action", action);
+    	$tempForm.attr("method", "post");
+    	$tempForm.submit();
+    	$tempForm.remove();
+    }
+</script>

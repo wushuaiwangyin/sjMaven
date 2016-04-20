@@ -1,0 +1,63 @@
+<div class="layer">
+    <div class="widget-main padding-3">
+       <table id="table-detail_info" data-url="${ctxPath}/kbStdEntry/entryList?stdCode=${stdCode!}" data-height="500"  data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true"
+               data-click-to-select="true"  data-toolbar="#toolbar"  data-toggle="table"
+               data-smart-display="true"> 
+            <thead>
+                <tr>
+            		<th data-field="state" data-formatter="" data-radio="true"></th>
+                    <th data-field="entryCode" data-width="20" data-sortable="true">审计依据条目编码</th>
+                    <th data-field="stdCode" data-width="30" data-sortable="true">审计依据编码</th>
+                    <th data-field="keyword"  data-width="20" data-sortable="true">关键字</th>
+                    <th data-field="content" data-width="150" data-sortable="true" data-visible="true" >条目内容</th>
+                    <th data-field="creatorId" data-width="30" data-sortable="true" data-visible="true" >创建人</th>
+                    <th data-field="createTime" data-width="150" data-sortable="true" data-visible="true" >创建时间</th>
+                    <th data-align="center" data-width="80" data-formatter="operatorBtn4">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+   <div id="rowBtn_edit4" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" 
+			title="编辑审计依据条目"
+			data-mode="page" data-title="编辑操作"
+			data-url="${ctxPath}/kbStdEntry/edit/showlayer?stdCode=${stdCode!}"
+			data-data="{id:'{row.entryId}'}"
+			data-width="50%"
+			data-reloadurl="true"
+			>
+			<i class="ace-icon fa fa-pencil bigger-130"></i>
+		</a>
+	
+		<a class="red" href="javascript:void(0);" 
+			title="删除审计依据条目"
+			data-mode="del" data-title="删除操作"
+			data-msg="你确定删除该审计依据条目吗?(慎重操作)"
+			data-url="${ctxPath}/kbStdEntry/delete" data-data="{id:'{row.entryId}'}"
+			data-reloadurl="true"
+			>
+			<i class="ace-icon fa fa-trash-o bigger-130"></i>
+		</a>
+	</div>
+  </div>
+
+
+
+
+
+
+<script>
+    var $table_detail = $('#table-detail_info');
+    $table_detail.bootstrapTable({
+        iconSize:'sm',
+        onLoadSuccess:tableLoadSuccess
+    });
+    function operatorBtn4(value, row){
+        return $("#rowBtn_edit4").html().replace(new RegExp("{row.entryId}","g"),row.entryId);
+    }
+</script>

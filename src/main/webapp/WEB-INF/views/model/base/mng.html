@@ -1,0 +1,280 @@
+<div class="widget-box widget-color-green2">
+    <div class="widget-header widget-header-small clearfix">
+        <h5 class="widget-title">模型管理</h5>
+        <div class="widget-toolbar">
+            <a href="#" data-action="fullscreen" class="orange2"> <i
+                    class="ace-icon fa fa-expand"></i>
+            </a>
+        </div>
+        <div class="widget-toolbar">
+			<span class="btn btn-purple btn-minier"
+                  onclick="Angel.downloadFile('search-form','${ctxPath}/model/base/export')">
+			<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+			导出Excel</span>
+        </div>
+        <div class="widget-toolbar">
+			<a class="btn btn-purple btn-minier"
+                  data-mode="delSelect" data-title="删除"
+                  data-msg="你确定删除选中数据吗?"
+                  data-url="${ctxPath}/model/base/deletes"
+                  data-data="{id:'{row.id}'}"
+                  data-table="table"
+                  data-callback="query()"
+                    >
+				<i class="ace-icon fa fa-remove bigger-130"></i>
+				<span>删除</span>
+			</a>
+        </div>
+
+		<!--
+        <div class="widget-toolbar">
+            <a class="btn btn-purple btn-minier" href="javascript:void(0);"
+               data-mode="paramset" data-title="提交模型"
+               data-url="${ctxPath}/model/base/submitadd"
+               data-width="50%"
+               data-data="{ids:'{row.id}'}" 
+               data-table="table" 
+               >
+				<i class="ace-icon fa fa-plus-circle bigger-130"></i>
+				<span>提交模型</span>
+			</a>
+        </div>
+        <div class="widget-toolbar">
+            <a class="btn btn-purple btn-minier" onclick="submitModel()" >
+                <i class="ace-icon fa fa-upload bigger-130"></i>
+                <span>提交</span>
+            </a>
+        </div>
+         -->
+        <!-- 
+        <div class="widget-toolbar no-border">
+            <a class="btn btn-purple btn-minier" href="javascript:void(0);"
+               data-mode="paramset" data-title="设置频率"
+               data-url="${ctxPath}/model/base/model-set-run-date"
+               data-width="50%" 
+               data-data="{id:'{row.id}'}" 
+               data-table="table" 
+               >
+                <i class="ace-icon fa fa-cogs bigger-130"></i>
+                <span>设置运行频率</span>
+            </a>
+        </div>
+         -->
+    </div>
+
+    <div class="widget-body">
+        <div class="widget-main padding-2">
+            <div class="row">
+                <div class="col-sm-12" id="list-page">
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="id" data-align="center" data-width="30" data-sortable="true">编号</th>
+                            <th data-field="name"   data-sortable="true" data-formatter="modelNameFormatter">模型名称</th>
+                            <th data-field="propertyname" data-sort-name="property" data-sortable="true">业务属性</th>
+                            <th data-field="buzlinename" data-sort-name="buzLine" data-sortable="true">业务条线</th>
+                            <th data-field="subjectname" data-sort-name="subject" data-sortable="true">专题</th>
+                            <th data-field="risklevelname" data-sort-name="riskLevel" data-sortable="true" data-cell-style="riskLevelCellStyle">风险级别</th>
+                            <th data-field="statusname"  data-sort-name="status" data-align="center" data-sortable="true" data-formatter="modelStatusFormatter">状态</th>
+                            <th data-field="id" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toolbar">
+	<form id="search-form">
+		<div class="form-inline" role="form">
+	        <div class="form-group">
+	            <span>模型名称</span>
+	            <input name="name" class="form-control w70" type="text" >
+	        </div>
+	        <div class="form-group">
+	            <span>业务属性</span>
+	            <#select name="property" id="property-chosen" width="130px" class="form-control w70">
+					<option value="">全部</option>
+					@for(item in ps){
+						<option value="${item.id!}">
+						${item.name!}
+						</option>
+					@}
+				</#select>
+	        </div>
+	        <div class="form-group">
+	            <span>业务条线</span>
+            	@var buzLines = dict.getDictListByType("model_buz_line");
+				<#select name="buzLine" id="buzline-chosen" width="120px" class="form-control w70">
+					<option value="">全部</option>
+					@for(item in buzLines){
+						<option value="${item.value!}">
+						${item.label!}
+						</option>
+					@}
+				</#select>
+	        </div>
+	        <div class="form-group">
+	            <span>风险级别</span>
+	            @var risks = dict.getDictListByType("model_risk_level");
+				<#select name ="riskLevel" id="riskLevel-chosen" width="120px" class="form-control w70">
+					<option value="">全部</option>
+					@for(item in risks){
+						<option value="${item.value!}">
+						${item.label!}
+						</option>
+					@}
+				</#select>
+	        </div>
+	        <div class="form-group">
+	            <span>状态</span>
+	            @var status = dict.getDictListByType("model_status");
+				<#select name="status" id="status-chosen" width="120px" class="form-control w70">
+					<option value="">全部</option>
+					@for(item in status){
+						<option value="${item.value!}">
+						${item.label!}
+						</option>
+					@}
+				</#select>
+	        </div>
+	        <button id="ok" type="button" onclick="query()" class="btn btn-primary btn-sm">查询</button>
+	    </div>
+	</form>
+</div>
+
+<div id="rowBtn_edit" style="display: none;">
+    <div class="hidden-sm hidden-xs action-buttons">
+    	<!-- 
+        <a class="green" href="javascript:void(0);" onclick="openTool('{row.id}')" >
+            <i class="ace-icon fa fa-pencil bigger-130"></i>
+        </a>
+         -->
+         <a class="green" href="javascript:void(0);"
+           data-mode="page" data-title="提交操作"
+           data-msg="你确定提交此数据吗?"
+           data-width="50%"
+           data-url="${ctxPath}/model/base/submitadd"
+           data-data="{'ids[]':'{row.id}'}"
+           data-callback="query()"
+                >
+            <i class="ace-icon fa fa-pencil bigger-130"></i>
+        </a>
+        <a class="red" href="javascript:void(0);"
+           data-mode="del" data-title="删除操作"
+           data-msg="你确定删除此数据吗?"
+           data-url="${ctxPath}/model/base/delete"
+           data-data="{id:'{row.id}'}"
+           data-callback="query()"
+                >
+            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+        </a>
+    </div>
+</div>
+
+
+<script>
+   
+$(function(){
+	var $table = $('#table');
+    $table.bootstrapTable({
+    	iconSize:'sm',
+		pagination:true,
+		method:"post",
+		toolbar:"#toolbar",
+		pageSize:10,
+		queryParamsType:'limit',
+		striped:true,
+		pageNumber:1,
+		sidePagination:'server',
+		url:'${ctxPath}/model/base/list?'+$("#search-form").serialize()
+    });
+})
+
+
+    $("#riskLevel-select").chosen({width: "100px",disable_search_threshold:10});
+    $("#status-select").chosen({width: "100px",disable_search_threshold:10});
+
+    function riskLevelCellStyle(value,row,index){
+        if(value == "特别严重"){
+            return {css:{background:'#ffb752'}};
+        }
+        return {};
+    }
+
+    function modelStatusFormatter(value,row,index){
+        if(value == "8"){
+            return "<font style='color:red;text-align:center;' size='3' >√</font>";
+        }else{
+            return value;
+        }
+    }
+
+    function modelNameFormatter(value,row,index){
+        return ' <a  href="javascript:void(0);"'+
+                    ' data-mode="detail" data-title="'+value+'    详细"'+
+                    ' data-url="${ctxPath}/model/base/detail/showlayer"'+
+                    'data-width="70%"'+
+                    'data-data="{id:'+row.id+'}" >'+
+                     value +
+                '</a>';
+    }
+
+    function query(){
+    	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/model/base/list?"+$("#search-form").serialize()})
+    }
+
+    function submitModel(){
+    	var rows = $('#table').bootstrapTable("getAllSelections");
+		if(rows.length <= 0){
+			layer.msg('<span class="red bigger-120">请选择需要提交的模型</span>');
+			return;
+		}else{
+			var ids = [];
+			for(var i=0;i<rows.length;i++){
+				var r = rows[i];
+				if(r.status == 1 || r.status == 3 || r.status == 5 || r.status == 7){
+					ids.push(r.id);
+				}
+			}
+		}
+		
+		//再判断
+		if(ids.length <= 0){
+			layer.msg('<span class="red bigger-120">您选择的模型不能提交 </span>');
+			return;
+		}
+		
+		var loadi;
+		layer.confirm("您确定提交吗？",function(index){
+			$.ajax({
+				url:"${ctxPath}/model/base/submit",
+				data:{ids:ids},
+				type:'post',
+				beforeSend:function(){
+					loadi = layer.load(5,0);
+				}
+			}).done(function(data){
+				layer.close(loadi);
+    			if(data>0) {
+    				layer.msg('<span class="red bigger-120">删除成功</span>', 1, 1,function(){
+    					query();
+    				});
+    			}else if(data<0){
+    				layer.alert('<span class="red bigger-120">提交失败，您没有提交权限！</span>', 8, !1);
+    			}
+    		}).fail(function(error){
+    			layer.msg('<span class="red bigger-120">提交失败</span>', 2, 8);
+    		});
+		},"提交确认");
+    }
+    
+    
+    function openTool(id){
+    	$("#fill-main-content").html(loadHtmlPage("model/step/main?id="+id));
+    }
+
+</script>

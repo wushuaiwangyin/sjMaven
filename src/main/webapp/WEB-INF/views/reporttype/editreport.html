@@ -1,0 +1,99 @@
+    <script type="text/javascript">
+    $(document).ready(function() {
+    	var index = layer.index;
+    	var validId = $("#saveform").Validform({
+        	tiptype : 4,
+            ajaxPost : true,
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+    	
+    	$("#submitForm").click(function() {
+    		validId.submitForm(false);
+    		var reportId = $('#reportId').val();
+    		var reportName = $('#reportName').val();
+    		var reportType = $('#reportType').val();
+    		var reportUrl = $('#reportUrl').val();
+    		var id = $('#id').val();
+    		$.ajax({
+		        url : ""+"${ctxPath!}/reporttype/savenewreport",  
+		        type : 'POST',  
+		        data : {id:id,reportId:reportId,reportName:reportName,reportType:reportType,reportUrl:reportUrl},
+		        dataType: 'json',
+		        cache: false,
+		        success:function(data){
+		        	if(data=='1'){
+		        		layer.msg("保存成功",1,1);
+	        			layer.close(index);
+		        	}else{
+		        		layer.msg("保存失败",3,1);
+		        	}
+				},
+				beforeSend:function(){
+				},
+				error:function(){
+					layer.msg("抱歉，出错啦",3,1);
+				}
+		        
+		 });
+    	});
+    })
+        
+    </script>
+        <style type="text/css">
+        #tb .td{
+            text-align: center;
+            font-weight: bold;
+            background-color: #6699FF;
+            color: #FFFFFF;
+            border:1px solid #000;
+        }
+    </style>
+<form class="saveform" id="saveform">
+<div class="layer">
+<input type="hidden" value="${analysis.id!}" id="id" name="id"/>
+<table class="EditTable" width="100%">
+	<tbody>
+		<tr class="FormData">
+					<td class="CaptionTD">报表编号</td>
+					<td class="DataTD width-100"><input type="text"
+						name="reportId" id="reportId" value="${analysis.reportId}" datatype="*"  nullmsg="报表编号！"
+						value=""></td>
+		</tr>
+		<tr class="FormData">
+					<td class="CaptionTD">报表名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="reportName" id="reportName" value="${analysis.reportName}" datatype="*"  nullmsg="报表名称！"
+						value=""></td>
+		</tr>
+		<tr class="FormData">
+					<td class="CaptionTD">报表分类</td>
+					<td class="DataTD">
+					<#treeselect url="reporttype/tree" modelId="reportType" 
+					modelNameValue="${pType.name}" selectIds="${analysis.reportType}" 
+					modelIdValue="${analysis.reportType!}" 
+					id="reportType" rootNodeName="报表分类列表" isCheck="请选择上级分类" />
+					</td>
+		</tr>
+		<tr class="FormData">
+					<td class="CaptionTD">资源连接</td>
+					<td class="DataTD width-100"><input type="text"
+						name="reportUrl" id="reportUrl" value="${analysis.reportUrl}" datatype="*"  nullmsg="资源连接！"
+						value=""></td>
+		</tr>
+		<tr align="center">
+			<td colspan="2">
+            <button type="submit" id="submitForm" class="btn btn-primary btn-sm">保存</button>&nbsp;
+            </td>
+		</tr>
+	</tbody>
+</table>
+
+</div>
+</form>

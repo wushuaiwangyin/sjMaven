@@ -1,0 +1,145 @@
+<div class="layer">
+    <form name="FormPost" id="sysuser-save" class="FormGrid"  method="post"
+          action="">
+        <input type="hidden" value="" name="id"/>
+        <table class="EditTable" width="100%">
+            <tbody>
+                <tr class="FormData">
+                    <td class="CaptionTD">中间表名</td>
+                    <td class="DataTD width-100" id="parentDicBox">
+                        <div style="" class="clearfix  input-group">
+                            <input type="text" name="" readonly id="pName"  value=""
+                                   class="form-control search-query">
+                                <span class="input-group-btn">
+                                    <span style="height: 34px;" type="button"
+                                          class="btn btn-purple btn-sm"
+                                          data-mode="page"
+                                          data-url="view/dialog/selectDbSource.html"
+                                          data-data="{isLayer:true,nameKey:'label',curId:'', url:'./data/depart.json',selectIds:''}"
+                                          data-title="请选择表" data-width="350px" data-height="400px"
+                                            >
+                                        <i class="ace-icon fa fa-search bigger-110"></i>查找
+                                    </span>
+                                </span>
+                            <input type="hidden"  id="treeselectid" name="pid">
+                        </div>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">主键</td>
+                    <td class="DataTD width-100">
+                        <select name="modelLevel"  class="chosen-select tag-input-style" id="c1-select" >
+                            <option>ID</option>
+                            <option>NAME</option>
+                            <option>ORG_NAME</option>
+                            <option>ORG_NO</option>
+                            <option>CUSTOMER_ID</option>
+                            <option>REG_DATE</option>
+                            <option>CODE</option>
+                            <option>MON</option>
+                            <option>DEL_FLAG</option>
+                            <option>RUNG_DATE</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">机构字段</td>
+                    <td class="DataTD width-100">
+                        <select name="modelLevel"  class="chosen-select tag-input-style" id="c2-select" >
+                            <option>ID</option>
+                            <option>NAME</option>
+                            <option>ORG_NAME</option>
+                            <option>ORG_NO</option>
+                            <option>CUSTOMER_ID</option>
+                            <option>REG_DATE</option>
+                            <option>CODE</option>
+                            <option>MON</option>
+                            <option>DEL_FLAG</option>
+                            <option>RUNG_DATE</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">客户号字段</td>
+                    <td class="DataTD width-100">
+                        <select name="modelLevel"  class="chosen-select tag-input-style" id="c3-select" >
+                            <option>ID</option>
+                            <option>NAME</option>
+                            <option>ORG_NAME</option>
+                            <option>ORG_NO</option>
+                            <option>CUSTOMER_ID</option>
+                            <option>REG_DATE</option>
+                            <option>CODE</option>
+                            <option>MON</option>
+                            <option>DEL_FLAG</option>
+                            <option>RUNG_DATE</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="user-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+<script type="text/javascript">
+    $("#c1-select").chosen({width: "100%",search_contains: true,disable_search_threshold:10});
+    $("#c2-select").chosen({width: "100%",search_contains: true,disable_search_threshold:10});
+    $("#c3-select").chosen({width: "100%",search_contains: true,disable_search_threshold:10});
+    //描述框自动扩张高度
+    $('textarea[class*=autosize]').autosize({append: "\n"});
+
+
+
+    $(function() {
+        $("#submitForm").click(function () {
+            validId.submitForm(false);
+            return false;
+        });
+
+        $("#user-save-cancel").click(function () {
+            layer.closeAll();
+            return false;
+        });
+
+        var validId = $("#sysuser-save").Validform({
+            ajaxPost : true,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#sysuser-save").data('loadi',loadi);
+            },
+            callback:function(data){
+                layer.close($("sysuser-save").data('loadi'));
+                if(data>0) {
+                    layer.msg('操作成功', 1, 1,function(){
+
+                        location.reload();
+
+                        layer.closeAll();
+                    });
+                }else{
+                    layer.msg('操作失败', 3, 1);
+                }
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+
+
+    });
+
+</script>

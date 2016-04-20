@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.FlowChartMapper">
+
+	<sql id="flowChartColumns">
+		id,name,description,xml,type,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasFlowChartColumns">
+		b.id,b.name,b.description,b.xml,b.type,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+
+	<resultMap type="com.krm.dbaudit.web.verify.model.FlowChart" id="flowChartMap">  
+		<result property="xml" column="xml" jdbcType="CLOB"   
+            javaType = "java.lang.String"  typeHandler ="com.krm.dbaudit.common.mybatis.OracleClobTypeHandler"/>  
+	</resultMap>
+	
+
+	<insert id="insertFlowChart">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+		  select flow_chart_seq.nextval from dual
+		</selectKey>
+		insert into flow_chart
+		  (id, name, xml, create_by,create_date, type,description)
+		values
+		  (#{id}, #{name}, #{xml,jdbcType=CLOB}, #{createBy}, #{createDate}, #{type},#{description,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getById" resultMap="flowChartMap" parameterType="Object">
+		select  
+        <include refid="flowChartColumns" />  
+        from flow_chart  
+        <where>
+        	id = #{id} and del_flag = 0
+        </where> 
+	</select>
+	
+	
+	<select id="findAllFlowChart" resultType="com.krm.dbaudit.web.verify.model.FlowChart" >
+		select  
+        <include refid="aliasFlowChartColumns" />  
+        from flow_chart  b
+        <where>
+        	b.del_flag = 0
+        </where> 
+	</select>
+	
+	
+	
+</mapper>

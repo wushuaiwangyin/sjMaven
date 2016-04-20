@@ -1,0 +1,63 @@
+<div class="layer" id="cols_modal">
+     <form name="FormPost" id="model-save-form" class="FormGrid"  method="post"
+		action="${ctxPath}/cust360/model/manage/">
+		
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">物理表编码</td>
+					<td class="DataTD width-100">
+					<input type="hidden" id="colid" name="colid" value="${colid!}">
+					 <input type="text" id="tabId" name="tabId"  readonly="readonly" datatype="*"  nullmsg="不可修改" value="${tabId!}">  
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">别名</td>
+					<td class="DataTD width-100">
+					 <input type="text" id="aliseName" name="aliseName" datatype="*"  nullmsg="显示到查询页面的中文字段名称" value="${aliseName!}">  
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">列名称</td>
+					<td class="DataTD width-100">
+					 <input type="text" id="colName" name="colName" datatype="*"  nullmsg="请与数据库物理表列名保持一致" value="${colName!}">  
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">字典项编码</td>
+					<td class="DataTD width-100">
+					 <input type="text" id="dicid" name="dicid" datatype="*"  nullmsg="如果不配置字典项值为-100，否则为字典表中相应码值" value="${dicid!}">  
+					</td>
+				</tr>
+				
+				
+				<tr class="FormData">
+					<td class="CaptionTD" colspan="1"><input type="button" id="savebtn" class="" value="save"></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+    </div>
+    
+   <script type="text/javascript">
+   
+   
+   
+   $(function(){
+	   $("#savebtn").click(function(){
+		   var aliseName=$("#aliseName").val();
+		   var colName=$("#colName").val();
+		   var dicid=$("#dicid").val();
+		   var colid=${colid!}
+		  $.post('${ctxPath}/cust360/model/manage/saveColInfo',{id:colid,aliseName:aliseName, colName: colName,dicid:dicid},function(data){
+			 alert(data);
+			 var index = layer.index;
+			// alert(index);
+			 layer.close(index);
+		  }) 
+		
+		//$("#cols_modal").modal('hide');
+	   });
+	   
+   })
+   </script>

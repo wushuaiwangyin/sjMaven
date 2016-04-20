@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 源数据库，行云  数据库调用,源数据非行云，需要屏蔽掉，扩展名修改为非XML -->
+
+<mapper namespace="com.krm.dbaudit.web.modeltool.mapper.ToolFlowMapper">
+	<!-- 建表语句 -->
+	<select id="getCreateTable" resultType="java.lang.String">
+		select F_GET_CREATETABLESQL(#{tablename}) as runsql from dual
+	</select>
+	
+	<!-- 提取操作语句生成 -->
+	<select id="getProcGetDataSql" resultType="java.lang.String">
+		select F_GET_PROC_GETDATASQL(#{flowid},#{targettable},#{srctable}) as runsql from dual
+	</select>
+	
+	<select id="getProcMergeDataSql2" resultType="java.lang.String">
+		select F_GET_PROC_MERGEDATASQL_MODE2(#{flowid},#{targettable},#{srctable1},#{srctable2}) as runsql from dual
+	</select>
+	
+	<select id="getProcMergeDataSql3" resultType="java.lang.String">
+		select F_GET_PROC_MERGEDATASQL_MODE3(#{flowid},#{targettable},#{srctable1},#{srctable2}) as runsql from dual
+	</select>
+	
+	<select id="getProcOverlayDataSql" resultType="java.lang.String">
+		select F_GET_PROC_OVERLAYDATASQL(#{flowid},#{targettable},#{srctable},#{curtable}) as runsql from dual
+	</select>
+</mapper>

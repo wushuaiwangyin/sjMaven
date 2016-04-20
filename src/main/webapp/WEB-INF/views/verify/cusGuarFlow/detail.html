@@ -1,0 +1,41 @@
+<div class="layer">
+    <div class="widget-main padding-8">
+        <table class="table table-condensed" id="capital-flow-data" data-height="500"   data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true"
+               data-smart-display="true">
+            <thead>
+                <tr>
+                <th data-field="contNo" data-sortable="true">合同号</th>
+		        <th data-field="borrowerNo" data-sortable="true">借款人客户号</th>
+		        <th data-field="borrowerName" data-sortable="true">借款人名称</th>
+		        <th data-field="guarNo" data-sortable="true">担保人客户号</th>
+		        <th data-field="guarName" data-sortable="true">担保人名称</th>
+		        <th data-field="cerNo" data-sortable="true">担保人证件号</th>
+		        <th data-field="guarAmt" data-sortable="true">担保金额 </th>
+		        <th data-field="guarStartDate" data-sortable="true">担保起始日 </th>
+		        <th data-field="guarEndDate" data-sortable="true">担保到期日 </th>
+		        <th data-field="guarContState" data-sortable="true">担保合同状态</th>
+		        <th data-field="finaBrId" data-sortable="true">账务机构 </th>
+		        <th data-field="customerMgr" data-sortable="true">客户经理</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+</div>
+<script>
+$(function(){
+	var $table = $('#capital-flow-data');
+	$table.bootstrapTable({
+    	iconSize:'sm',
+		pagination:true,
+		method:"post",
+		pageSize:10,
+		queryParamsType:'limit',
+		striped:true,
+		pageNumber:1,
+		sidePagination:'server',
+		url:'${ctxPath}/verify/cusguarflow/showdatalist?guar_no=${guar_no}&search_flow=${search_flow}'
+    });
+});
+</script>

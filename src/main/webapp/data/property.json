@@ -1,0 +1,5 @@
+[
+    {"id":1,"name":"合规模型","index":1,"hasLine":"有","hasTopic":"无","remark":"1111"},
+    {"id":2,"name":"重大风险模型","index":1,"hasLine":"有","hasTopic":"有","remark":"1111"},
+    {"id":3,"name":"监管模型","index":1,"hasLine":"无","hasTopic":"有","remark":"1111"}
+]

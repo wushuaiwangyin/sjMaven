@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelDealMapper">
+	<sql id="modelDealColumns">
+		a.id,a.model_id,a.deal_action,a.model_status,a.deal_memo,a.deal_by,to_char(a.deal_date,'yyyy-mm-dd') as deal_date,to_char(a.deal_date,'hh24:mi:ss') as deal_time
+	</sql>
+	<select id="findModelDealInfo" resultType="com.krm.dbaudit.web.model.model.ModelDeal">
+		select <include refid="modelDealColumns" />,b.label as deal_action_name,c.label as model_status_name
+		from MODEL_DEAL_LOG a,SYS_DICT b,SYS_DICT c 
+		<where>
+			a.deal_action=b.value and b.type='model_deal_action' and a.model_status=c.value and c.type='model_status' and a.model_id=#{model_id}
+		</where>
+		order by a.id desc
+	</select>
+	
+	<!-- 添加处理流程-->
+	<insert id="insertModelDealLog">
+		insert into MODEL_DEAL_LOG select MODEL_DEAL_SEQ.nextval,b.id,#{deal_action},#{model_status},#{deal_memo},a.name,sysdate
+		from SYS_USER a,MODEL_BASE b where a.id=#{user_id} and b.id in 
+		<foreach item="item" index="index" collection="model_ids" open="(" separator="," close=")">  
+			  #{item}  
+		</foreach>
+	</insert>
+	
+	<!-- 添加处理流程后，更新模型状态-->
+	<update id="updateModelDeal">
+		update MODEL_BASE set status=#{model_status},update_by=(select name from SYS_USER a where a.id=#{user_id}),update_date=sysdate where id in 
+		<foreach item="item" index="index" collection="model_ids" open="(" separator="," close=")">  
+			  #{item}  
+		</foreach>
+	</update>	
+</mapper>

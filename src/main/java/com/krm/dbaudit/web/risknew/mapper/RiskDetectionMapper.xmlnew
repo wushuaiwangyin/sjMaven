@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.risknew.mapper.RiskDetectionMapper">
+
+	<sql id="riskModelBaseColumns">
+		id,name,property,buz_line,subject,risk_level,status,deal_way,db_src,run_time,interval,run_way,tname,c_key,c_org,c_customer,description,create_by,create_date,update_by,update_date,DEL_FLAG,last_run_date,last_run_count,last_run_status,code
+	</sql>
+	
+	<sql id="aliasRiskModelBaseColumns">
+		b.id,b.name,b.property,b.buz_line,b.subject,b.risk_level,b.status,b.deal_way,b.db_src,b.run_time,b.interval,b.run_way,b.tname,b.c_key,b.c_org,b.c_customer,b.description,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG,b.last_run_date,b.last_run_count,b.last_run_status,b.code
+	</sql>
+
+	<sql id="aliasSysDictColumns">
+		id,create_by,create_date,del_flag,description,label,remarks,sort,type,update_by,update_date,value
+	</sql>
+
+	<select id="findById" resultType="com.krm.dbaudit.web.risknew.model.RiskModelBase">
+		select  <include refid="aliasRiskModelBaseColumns" /> ,mp.name as propertyname,ms.name as subjectname,dl.label buzlinename,
+		         dr.label as risklevelname,ds.label as statusname,dd.label as dealway
+			 from model_base  b 
+			 left join model_buz_property mp on mp.id = b.property
+	         left join model_subject ms on ms.id = b.subject
+	         left join sys_dict dl on dl.value = b.buz_line and dl.type = 'model_buz_line'
+	         left join sys_dict dr on dr.value = b.risk_level and dr.type = 'model_risk_level'
+	         left join sys_dict ds on ds.value = b.status || '' and ds.type = 'model_status'
+	         left join sys_dict dd on dd.value = b.deal_way || '' and dd.type = 'model_deal_way'
+		<where>
+		    b.id = #{id}
+		</where>
+	</select>	
+	
+	<!-- 查询上月跑批模型数量 -->
+	<select id="findLastRunByMonth" resultType="java.util.HashMap">
+		select mp.NAME as name, COUNT(1) as value 
+		from (select  mrl.run_date as runTime,b.PROPERTY as property from MODEL_BASE b
+            left join model_run_log mrl on b.id = mrl.model_id
+            <where>
+            	b.del_flag = 0
+            	<if test="@Ognl@isNotBlank(status)">
+			    	and b.status =  #{status}
+				</if>
+		    	and mrl.RUN_DATE is not null
+           		and mrl.RUN_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+           		and mrl.RUN_DATE &lt;= add_months(trunc(sysdate,'MM'),0) 
+           		and mrl.RUN_DATE in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						<where>
+							b.del_flag = 0 
+							and mrl.run_result_count &gt; 0
+							<if test="@Ognl@isNotBlank(status)">
+							    and b.status =  #{status}
+							 </if>
+						</where>)mm 
+				<where>
+					modelRunTime IS NOT NULL
+				</where>
+				    group by ID))
+            </where>
+            ) m
+		left join model_buz_property mp on mp.id = m.property
+		group by rollup(mp.NAME) 
+	</select>
+	
+	<!-- 查询昨日跑批模型数量 -->
+	<select id="findLastRunByYesterday" resultType="java.util.HashMap">
+		select mp.NAME as name, COUNT(1) as value 
+		from (select  mrl.run_date as runTime,b.PROPERTY as property from MODEL_BASE b
+            left join model_run_log mrl on b.id = mrl.model_id
+            <where>
+            	b.del_flag = 0
+            	<if test="@Ognl@isNotBlank(status)">
+			    	and b.status =  #{status}
+				</if>
+		    	and mrl.RUN_DATE is not null
+           		and mrl.RUN_DATE &gt;= trunc(sysdate, 'dd')-0.5
+           		and mrl.RUN_DATE &lt;= trunc(sysdate, 'dd') 
+           		and mrl.RUN_DATE in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						<where>
+							b.del_flag = 0 
+							and mrl.run_result_count &gt; 0
+							<if test="@Ognl@isNotBlank(status)">
+							    and b.status =  #{status}
+							 </if>
+						</where>)mm 
+				<where>
+					modelRunTime IS NOT NULL
+				</where>
+				    group by ID))
+            </where>
+            ) m
+		left join model_buz_property mp on mp.id = m.property
+		group by rollup(mp.NAME) 
+	</select>
+	
+	<!-- 跑批模型柱状图(上月和昨日) -->
+	<select id="countByBar" resultType="java.util.HashMap">
+		select mp.NAME as key, mp.SORT as sort, COUNT(1) as value1, 0 as value2
+		from (select  mrl.run_date as runTime,b.PROPERTY as property from MODEL_BASE b
+            left join model_run_log mrl on b.id = mrl.model_id
+		<where>
+			b.del_flag = 0
+			<if test="@Ognl@isNotBlank(status)">
+		    	and b.status =  #{status}
+			</if>
+			and mrl.RUN_DATE is not null
+			and mrl.RUN_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+           	and mrl.RUN_DATE &lt;= add_months(trunc(sysdate,'MM'),0) 
+           	and mrl.RUN_DATE in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						<where>
+							b.del_flag = 0 
+							and mrl.run_result_count &gt; 0
+							<if test="@Ognl@isNotBlank(status)">
+							    and b.status =  #{status}
+							 </if>
+						</where>)mm 
+				<where>
+					mm.modelRunTime IS NOT NULL
+				</where>
+				    group by ID))
+            </where>
+            ) m
+		left join model_buz_property mp on mp.id = m.property
+		group by mp.NAME, mp.SORT
+		
+		union
+		
+		select mp.NAME as key, mp.SORT as sort, 0 as value1, COUNT(1) as value2
+		from (select  mrl.run_date as runTime,b.PROPERTY as property from MODEL_BASE b
+            left join model_run_log mrl on b.id = mrl.model_id
+		<where>
+			b.del_flag = 0
+			and mrl.run_result_count &gt; 0
+			<if test="@Ognl@isNotBlank(status)">
+		    	and b.status =  #{status}
+			</if>
+			and mrl.RUN_DATE is not null
+			and mrl.RUN_DATE &gt;= trunc(sysdate, 'dd')-0.5
+           	and mrl.RUN_DATE &lt;= trunc(sysdate, 'dd') 
+           	and mrl.RUN_DATE in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						<where>
+							b.del_flag = 0 
+							<if test="@Ognl@isNotBlank(status)">
+							    and b.status =  #{status}
+							 </if>
+						</where>)mm 
+				<where>
+					mm.modelRunTime IS NOT NULL
+				</where>
+				    group by ID))
+            </where>
+            ) m
+		left join model_buz_property mp on mp.id = m.property
+		group by mp.NAME, mp.SORT
+	</select>
+
+	<!-- 上月机构排行榜 -->
+	<select id="findLastMonthByOrgan" resultType="java.util.HashMap">
+		select p.*, rownum from(
+		    select o.name,count(1) as count from
+		    (
+			    select so.NAME as name, m.MODEL_ID from MODEL_DATA m 
+                left join SYS_OFFICE so on so.ID = trim(m.ORGAN_ID)
+                left join MODEL_BASE mb on m.MODEL_ID = mb.ID
+	                <where> 
+		                trim(m.ORGAN_ID) is not null
+		                and m.DATA_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+		                and m.DATA_DATE &lt;= add_months(trunc(sysdate,'MM'),0)
+		                and mb.STATUS = 8
+	                </where>
+		            group by so.name,m.MODEL_ID
+		    )o 
+		    group by o.name order by count desc
+		)p 
+		<where>
+			rownum &lt;= 5
+		</where> 
+	</select>
+	
+	<!-- 昨日机构排行榜 -->
+	<select id="findYesterdayByOrgan" resultType="java.util.HashMap">
+		select p.*, rownum from(
+		    select o.name,count(1) as count from
+		    (
+			    select so.NAME as name, m.MODEL_ID from MODEL_DATA m 
+                left join SYS_OFFICE so on so.ID = trim(m.ORGAN_ID)
+                left join MODEL_BASE mb on m.MODEL_ID = mb.ID
+	                <where> 
+		                trim(m.ORGAN_ID) is not null
+		                and m.DATA_DATE &gt;= trunc(sysdate, 'dd')-0.5
+		                and m.DATA_DATE &lt;= trunc(sysdate, 'dd')
+		                and mb.STATUS = 8
+	                </where>
+		            group by so.name,m.MODEL_ID
+		    )o 
+		    group by o.name order by count desc
+		)p 
+		<where>
+			rownum &lt;= 5
+		</where> 
+	</select>
+	
+	
+	<!-- 模型列表 -->
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.risknew.model.RiskModelBase">
+		select * from(
+			select b.id,b.name,b.code,mp.name as propertyName,dl.label buzlineName,
+			         dr.label as riskLevelName, mrl.run_date as modelRunTime
+				 from model_base  b 
+				 left join model_buz_property mp on mp.id = b.property
+		         left join sys_dict dl on dl.value = b.buz_line and dl.type = 'model_buz_line'
+		         left join sys_dict dr on dr.value = b.risk_level and dr.type = 'model_risk_level'
+				 left join model_run_log mrl on b.id = mrl.model_id
+			<where>
+				b.del_flag = 0
+				 <if test="@Ognl@isNotBlank(id)">
+				    and b.id in
+					<foreach item="item" index="index" collection="id" open="(" separator="," close=")">  
+	 					#{item}
+		 			</foreach>
+			 	</if>
+				 <if test="@Ognl@isNotBlank(name)">
+				    and b.name like '%' || #{name} ||'%' 
+				 </if>
+				 <if test="@Ognl@isNotBlank(property)">
+				    and b.property =  #{property}
+				 </if>
+				 <if test="@Ognl@isNotBlank(buzLine)">
+				 	and b.buz_line in 
+					<foreach item="item" index="index" collection="buzLine" open="(" separator="," close=")">  
+	 					#{item}
+	 				</foreach>
+				 </if>
+				 <if test="@Ognl@isNotBlank(subject)">
+				    and b.subject =  #{subject}
+				 </if>
+				 <if test="@Ognl@isNotBlank(riskLevel)">
+				    and b.risk_level like '%' || #{riskLevel} ||'%' 
+				 </if>
+				 <if test="@Ognl@isNotBlank(status)">
+				    and b.status =  #{status}
+				 </if>
+				 <if test="@Ognl@isNotBlank(custNo)">
+				    and b.ID in(
+	            		select distinct m.MODEL_ID from MODEL_DATA m where trim(m.CUST_NO) = #{custNo}
+	            	)
+				 </if>
+				 <if test="@Ognl@isNotBlank(organId)">
+				    and b.ID in(
+	            		select distinct m.MODEL_ID from MODEL_DATA m where trim(m.ORGAN_ID) in 
+	            		(select id from sys_office o start with o.id=#{organId} connect by prior  o.ID=o.PARENT_ID)
+	            	)
+				 </if>
+				 <choose>
+					 <when test="dealStatus == 1">
+					    and b.ID in(
+		            		select c.model_id from (
+			                  select a.model_id,max(deal_status) deal_status from (
+			                         select m.MODEL_ID,M.DEAL_STATUS from MODEL_DATA m GROUP BY MODEL_ID,M.DEAL_STATUS 
+			                  ) a  group by a.model_id having count(0) =1
+			                  ) c where c.deal_status = #{dealStatus}
+		            	)
+					 </when>
+					 <when test="dealStatus == 2">
+					    and b.ID in(
+		            		select c.model_id from (
+			                  select a.model_id,max(deal_status) deal_status from (
+			                         select m.MODEL_ID,M.DEAL_STATUS from MODEL_DATA m GROUP BY MODEL_ID,M.DEAL_STATUS 
+			                  ) a  group by a.model_id having count(0) =1
+			                  ) c where c.deal_status = #{dealStatus}
+		            	)
+					 </when>
+					 <when test="dealStatus == 3">
+					    and b.ID in(
+		            		 select a.model_id from (
+	                         select m.MODEL_ID,M.DEAL_STATUS from MODEL_DATA m GROUP BY MODEL_ID,M.DEAL_STATUS 
+	                  			) a  group by a.model_id having count(0) >1
+		            	)
+					 </when>
+				 </choose>
+			</where>
+			<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+				ORDER BY b.${sortC}   ${order}
+			</if>
+		)mm
+		<where>
+			mm.modelRunTime is not null
+			and mm.modelRunTime in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						<where>
+							b.del_flag = 0 
+							and mrl.run_result_count &gt; 0
+							<if test="@Ognl@isNotBlank(property)">
+							    and b.property = #{property}
+							 </if>
+							<if test="@Ognl@isNotBlank(status)">
+							    and b.status =  #{status}
+							 </if>
+						</where>)mm 
+				<where>
+					mm.modelRunTime IS NOT NULL
+				</where>
+				    group by ID))
+			 <if test="@Ognl@isNotBlank(lastRunDateStart)">
+				    and mm.modelRunTime &gt;=  to_date(#{lastRunDateStart},'YYYY-MM-DD')
+			</if>
+			<if test="@Ognl@isNotBlank(lastRunDateEnd)">
+				    and mm.modelRunTime &lt;=  to_date(#{lastRunDateEnd},'YYYY-MM-DD')
+			</if>
+		</where>
+		ORDER BY mm.modelRunTime desc
+	</select>
+	
+	<!-- 审计模型列表 -->
+	<select id="findPageInfoByAudit" resultType="com.krm.dbaudit.web.risknew.model.RiskModelBase">
+	select * from(
+		select b.id,b.name,b.code,mp.name as propertyName,dl.label buzlineName,
+		         dr.label as riskLevelName, mrl.run_date as modelRunTime, t.name as auditType
+			 from audit_model a
+			 left join AUDIT_TYPE t on a.TYPE = t.ID
+			 inner join model_base  b on a.model=b.id
+			 left join model_buz_property mp on mp.id = b.property
+	         left join sys_dict dl on dl.value = b.buz_line and dl.type = 'model_buz_line'
+	         left join sys_dict dr on dr.value = b.risk_level and dr.type = 'model_risk_level'
+			 left join model_run_log mrl on b.id = mrl.model_id
+		<where>
+			b.del_flag = 0
+			<if test="@Ognl@isNotBlank(id)">
+			    and b.id in
+				<foreach item="item" index="index" collection="id" open="(" separator="," close=")">  
+ 					#{item}
+	 			</foreach>
+			 </if>
+			 <if test="@Ognl@isNotBlank(type)">
+			    and a.type in
+				<foreach item="item" index="index" collection="type" open="(" separator="," close=")">  
+	 					#{item}
+	 				</foreach>
+			 </if>
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			 <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+			 <if test="@Ognl@isNotBlank(subject)">
+			    and b.subject =  #{subject}
+			 </if>
+			 <if test="@Ognl@isNotBlank(riskLevel)">
+			    and b.risk_level like '%' || #{riskLevel} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(status)">
+			    and b.status =  #{status}
+			 </if>
+			 <if test="@Ognl@isNotBlank(custNo)">
+			    and b.ID in(
+            		select distinct m.MODEL_ID from MODEL_DATA m where trim(m.CUST_NO) = #{custNo}
+            	)
+			 </if>
+			 <if test="@Ognl@isNotBlank(organId)">
+			    and b.ID in(
+            		select distinct m.MODEL_ID from MODEL_DATA m where trim(m.ORGAN_ID) in 
+					(select id from sys_office o start with o.id=#{organId} connect by prior  o.ID=o.PARENT_ID)
+            	)
+			 </if>
+			 <choose>
+				 <when test="dealStatus == 1">
+				    and b.ID in(
+	            		select c.model_id from (
+		                  select a.model_id,max(deal_status) deal_status from (
+		                         select m.MODEL_ID,M.DEAL_STATUS from MODEL_DATA m GROUP BY MODEL_ID,M.DEAL_STATUS 
+		                  ) a  group by a.model_id having count(0) =1
+		                  ) c where c.deal_status = #{dealStatus}
+	            	)
+				 </when>
+				 <when test="dealStatus == 2">
+				    and b.ID in(
+	            		select c.model_id from (
+		                  select a.model_id,max(deal_status) deal_status from (
+		                         select m.MODEL_ID,M.DEAL_STATUS from MODEL_DATA m GROUP BY MODEL_ID,M.DEAL_STATUS 
+		                  ) a  group by a.model_id having count(0) =1
+		                  ) c where c.deal_status = #{dealStatus}
+	            	)
+				 </when>
+				 <when test="dealStatus == 3">
+				    and b.ID in(
+	            		 select a.model_id from (
+                         select m.MODEL_ID,M.DEAL_STATUS from MODEL_DATA m GROUP BY MODEL_ID,M.DEAL_STATUS 
+                  			) a  group by a.model_id having count(0) >1
+	            	)
+				 </when>
+			 </choose>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	)mm
+		<where>
+			mm.modelRunTime is not null
+			and mm.modelRunTime in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						<where>
+							b.del_flag = 0 
+							and mrl.run_result_count &gt; 0
+							<if test="@Ognl@isNotBlank(property)">
+							    and b.property = #{property}
+							 </if>
+							<if test="@Ognl@isNotBlank(status)">
+							    and b.status =  #{status}
+							 </if>
+						</where>)mm 
+				<where>
+					mm.modelRunTime IS NOT NULL
+				</where>
+				    group by ID))
+			 <if test="@Ognl@isNotBlank(lastRunDateStart)">
+				    and mm.modelRunTime &gt;=  to_date(#{lastRunDateStart},'YYYY-MM-DD')
+				 </if>
+				 <if test="@Ognl@isNotBlank(lastRunDateEnd)">
+				    and mm.modelRunTime &lt;=  to_date(#{lastRunDateEnd},'YYYY-MM-DD')
+				 </if>
+		</where>
+		ORDER BY mm.modelRunTime desc
+	</select>
+	
+	
+	
+	 	
+	<select id="findAllAuditModel" resultType="com.krm.dbaudit.web.model.model.AuditModel">
+		select a.*, m.name as name from AUDIT_MODEL a
+	    left join MODEL_BASE m 
+	    on a.model = m.id
+	</select>
+	
+	
+	<select id="findLastMonthByStatus"  resultType="java.util.HashMap">
+		select ds.label as key, ds.SORT as sort, count(1) as value1, 0 as value2
+		from (
+        select m.NOTICE_STATUS,m.DEAL_STATUS,m.MODEL_ID,m.DATA_DATE,mb.PROPERTY,mb.BUZ_LINE  from MODEL_DATA m 
+        left join MODEL_BASE mb
+        on m.MODEL_ID = mb.ID) b
+		left join sys_dict ds on ds.value = b.NOTICE_STATUS || '' and ds.type = 'data_notice_status'
+		<where>
+			1=1
+			    and b.DATA_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+			    and b.DATA_DATE &lt;= add_months(trunc(sysdate,'MM'),0)
+			<if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			  <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+		</where> 
+		group by ds.label, ds.sort
+	
+		union all
+	
+		select ds.label as key, ds.SORT+20 as sort, count(1) as value1, 0 as value2
+		from (
+        select m.NOTICE_STATUS,m.DEAL_STATUS,m.MODEL_ID,m.DATA_DATE,mb.PROPERTY,mb.BUZ_LINE  from MODEL_DATA m 
+        left join MODEL_BASE mb
+        on m.MODEL_ID = mb.ID) b
+		left join sys_dict ds on ds.value = b.DEAL_STATUS || '' and ds.type = 'data_deal_status'
+		<where>
+			1=1
+			  	and b.DATA_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+			    and b.DATA_DATE &lt;= add_months(trunc(sysdate,'MM'),0)
+			<if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			  <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+		</where> 
+		group by ds.label, ds.sort
+		
+		union all
+		
+		select dl.label as key, dl.SORT+50 as sort, count(1) as value1, 0 as value2
+		from (
+        select a.*, mb.PROPERTY,mb.BUZ_LINE from MODEL_BASE mb
+        right join(
+	        select data.MODEL_ID,deal.DEAL_TYPE,data.DATA_DATE from MODEL_DATA_DEAL deal
+	        left join MODEL_DATA data
+	        on deal.DATA_ID = data.PKID )a
+        	on mb.ID = a.MODEL_ID)b
+        left join SYS_DICT dl on dl.VALUE = b.DEAL_TYPE || '' and dl.TYPE = 'model_deal_way'
+        <where>
+			1=1
+			  	and b.DATA_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+			    and b.DATA_DATE &lt;= add_months(trunc(sysdate,'MM'),0)
+			<if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			  <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+		</where> 
+		group by dl.label, dl.sort  
+	</select>
+
+
+	<select id="findYesterdayByStatus"  resultType="java.util.HashMap">
+		select ds.label as key, ds.SORT as sort, 0 as value1, count(1)  as value2
+		from (
+        select m.NOTICE_STATUS,m.DEAL_STATUS,m.MODEL_ID,m.DATA_DATE,mb.PROPERTY,mb.BUZ_LINE  from MODEL_DATA m 
+        left join MODEL_BASE mb
+        on m.MODEL_ID = mb.ID) b
+		left join sys_dict ds on ds.value = b.NOTICE_STATUS || '' and ds.type = 'data_notice_status'
+		<where>
+			1=1
+				and b.DATA_DATE &gt;= trunc(sysdate, 'dd')-0.5
+            	and b.DATA_DATE &lt;= trunc(sysdate, 'dd')
+			<if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			  <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+		</where> 
+		group by ds.label, ds.sort
+	
+		union all
+	
+		select ds.label as key, ds.SORT+20 as sort, 0 as value1, count(1)  as value2
+		from (
+        select m.NOTICE_STATUS,m.DEAL_STATUS,m.MODEL_ID,m.DATA_DATE,mb.PROPERTY,mb.BUZ_LINE  from MODEL_DATA m 
+        left join MODEL_BASE mb
+        on m.MODEL_ID = mb.ID) b
+		left join sys_dict ds on ds.value = b.DEAL_STATUS || '' and ds.type = 'data_deal_status'
+		<where>
+			1=1
+				and b.DATA_DATE &gt;= trunc(sysdate, 'dd')-0.5
+            	and b.DATA_DATE &lt;= trunc(sysdate, 'dd')
+			<if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			  <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+		</where> 
+		group by ds.label, ds.sort
+		
+		union all
+		
+		select dl.label as key, dl.SORT+50 as sort, 0 as value1, count(1)  as value2
+		from (
+        select a.*, mb.PROPERTY,mb.BUZ_LINE from MODEL_BASE mb
+        right join(
+        select data.MODEL_ID,deal.DEAL_TYPE,data.DATA_DATE from MODEL_DATA_DEAL deal
+        left join MODEL_DATA data
+        on deal.DATA_ID = data.PKID )a
+        on mb.ID = a.MODEL_ID)b
+        left join SYS_DICT dl on dl.VALUE = b.DEAL_TYPE || '' and dl.TYPE = 'model_deal_way'
+        <where>
+			1=1
+				and b.DATA_DATE &gt;= trunc(sysdate, 'dd')-0.5
+            	and b.DATA_DATE &lt;= trunc(sysdate, 'dd')
+			<if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			  <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line = #{buzLine} 
+			 </if>
+		</where> 
+		group by dl.label, dl.sort  
+	</select>
+
+
+	<resultMap id="modelData" type="com.krm.dbaudit.web.risknew.model.ModelData" >  
+		<result column="id" property="id"/>
+		<result column="notice_status" property="noticeStatus"/>
+		<result column="deal_status" property="dealStatus"/>
+		<result column="model_id" property="modelId"/>
+		<result column="organ_id" property="organId"/>
+		<result column="organ_name" property="organName"/>
+		<result column="data_date" property="dataDate"/>
+		<result column="cust_no" property="custNo"/>
+		<result column="teller" property="teller"/>
+		<result column="cust_manager" property="custManager"/>
+	</resultMap>
+
+	<select id="findModelDataByPkid" resultMap="modelData">
+		select 
+			a.pkid id,a.notice_status,a.deal_status,a.model_id,a.organ_id,
+			(select o.NAME from sys_office o where o.ID=a.organ_id) organ_name,
+			a.cust_no,a.teller,a.cust_manager,to_char(DATA_DATE,'yyyy-MM-dd') data_date
+		from model_data a 
+			where pkid=#{id}
+	</select>
+</mapper>

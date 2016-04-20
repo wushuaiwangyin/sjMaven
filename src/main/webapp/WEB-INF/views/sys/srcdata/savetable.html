@@ -1,0 +1,50 @@
+
+<div class="layer">
+	<form name="FormPost" id="srcdata-save-form" class="FormGrid"  method="post" 
+	    action="${ctxPath}/srcdata/savetable">
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr style="display: none;">
+					<td class="ui-state-error" id="FormError"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">数据源类型</td>
+					<td class="DataTD">
+					<#treeselect url="srcdata/tree" modelNameValue="${pType.name!}" 
+							modelIdValue="${srctable.tableTypeid!}" selectIds="${pType.id!}" modelId="tableTypeid"
+							 rootNodeName="源数据分类列表" />
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">数据源表名</td>
+					<td class="DataTD width-100"><input type="text"
+						name="tableName" datatype="*"  nullmsg="请输入数据源表名！"
+						value="${srctable.tableName!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">数据源表中文表名</td>
+					<td class="DataTD width-100">
+						<input type="text" value="${srctable.tableAlias!}" 
+						datatype="*" nullmsg="请输入数据源表名！" name="tableAlias"/>
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="top-type-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+<#save formId="srcdata-save-form" callBack="reloadTree()"/>
+
+
+<script type="text/javascript">
+//描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+</script>

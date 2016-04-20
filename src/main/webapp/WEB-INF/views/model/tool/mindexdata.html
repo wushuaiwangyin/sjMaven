@@ -1,0 +1,2507 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+     <title>探索式分析建模工具</title> 
+     <meta name="renderer" content="webkit">
+	 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	 <meta charset="utf-8" />
+
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/tool/styles/table.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/css/toolui.css" />
+	
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+	
+	<!-- 
+	<script type="text/javascript" src="${ctxPath!}/static/layer/layer.min.js"></script>
+	 -->
+	<script type="text/javascript" src="${ctxPath!}/static/layer2.1/layer.js"></script>
+
+	
+	
+<style>
+HTML{height:100%}
+body{height:100%;padding:0px;margin:0px}
+*{font-size:12px;font-family:"Microsoft YaHei",微软雅黑,"Microsoft JhengHei",华文细黑,STHeiti,MingLiu}
+.datagrid-cell-c1-itemid {
+width: 23px;
+}
+</style>
+<script type="text/javascript">
+var fileStr = "";
+var temptablename = "";
+var tablecols=null;
+var operatercols;
+var operatercol;//选中的表头
+var tabletype;//表类型，1源表，2分析表
+var tablenode;//选中的树节点
+var operaternode;//右键选择的树节点，做删除或者重命名用
+var loadindex;
+var flowid;//编辑的流程编号
+var actionid;//当前表是什么类型的表
+$(function(){
+	 layer.config({
+        extend: 'extend/layer.ext.js'
+     });
+	 $('#tabletree').tree({//双击事件
+		 	url: "${ctxPath!}/model/tool/gettabletree",
+	        loadFilter: function(data){
+	            return data;   
+	        },
+	        onClick: function(node){
+		    	 $('#tabletree').find('.tree-node-selected').removeClass('tree-node-selected');//移除上次选中的节点
+		    	 $("#tabletree").tree("select",node.target);//选中当前节点
+		    },
+			onDblClick: function(node){
+				//双击显示表数据
+				tabletype = node.type;
+				tablenode = node;
+				operaternode = node;
+				actionid = node.actionid;
+				if(operaternode.type==0){
+	            	layer.msg("这好像是一个文件夹，不是一个可查询的表！",{icon: 5,time: 2000});
+	            	return;
+            	}
+				var  tableName = node.name;
+				fileStr = "";
+				var columns = new Array();
+				var cols = new Array();
+				var colData = new Object();
+				$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+tableName, 
+					success: function(data){
+						var resfiled=data;
+						
+						for(var i=0;i<resfiled.length;i++){
+							var fieldalias = resfiled[i].fieldalias;
+							var fieldname = resfiled[i].fieldname;
+							var fieldtype = resfiled[i].fieldtype;
+							var fieldid = resfiled[i].id;
+							var fieldentitytype = resfiled[i].fieldentitytype;
+							colData = new Object();
+							colData.field = fieldname;
+						    colData.title = fieldalias;
+						    colData.fieldtype = fieldtype;
+						    colData.fieldid = fieldid;
+						    colData.fieldentitytype=fieldentitytype;
+						    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+						    
+						    colData.resizable=true;
+						    cols.push(colData);
+						}
+						columns.push(cols);
+						operatercols = cols;
+						
+						$('#datalist').datagrid({
+				            iconCls:'icon-save', 
+				            nowrap: true, 
+				            autoRowHeight: false, 
+				            striped: true, 
+				            url: "${ctxPath!}/model/tool/showtable?tablename="+tableName,
+				            collapsible:true, 
+				            remoteSort: false,
+				            columns: columns,
+				            pagination: true,  //分页控件
+				            rownumbers: true,  //行号
+				            pageSize: 50,
+				           // pageList: [10,20,30,40,50],
+				            onHeaderContextMenu:function(e, field){
+				            	operatercol = field;
+				            	$('#menu').menu('show', {
+			                        left: e.pageX,         //弹出窗口的方位坐标
+			                        top: e.pageY
+			                    });
+			                    e.preventDefault();
+				            },
+				            onDblClickCell:function(rowIndex, field, value){
+				            	var dg = $('#datalist');
+				            	var resetcol = dg.datagrid('getColumnOption',field);
+				            	resetcol.width = 150;
+				            	resetcol.align = 'center';
+				            	dg.datagrid();
+				            },
+				            onClickRow:function(rowIndex, rowData){
+				            	if(actionid=='group_data'){
+				            		var rowdatastr = "";
+					            	$.each(cols,function(ci,co){
+					            		rowData[co.field];
+					            		rowdatastr = rowdatastr + co.field + "=" + rowData[co.field] + "&";
+					            	});
+					            	if(rowdatastr != "" ){
+					            		rowdatastr = rowdatastr.substring(0,rowdatastr.length-1);
+					            	}
+					            	//提交钻取请求
+					            	$.ajax({
+					            		url:"${ctxPath!}/model/tool/gettablecubefield?tablename="+tableName,
+					            		success: function(data){
+					            			layer.close(loadindex);
+					            			var colsDrill = new Array();
+					        				var colDataDrill = new Object();
+					        				var columnsDrill = new Array();
+					        				
+					        				var resfiled=data;
+											
+											for(var i=0;i<resfiled.length;i++){
+												var fieldalias = resfiled[i].fieldalias;
+												var fieldname = resfiled[i].fieldname;
+												var fieldtype = resfiled[i].fieldtype;
+												var fieldid = resfiled[i].id;
+												var fieldentitytype = resfiled[i].fieldentitytype;
+												colDataDrill = new Object();
+												colDataDrill.field = fieldname;
+												colDataDrill.title = fieldalias;
+												colDataDrill.fieldtype = fieldtype;
+												colDataDrill.fieldid = fieldid;
+												colDataDrill.fieldentitytype=fieldentitytype;
+												colDataDrill.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+											    
+												colDataDrill.resizable=true;
+												colsDrill.push(colDataDrill);
+											}
+											columnsDrill.push(colsDrill);
+											
+											
+											$('#datadrilllist').datagrid({
+												iconCls:'icon-save', 
+									            nowrap: true, 
+									            autoRowHeight: false, 
+									            striped: true, 
+									          	url:"${ctxPath!}/model/tool/showtablecube?tablename="+tableName+"&"+rowdatastr,
+									            collapsible:true, 
+									            remoteSort: false,
+									            columns: columnsDrill,
+									            pagination: true,  //分页控件
+									            rownumbers: true,  //行号
+									            pageSize: 50
+											});
+											var drillp = $('#datadrilllist').datagrid('getPager'); 
+											$(drillp).pagination({
+										        beforePageText: '第',//页数文本框前显示的汉字 
+										        afterPageText: '页    共 {pages} 页', 
+										        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+										    });
+					            			$('#datadrill').dialog('open');
+					            		},
+					            		beforeSend:function(){
+											loadindex = layer.load(1, {
+							            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+							            	});
+										},
+										error:function(){
+											layer.close(loadindex);
+							            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+										}
+					            	});
+				            	}
+				            },
+				            onLoadError:function(){
+					            layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				            }
+				        }); 
+						
+						var p = $('#datalist').datagrid('getPager'); 
+						$(p).pagination({
+					        beforePageText: '第',//页数文本框前显示的汉字 
+					        afterPageText: '页    共 {pages} 页', 
+					        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+					    });
+						
+						
+						$("#tablecol").empty();
+						$("#tablecollist").empty();
+						$("#tableselectcolumn").empty();
+						
+						tablecols = cols;
+						
+						$.each(cols,function(n,node) {
+							    //加载快速查询字段
+				            	$("#tablecol").append("<option value='" + node.title + "_"+node.fieldtype+"'>" + node.title + "</option>");
+				            	//加载数据提取字段
+				            	$("#tablecollist").append("<option value='" + node.title + "_"+node.fieldtype+"'>" + node.title + "</option>");
+				            	$("#tableselectcolumn").append("<option value='" +node.fieldid+"' selected='selected'>" + node.title + "</option>");
+				        });  
+			    }});
+				
+				//快速查询栏设置
+				//设置表名
+				$('#tablename_zh').val(node.text);
+				$('#tablename').val(tableName);
+				//自动加载查询字段 tablecol
+				//alert(columns);
+				
+		    },
+		    onLoadSuccess: function(node){
+		    	//$('#tabletree').tree('expandAll');
+		    	 var children = $('#tabletree').tree('getChildren');
+		    	 for (var i = 0; i < children.length; i++) {
+	                    var node = children[i];
+	                    if(node.name == temptablename){
+	                    	$("#tabletree").tree("select",node.target);
+	                    	var nodeobj = node.target;
+	                    	//触发鼠标双击事件
+	                        var evObj = document.createEvent('MouseEvents');
+	                        evObj.initMouseEvent( 'dblclick', true, true, window, 1, 12, 345, 7, 220, false, false, true, false, 0, null );
+	                        nodeobj.dispatchEvent(evObj);
+	                    }
+	             }
+		    },
+		    onContextMenu:function(e, node){
+		    	operaternode = node;
+		    	$('#menu2').menu('show', {
+                    left: e.pageX,         //弹出窗口的方位坐标
+                    top: e.pageY
+                });
+                e.preventDefault();
+		    }
+	    });
+	 
+	$("#tablecollist").change(function(){
+		 createsql($("#tablecollist").find("option:selected").text());
+	});
+	
+	$("#scope").bind("click", function() {
+		 //$("#firstnum").disabled="enabled";
+		 //$("#endnum").disabled="enabled";
+		 //$("#all").attr("checked",true);
+		 $("#endnum").removeAttr("disabled");
+		 $("#firstnum").removeAttr("disabled");
+		});
+	 $("#all").bind("click", function() {
+		 //$("#firstnum").disabled="enabled";
+		 //$("#endnum").disabled="enabled";
+		 //$("#all").attr("checked",true);
+		 $("#endnum").attr("disabled","disabled");
+		 $("#firstnum").attr("disabled","disabled");
+		});
+	 
+	 //删除虚拟列
+	 $('#m-delete').click(function(){
+		 for(var i=0;i<operatercols.length;i++){
+			 if(operatercols[i].field==operatercol && operatercols[i].fieldentitytype==0){
+				 var srctable = $('#tablename').val();
+				 var action_data = "[{\"modelid\":1,\"parentflowid\":0,\"tablename\":\""+srctable+"\",\"fieldid\":"+operatercols[i].fieldid+"}]";
+				 var submitJson = "[{\"action_id\":\"delete_virtualfield\",\"action_data\":"+action_data+"}]";
+				 $.ajax({
+				        url : ""+"${ctxPath!}/model/flow/doflow",  
+				        type : 'POST',  
+				        data : {jsonmemo:submitJson.toString()},
+				        dataType: 'json',
+				        cache: false,
+				        success:function(data){
+				        	layer.close(loadindex);
+				        	var json = eval(data);
+				        	$.each(json,function(infoIndex,info){
+				        		var return_flag = eval(info["return_flag"]);
+				        		if(return_flag=='0'){
+				        			layer.msg('删除虚拟列成功！',{icon: 1,time: 2000});
+				        			var ret_data = eval(info["return_data"]);
+					        			$.each(ret_data,function(infoIndex,info){
+						        			temptablename = info["tablename"];
+							        		$('#tabletree').tree({
+							        	        url: "${ctxPath!}/model/tool/gettabletree",
+							        	        loadFilter: function(data){
+							        	            return data;
+							        	        }
+							        	    }); 
+							        	});
+							        	$('#getdata').dialog('close');
+				        		}else{
+				        			var return_msg = info["return_msg"];
+				        			layer.msg(return_msg,{icon: 5,time: 2000});
+				        		}
+				        		
+				        	});
+						},
+						beforeSend:function(){
+							loadindex = layer.load(1, {
+			            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+			            	});
+						},
+						error:function(){
+							layer.close(loadindex);
+			            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+						}
+				        });
+			 }else if(operatercols[i].title==operatercol && operatercols[i].fieldentitytype==1){
+				 layer.msg("这不是一个虚拟列，您不能执行该操作",{icon: 5,time: 2000});
+			 }
+		 }
+	 });
+	 
+	 //删除中间表
+	 $('#m-deletetable').click(function(){
+		 if(operaternode.type==1){
+			 layer.msg("源数据表不能删除",{icon: 5,time: 2000});
+			 return;
+		 }else if(operaternode.type==2){
+			 layer.confirm('您确定要删除这个中间表吗？', {
+				    btn: ['确定','取消'] //按钮
+				}, function(){
+				    //layer.msg('的确很重要', {icon: 1});
+					$.ajax({
+				        url : ""+"${ctxPath!}/model/tool/deletetable?tablename="+operaternode.name,  
+				        type : 'POST',  
+				        data : {},
+				        dataType: 'json',
+				        cache: false,
+				        success:function(data){
+				        	layer.close(loadindex);
+				        	var json = eval(data);
+				        	$.each(json,function(infoIndex,info){
+				        		var return_flag = eval(info["return_flag"]);
+				        		if(return_flag=='0'){
+				        			layer.msg("删除中间表成功",{icon: 1,time: 2000});
+				        			$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    });
+				        		}else{
+				        			var return_msg = info["return_msg"];
+				        			layer.msg(return_msg,{icon: 5,time: 2000});
+				        		}
+				        		
+				        	});
+						},
+						beforeSend:function(){
+							loadindex = layer.load(1, {
+			            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+			            	});
+						},
+						error:function(){
+							layer.close(loadindex);
+			            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+						}
+				    });
+				}, function(){
+				    
+				});
+		 }
+	 });
+	 
+	 //中间表重命名
+	 $('#m-rename').click(function(){
+		 if(operaternode.type==1){
+			 layer.msg("源数据表不能重命名",{icon: 5,time: 2000});
+			 return;
+		 }else if(operaternode.type==2){
+			 
+			 layer.prompt(function(val){
+				 alert(val);
+				 $.ajax({
+				        url : ""+"${ctxPath!}/model/tool/updatetablename",  
+				        type : 'POST',  
+				        data : {tablename:operaternode.name,tablealias:val},
+				        dataType: 'json',
+				        cache: false,
+				        success:function(data){
+				        	layer.close(loadindex);
+				        	var json = eval(data);
+				        	$.each(json,function(infoIndex,info){
+				        		var return_flag = eval(info["return_flag"]);
+				        		if(return_flag=='0'){
+				        			layer.msg("重命名成功",{icon: 1,time: 2000});
+				        			$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    });
+				        		}else{
+				        			var return_msg = info["return_msg"];
+				        			layer.msg(return_msg,{icon: 5,time: 2000});
+				        		}
+				        		
+				        	});
+						},
+						beforeSend:function(){
+							loadindex = layer.load(1, {
+			            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+			            	});
+						},
+						error:function(){
+							layer.close(loadindex);
+			            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+						}
+				    });
+			 });
+		 }
+	 });
+	 
+	 $('#m-edittable').click(function(){
+		 flowid="";
+		 if(operaternode.type==0){
+			 layer.msg("不能对文件夹进行编辑",{icon: 5,time: 2000});
+			 return;
+		 }else if(operaternode.type==1){
+			 layer.msg("不能对源数据表进行编辑",{icon: 5,time: 2000});
+			 return;
+		 }else if(operaternode.type==2){
+			 $.ajax({
+			        url : ""+"${ctxPath!}/model/tool/geteditflowinfo?tablename="+operaternode.name,  
+			        type : 'POST',
+			        data : {},
+			        dataType: 'json',
+			        cache: false,
+			        success:function(data){
+			        	layer.close(loadindex);
+			        	var json = eval(data);
+			        	$.each(json,function(infoIndex,info){
+			        		var js = eval(info);
+			        		var action_id = js.action_id;
+			        		if(action_id=='get_data'){
+			        			//layer.msg("这是一个数据提取的操作",{icon: 1,time: 2000});
+			        			var action_data =js.action_data;
+			        			$.each(action_data,function(index1,info1){
+			        				var tablealias = info1.tablealias;
+			        				var condition = info1.contition;
+			        				var edittablename = info1.tablename;
+			        				var srctable1 = info1.srctable1;
+			        				$('#tablename').val(srctable1);
+			        				flowid = info1.flowid;
+			        				//是否有行号
+			        				var getinfo = info1.getinfo;
+			        				var firstnum = getinfo[0].firstnum;
+			        				var endnum = getinfo[0].endnum;
+			        				if(firstnum != '' && endnum != ''){
+			        					$("#all").attr("checked",false);
+			        					$("#scope").attr("checked",true);
+			        					$("#firstnum").removeAttr("disabled");
+			        					$("#endnum").removeAttr("disabled");
+			        					$("#firstnum").val(firstnum);
+			        					$("#endnum").val(endnum);
+			        				}else{
+			        					$("#scope").attr("checked",false);
+			        					$("#all").attr("checked",true);
+			        					$("#firstnum").attr("disabled","disabled");
+			        					$("#firstnum").val("");
+			        					$("#endnum").attr("disabled","disabled");
+			        					$("#endnum").val("");
+			        				}
+			        				//表名称
+			        				$('#tmpname').val(tablealias);
+			        				//条件
+			        				$('#condition').val(condition);
+			        				//字段
+			        				var ecolumns = new Array();
+									var ecols = new Array();
+									var colData = new Object();
+			        				$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+srctable1, 
+			        					success: function(data){
+			        						var resfiled=data;
+			        						
+			        						for(var i=0;i<resfiled.length;i++){
+			        							var fieldalias = resfiled[i].fieldalias;
+			        							var fieldname = resfiled[i].fieldname;
+			        							var fieldtype = resfiled[i].fieldtype;
+			        							var fieldid = resfiled[i].id;
+			        							var fieldentitytype = resfiled[i].fieldentitytype;
+			        							colData = new Object();
+			        							colData.field = fieldname;
+			        						    colData.title = fieldalias;
+			        						    colData.fieldtype = fieldtype;
+			        						    colData.fieldid = fieldid;
+			        						    colData.fieldentitytype=fieldentitytype;
+			        						    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+			        						    
+			        						    colData.resizable=true;
+			        						    ecols.push(colData);
+			        						}
+			        						ecolumns.push(ecols);
+			        						
+			        						$("#tablecollist").empty();
+			        						$("#tableselectcolumn").empty();
+			        						
+			        						
+					        				
+			        						$.each(ecols,function(n,node) {
+			        							//加载数据提取字段
+			        				            $("#tablecollist").append("<option value='" + node.title + "_"+node.fieldtype+"'>" + node.title + "</option>");
+			        				            $("#tableselectcolumn").append("<option value='" +node.fieldid+"' >" + node.title + "</option>");
+			        				            
+			        				            
+			        						});
+			        						
+			        						var efield = info1.field;
+			        						$("#tableselectcolumn option").each(function(index,opt) {
+			        							$.each(efield,function(i,field){
+						        					if(opt.value==field.id){
+						        						opt.selected=true;
+						        					}
+						        				});
+			        						});
+			        						
+			        						
+			        			    }});
+			        				
+			        				//字段里面的条件
+			        				$("#querysql").val(condition);
+			        				
+			        				
+			        			});
+			        			
+			        			$('#getdata').dialog('open');
+			        		}else if(action_id=='distinct_data'){
+			        			var action_data =js.action_data;
+			        			var arr = new Array();
+		        				arr.push("edit_distinct_data");
+		        				arr.push(action_data);
+		        				strdis = window.showModalDialog("${ctxPath!}/model/flow/distinct",arr,"dialogWidth=460px;dialogHeight=400px");
+		        				//保存编辑
+		        				if(strdis!=null && strdis != ''){
+		        					$.ajax({
+		        				        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        				        type : 'POST',  
+		        				        data : {jsonmemo:strdis.toString()},
+		        				        dataType: 'json',
+		        				        cache: false,
+		        				        success:function(data){
+		        				        	layer.close(loadindex);
+		        				        	var json = eval(data);
+		        				        	$.each(json,function(infoIndex,info){
+		        				        		var return_flag = eval(info["return_flag"]);
+		        				        		if(return_flag=='0'){
+		        				        			layer.msg('操作成功！',{icon: 1,time: 2000});
+		        				        			var ret_data = eval(info["return_data"]);
+		        					        			$.each(ret_data,function(infoIndex,info){
+		        						        			temptablename = info["tablename"];
+		        							        		$('#tabletree').tree({
+		        							        	        url: "${ctxPath!}/model/tool/gettabletree",
+		        							        	        loadFilter: function(data){
+		        							        	            return data;
+		        							        	        }
+		        							        	    }); 
+		        							        	});
+		        							        	$('#getdata').dialog('close');
+		        				        		}else{
+		        				        			var return_msg = info["return_msg"];
+		        				        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        				        		}
+		        				        		
+		        				        	});
+		        						},
+		        						beforeSend:function(){
+		        							loadindex = layer.load(1, {
+		        			            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		        			            	});
+		        						},
+		        						error:function(){
+		        							layer.close(loadindex);
+		        			            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+		        						}
+		        				        });
+		        				}
+			        		}else if(action_id=='group_data'){
+			        			var action_data =js.action_data;
+			        			$.each(action_data,function(gindex,ginfo){
+			        				var tablealias = ginfo.tablealias;
+			        				var condition = ginfo.contition;
+			        				var edittablename = ginfo.tablename;
+			        				var srctable1 = ginfo.srctable1;
+			        				$('#tablename').val(srctable1);
+			        				$('#filename').val(tablealias);
+			        				flowid = ginfo.flowid;
+			        				
+			        				//
+			        				var ecolumns = new Array();
+									var ecols = new Array();
+									var colData = new Object();
+									$.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+srctable1, 
+			        					success: function(data){
+			        						var resfiled=data;
+			        						var grouptablehtml="";
+			        						for(var i=0;i<resfiled.length;i++){
+			        							var fieldalias = resfiled[i].fieldalias;
+			        							var fieldname = resfiled[i].fieldname;
+			        							var fieldtype = resfiled[i].fieldtype;
+			        							var fieldid = resfiled[i].id;
+			        							var fieldentitytype = resfiled[i].fieldentitytype;
+			        							colData = new Object();
+			        							colData.field = fieldname;
+			        						    colData.title = fieldalias;
+			        						    colData.fieldtype = fieldtype;
+			        						    colData.fieldid = fieldid;
+			        						    colData.fieldentitytype=fieldentitytype;
+			        						    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+			        						    
+			        						    colData.resizable=true;
+			        						    ecols.push(colData);
+			        						    
+			        						    if(colData.fieldtype=='3'){
+		        					         		grouptablehtml=grouptablehtml + "<tr><td ><input type='checkbox' name='groupsum' value='" + colData.title + "__"+colData.fieldid+"'>"+colData.title+" </td></tr>";
+		        					         	}
+			        						}
+			        						ecolumns.push(ecols);
+			        						
+			        						//要求各的数字字段
+			        						//首先加载类型为数字的字段
+			        						var grouptableobj = document.getElementById("grouptable");
+			        						grouptableobj.innerHTML=grouptablehtml;
+			        						
+			        						var groupinfo = ginfo.groupinfo;
+			        						var groupfield = groupinfo[0].groupfield;
+			        						var collectfield = groupinfo[0].collectfield;
+			        						
+			        						//处理要汇总的字段
+			        						$.each(groupfield,function(gfindex,gfinfo){
+			        							$.each(ecols,function(eindex,einfo){
+			        								if(einfo.fieldid==gfinfo.id){
+			        									$('#group'+(gfindex+1)).append("<option value='" + einfo.title + "__"+einfo.fieldid+"' selected='selected'>" + einfo.title + "</option>");
+			        								}else{
+			        									$('#group'+(gfindex+1)).append("<option value='" + einfo.title + "__"+einfo.fieldid+"'>" + einfo.title + "</option>");
+			        								}
+			        								
+			        							});
+			        						});
+			        						
+			        						//统计方法avg sum.....
+			        						$.each(collectfield,function(ccindex,ccinfo){
+			        							//选中
+			        							$.each($('input[name=collecttype]'),function(ckindex,ckinfo){
+			        								if(ccinfo.collecttype==ckinfo.value){
+			        									ckinfo.checked=true;
+			        								}
+			        							});
+			        							
+			        							//选中
+			        							$.each($('input[name=groupsum]'),function(gsindex,gsinfo){
+			        								if(ccinfo.id==gsinfo.value.split('__')[1]){
+			        									gsinfo.checked=true;
+			        								}
+			        							});
+			        						});
+			        						
+			        						
+			        			    }});
+			        				
+			        				$('#dlggroup').dialog('open');
+			        			});
+			        		}else if(action_id=='sort_data'){
+			        			var action_data =js.action_data;
+			        			$.each(action_data,function(gindex,ginfo){
+			        				var tablealias = ginfo.tablealias;
+			        				var condition = ginfo.contition;
+			        				var edittablename = ginfo.tablename;
+			        				var srctable1 = ginfo.srctable1;
+			        				$('#orderfilename').val(tablealias);
+			        				$('#tablename').val(srctable1);
+			        				flowid = ginfo.flowid;
+			        				
+			        				//
+									var fields = ginfo.field;
+									var sortinfo = ginfo.sortinfo;
+									
+									for(var i=1;i<=4;i++){
+										$.each(fields,function(findex,finfo){
+											$('#orderfield'+i).append("<option value='" + finfo.fieldalias + "__"+finfo.id+"'>" + finfo.fieldalias + "</option>");
+										});
+									}
+									
+									//处理选中的字段
+									$.each(sortinfo[0].sortfield,function(srindex,srinfo){
+										$("#orderfield"+(srindex+1)+" option").each(function(ofindex,ofinfo){
+											if(ofinfo.text==srinfo.fieldalias){
+												ofinfo.selected=true;
+											}
+										});
+										
+										$("#orderdirection"+(srindex+1)+" option").each(function(odindex,odinfo){
+											if(odinfo.value==srinfo.mode){
+												odinfo.selected=true;
+											}
+										});
+									});
+									
+									
+									$('#dlgqueryorder').dialog('open');
+			        			});
+			        		}else if(action_id=='merge_data'){
+			        			//数据关联
+			        			var action_data =js.action_data;
+			        			var arr = new Array();
+		        				arr.push("edit_merge_data");
+		        				arr.push(action_data);
+		        				str11 = window.showModalDialog("${ctxPath!}/model/flow/association",arr,"dialogWidth=530px;dialogHeight=380px");
+		        				//保存编辑
+		        				if(str11!=null && str11 != ''){
+		        					$.ajax({
+		        				        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        				        type : 'POST',  
+		        				        data : {jsonmemo:str11.toString()},
+		        				        dataType: 'json',
+		        				        cache: false,
+		        				        success:function(data){
+		        				        	layer.close(loadindex);
+		        				        	var json = eval(data);
+		        				        	$.each(json,function(infoIndex,info){
+		        				        		var return_flag = eval(info["return_flag"]);
+		        				        		if(return_flag=='0'){
+		        				        			layer.msg('操作成功！',{icon: 1,time: 2000});
+		        				        			var ret_data = eval(info["return_data"]);
+		        					        			$.each(ret_data,function(infoIndex,info){
+		        						        			temptablename = info["tablename"];
+		        							        		$('#tabletree').tree({
+		        							        	        url: "${ctxPath!}/model/tool/gettabletree",
+		        							        	        loadFilter: function(data){
+		        							        	            return data;
+		        							        	        }
+		        							        	    }); 
+		        							        	});
+		        							        	$('#getdata').dialog('close');
+		        				        		}else{
+		        				        			var return_msg = info["return_msg"];
+		        				        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        				        		}
+		        				        		
+		        				        	});
+		        						},
+		        						beforeSend:function(){
+		        							loadindex = layer.load(1, {
+		        			            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		        			            	});
+		        						},
+		        						error:function(){
+		        							layer.close(loadindex);
+		        			            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+		        						}
+		        				        });
+		        				}
+			        			
+			        		}else if(action_id=='overlay_data'){
+			        			//数据叠加
+			        			var action_data =js.action_data;
+			        			var arr = new Array();
+		        				arr.push("edit_overlay_data");
+		        				arr.push(action_data);
+		        				stradd = window.showModalDialog("${ctxPath!}/model/flow/add",arr,"dialogWidth=680px;dialogHeight=450px");
+		        				//保存编辑
+		        				if(stradd!=null && stradd != ''){
+		        					$.ajax({
+		        				        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        				        type : 'POST',  
+		        				        data : {jsonmemo:stradd.toString()},
+		        				        dataType: 'json',
+		        				        cache: false,
+		        				        success:function(data){
+		        				        	layer.close(loadindex);
+		        				        	var json = eval(data);
+		        				        	$.each(json,function(infoIndex,info){
+		        				        		var return_flag = eval(info["return_flag"]);
+		        				        		if(return_flag=='0'){
+		        				        			layer.msg('操作成功！',{icon: 1,time: 2000});
+		        				        			var ret_data = eval(info["return_data"]);
+		        					        			$.each(ret_data,function(infoIndex,info){
+		        						        			temptablename = info["tablename"];
+		        							        		$('#tabletree').tree({
+		        							        	        url: "${ctxPath!}/model/tool/gettabletree",
+		        							        	        loadFilter: function(data){
+		        							        	            return data;
+		        							        	        }
+		        							        	    }); 
+		        							        	});
+		        							        	$('#getdata').dialog('close');
+		        				        		}else{
+		        				        			var return_msg = info["return_msg"];
+		        				        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        				        		}
+		        				        		
+		        				        	});
+		        						},
+		        						beforeSend:function(){
+		        							loadindex = layer.load(1, {
+		        			            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		        			            	});
+		        						},
+		        						error:function(){
+		        							layer.close(loadindex);
+		        			            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+		        						}
+		        				        });
+		        				}
+			        		}
+			        	});
+					},
+					beforeSend:function(){
+						loadindex = layer.load(1, {
+		            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		            	});
+					},
+					error:function(){
+						layer.close(loadindex);
+		            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+					}
+			    });
+		 }
+		 
+	 });
+	 
+	 function drag() {
+	        $('.datagrid-header-inner .datagrid-cell').draggable();
+	    }
+	 
+	//刷新
+	 $('#m-flushtable').click(function(){
+		 flowid="";
+		 if(operaternode.type==0){
+			 layer.msg("不能对文件夹进行刷新",{icon: 5,time: 2000});
+			 return;
+		 }else if(operaternode.type==1){
+			 layer.msg("不能对源数据表进行刷新",{icon: 5,time: 2000});
+			 return;
+		 }else if(operaternode.type==2){
+			 $.ajax({
+			        url : ""+"${ctxPath!}/model/tool/refreshflowdata?tablename="+operaternode.name,  
+			        type : 'POST',
+			        dataType: 'json',
+			        cache: false,
+			        success:function(data){
+			        	layer.close(loadindex);
+			        	var json = eval(data);
+			        	$.each(json,function(infoIndex,info){
+			        		var return_flag = eval(info["return_flag"]);
+			        		if(return_flag=='0'){
+			        			var return_msg = info["return_msg"];
+			        			layer.msg(return_msg,{icon: 1,time: 2000});
+			        			var ret_data = eval(info["return_data"]);
+				        			$.each(ret_data,function(infoIndex,info){
+					        			temptablename = info["tablename"];
+						        		$('#tabletree').tree({
+						        	        url: "${ctxPath!}/model/tool/gettabletree",
+						        	        loadFilter: function(data){
+						        	            return data;
+						        	        }
+						        	    }); 
+						        	});
+						        	$('#getdata').dialog('close');
+			        		}else{
+			        			var return_msg = info["return_msg"];
+			        			layer.msg(return_msg,{icon: 5,time: 2000});
+			        		}
+			        		
+			        	});
+			        },
+			 	beforeSend:function(){
+					loadindex = layer.load(1, {
+	            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+	            	});
+				},
+				error:function(){
+					layer.close(loadindex);
+	            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				}
+			 });
+		 }
+	 });
+	
+	 $('#querylib').tree({
+		 url: "${ctxPath!}/model/function/getfunlist",
+	     loadFilter: function(data){
+	         return data;   
+	     },
+	     onDblClick: function(node){
+	    	 //双击函数时加载函数到条件编辑窗口中
+	    	 createsql(node.name+"()");
+	     },
+	     onLoadSuccess:function(node){
+	    	 var nodes = $('#querylib').tree("getChildren");
+	    	 $.each(nodes,function(ni,nnode){
+	    		 if(nnode.type!=0){
+	    			 $(nnode.target).attr("title","函数说明："+nnode.funmemo+"\n参数说明："+nnode.funscript);
+	    		 }
+	    	 });
+	     }
+	 });
+	});
+	
+
+$(function(){ 	 
+ 	 $("#searchbox").searchbox({//搜索
+ 		  searcher: function (value) {
+ 			  if(value==""){
+ 				  alert("Please Write");
+ 				  return false;
+ 			  }
+ 			  $("#tabletree li:eq(0)").find("div").addClass("tree-node-selected");//设置第一个节点高亮  
+ 		      var roots = $("#tabletree").tree("getSelected");//获取根节点
+ 			  var nodes = $('#tabletree').tree('getChildren',roots.target);
+ 			  var childNodeList = [];
+ 			  var nochildNodeList = [];
+ 			  if(value!=""){
+ 				 $('#tabletree').find('.tree-node-selected').removeClass('tree-node-selected');//移除上次选中的节点
+ 				  
+ 				  for ( var i=0; i<nodes.length; i++){
+ 					  var node = nodes[i];
+ 					  if(isMatch(value,roots.text)){
+ 						  childNodeList.push(roots);
+ 					  }
+ 					  if(isMatch(value,node.text)){
+ 						  childNodeList.push(node);
+ 					  }else if(!isMatch(value,node.text)){
+ 						  nochildNodeList.push(node); 
+ 					  }
+ 				  }
+ 			  }
+ 			  if(childNodeList.length<=0){
+ 				 alert("No Search");
+ 				$('#searchbox').searchbox('setValue', null);//设置searchbox为空
+ 				  return false;
+ 			  }
+ 			
+ 			  for ( var i=0; i<nochildNodeList.length; i++){//循环关闭不匹配的节点层级
+ 				  $('#tabletree').tree('collapse', nochildNodeList[i].target);//折叠所有节点
+ 			  }
+ 			  if(childNodeList.length==1){//只有一个匹配的节点，默认选中
+ 				  $('#tabletree').tree('expandTo',childNodeList[0].target);//打开节点到当前节点
+ 				  $('#tabletree').tree('select',childNodeList[0].target);//打开节点到当前节点
+ 			  }else{//有多个匹配的节点，加上高亮
+ 				  for ( var i=0; i<childNodeList.length; i++){//循环打开到匹配的节点层级
+ 					  $('#tabletree').tree('expandTo',childNodeList[i].target);//打开节点到当前节点
+ 					  $(".tree-title", childNodeList[i].target).addClass("tree-node-selected"); 
+ 				  }
+ 			  }
+ 	  }
+ 	});
+ });
+ 	 function isMatch(searchText, targetText) {//模糊查询
+ 	        return $.trim(targetText)!="" && targetText.indexOf(searchText)!=-1;  
+ 	    }
+ 	 function formatconvalue(value,type){
+ 		 var retstr = "";
+ 		 var arr = value.split(',');
+ 		 if(type=='1'){
+ 			for(var i=0;i<arr.length;i++){
+ 	 			retstr += arr[i]+",";
+ 	 		 }
+ 		 }else{
+ 			for(var i=0;i<arr.length;i++){
+ 	 			retstr += "\'"+arr[i]+"\',";
+ 	 		 }
+ 		 }
+ 		 
+ 		 if(retstr!=""){
+ 			retstr = retstr.substring(0,retstr.length-1);
+ 			retstr = "(" +retstr+ ")";
+ 		 }
+ 		 return retstr;
+ 	 }
+ 	 
+ 	 
+ 	 function query(){
+ 		var condtion = "";
+ 		var tablename = $('#tablename').val();
+ 		if(tablename==null || tablename==''){
+ 			layer.msg("请在左侧树菜单中选择在操作的表",{icon: 6,time: 2000});
+ 			return;
+ 		}
+ 		var operator = $('#operator').val();
+ 		var tablecol = $('#tablecol').val();
+ 		//tablecol是由字段名和字段类型拼接在一起的，如序号_3，需要拆分开来。
+ 		var tablecolarr = tablecol.split('_');
+ 		var tablecol_1 = tablecolarr[0];
+ 		var tablecol_2 = tablecolarr[1];
+ 		var queryvalue = $('#queryvalue').val();
+ 		if(queryvalue==null || queryvalue==''){
+ 			layer.msg("请输入查询条件");
+ 			return;
+ 		}
+ 		if(tablecol_2=="1" || tablecol_2=="2"){
+ 			//字符类型的查询条件需要加引号
+ 			if(operator==' like ' || operator == ' not like '){
+ 				condition = tablecol_1+" "+operator+" \'%"+queryvalue+"%\' ";
+ 			}else if(operator==' in ' || operator == ' not in '){
+ 				condition = tablecol_1+" "+operator+" "+ formatconvalue(queryvalue,tablecol_2);
+ 			}else{
+ 				condition = tablecol_1+" "+operator+" \'"+queryvalue+"\' ";
+ 			}
+ 		}else{
+ 			if(operator==' in ' || operator == ' not in '){
+ 				condition = tablecol_1+" "+operator+" "+ formatconvalue(queryvalue,tablecol_2);
+ 			}else{
+ 				condition = tablecol_1+operator+queryvalue;
+ 			}
+ 		}
+ 		condtion = encodeURIComponent(encodeURIComponent(condition));
+ 		$('#datalist').datagrid({
+            iconCls:'icon-save', 
+            nowrap: true, 
+            autoRowHeight: false, 
+            striped: true, 
+            url: '${ctxPath!}/model/tool/showtable?tablename='+tablename+'&pagenum=1&pagesize=50&condition='+condtion,
+            collapsible:true, 
+            remoteSort: false,
+            pagination: true,  //分页控件
+            rownumbers: true,  //行号
+            pageSize: 50,
+            onBeforeLoad:function(){
+            	loadindex = layer.load(1, {
+            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+            	});
+            },
+            onLoadSuccess:function(){
+            	layer.close(loadindex);
+            },
+            onLoadError:function(){
+            	layer.close(loadindex);
+            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+            }
+        }); 
+ 		
+ 		var p = $('#datalist').datagrid('getPager'); 
+		$(p).pagination({ 
+	        pageSize: 50,//每页显示的记录条数，默认为10 
+	        beforePageText: '第',//页数文本框前显示的汉字 
+	        afterPageText: '页    共 {pages} 页', 
+	        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+	    });
+ 		 
+ 	 }
+ 	 
+ 	(function($){
+ 		  $.fn.extend({
+ 		  insertAtCaret: function(myValue){
+ 		  var $t=$(this)[0];
+ 		  if (document.selection) {
+ 		  this.focus();
+ 		  sel = document.selection.createRange();
+ 		  sel.text = myValue;
+ 		  this.focus();
+ 		  }
+ 		  else
+ 		  if ($t.selectionStart || $t.selectionStart == '0') {
+ 		  var startPos = $t.selectionStart;
+ 		  var endPos = $t.selectionEnd;
+ 		  var scrollTop = $t.scrollTop;
+ 		  $t.value = $t.value.substring(0, startPos) + myValue + $t.value.substring(endPos, $t.value.length);
+ 		  this.focus();
+ 		  $t.selectionStart = startPos + myValue.length;
+ 		  $t.selectionEnd = startPos + myValue.length;
+ 		  $t.scrollTop = scrollTop;
+ 		  }
+ 		  else {
+ 		  this.value += myValue;
+ 		  if(myValue!=" '' ")
+ 		  this.focus();
+ 		  }
+ 		  }
+ 		  })
+ 		})(jQuery);
+ 	 
+ 	function createsql(text)
+ 	{       
+ 		$("#querysql").insertAtCaret(text);
+ 	}
+ 	
+	function setcondition(){
+		var convalue=$("#querysql").val();
+		$("#condition").val(convalue);
+		$('#dlgquery').dialog('close');
+	}
+	
+	function submitGetData(){
+		 var field= '[';
+		 var condition=$('#condition').val();
+		 var tmptablename = $('#tmpname').val();
+		 if(''==tmptablename){
+			 alert('请输入表名称！');
+			 return false;
+		 }
+		 var srctable = $('#tablename').val();
+		 //提取用记选择的显示字段
+		 var selectobj = document.getElementById("tableselectcolumn");
+		 
+		 for(var i=0;i<selectobj.length;i++){
+			 if(selectobj.options[i].selected == true){
+				 var value = selectobj.options[i].value;
+				 var text = selectobj.options[i].text;
+				 if(i!=selectobj.length-1){
+					 field = field + "{\"id\":"+value+",\"fieldname\":\"item1\",\"fieldalias\":\""+text+"\"},";
+				 }else{
+					 field = field + "{\"id\":"+value+",\"fieldname\":\"item1\",\"fieldalias\":\""+text+"\"}";
+				 }
+				 
+			 }
+		 }
+		 field = field + "]";
+		 
+		 var action_data = "[{\"modelid\":1,\"flowid\":\""+flowid+"\",\"tablealias\":\""+tmptablename+"\",\"srctable\":\""+srctable+"\",\"field\":"+field+",\"condition\":\""+condition+"\",\"firstnum\":\""+getFirstVlaue()+"\",\"endnum\":\""+getEndVlaue()+"\"}]";
+		 var submitJson = "[{\"action_id\":\"get_data\",\"action_data\":"+action_data+"}]";
+		 $.ajax({
+		        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        type : 'POST',  
+		        data : {jsonmemo:submitJson.toString()},
+		        dataType: 'json',
+		        cache: false,
+		        success:function(data){
+		        	layer.close(loadindex);
+		        	var json = eval(data);
+		        	$.each(json,function(infoIndex,info){
+		        		var return_flag = eval(info["return_flag"]);
+		        		if(return_flag=='0'){
+		        			layer.msg('数据提取成功！',{icon: 1,time: 2000});
+		        			var ret_data = eval(info["return_data"]);
+			        			$.each(ret_data,function(infoIndex,info){
+				        			temptablename = info["tablename"];
+					        		$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    }); 
+					        	});
+					        	$('#getdata').dialog('close');
+		        		}else{
+		        			var return_msg = info["return_msg"];
+		        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        		}
+		        		
+		        	});
+				},
+				beforeSend:function(){
+					loadindex = layer.load(1, {
+	            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+	            	});
+				},
+				error:function(){
+					layer.close(loadindex);
+	            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				}
+		        });
+	}
+	
+	//判断是用是否选择范围提取数据
+	 function getFirstVlaue(){
+		 if($('input:radio[name="scope"]:checked').val()=="scope"){
+			 var firstnum = $('#firstnum').val();
+			 return firstnum;
+		 }else{
+			 return "";
+		 }
+	 }
+	 function getEndVlaue(){
+		 if($('input:radio[name="scope"]:checked').val()=="scope"){
+			 var endnum = $('#endnum').val();
+			 return endnum;
+		 }else{
+			 return "";
+		 }
+	 }
+	 
+	 
+	 function datagroup(){
+		 //初始化统计方式
+		 $('input[name=collecttype]').each(function(dgindex,dgobj){
+			 dgobj.checked=false;
+		 });
+		 //
+		 $('#filename').val('');
+		 var tablename = $('#tablename').val();
+		 if(tablename==null || tablename==''){
+	 			layer.msg("请在左侧树菜单中选择您要操作的表",{icon: 6,time: 2000});
+	 			return;
+	 	 }
+		 flowid="";
+		 $('#dlggroup').dialog('open');
+		 //加载字段
+		 $("#group1").empty();
+		 $("#group1").append("<option value='0'>无</option>");
+		 var grouptablehtml="";
+		 $.each(tablecols,function(n,node) {
+			//加载快速查询字段
+         	$("#group1").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+         	//加载求和的数字字段,只显示字段类型为数字的字段
+         	if(node.fieldtype=='3'){
+         		grouptablehtml=grouptablehtml + "<tr><td ><input type='checkbox' name='groupsum' value='" + node.title + "__"+node.fieldid+"'>"+node.title+" </td></tr>";
+         	}
+         });
+		 var grouptableobj = document.getElementById("grouptable");
+		 grouptableobj.innerHTML=grouptablehtml;
+		 
+		 
+	 }
+	 
+	 //选择条件
+	 function groupcondition(){
+		 var tablename = $('#tablename').val();
+		 groupstr = window.showModalDialog("${ctxPath!}/model/flow/condition",tablename,"dialogWidth=650px;dialogHeight=560px");
+		 $('#groupcondition').val(groupstr);
+	 }
+	 
+	 function ocgroup1(obj){
+		 if(obj.value != '0'){
+			 //加载#group2的字段
+			 $("#group2").empty();
+			 $("#group2").append("<option value='0'>无</option>");
+			 $.each(tablecols,function(n,node) {
+				    //加载快速查询字段
+	         	$("#group2").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+	         });
+		 }
+	 }
+	 
+	 function ocgroup2(obj){
+		 if(obj.value != '0'){
+			 //加载#group2的字段
+			 $("#group3").attr("disabled",false);
+			 $("#group3").empty();
+			 $("#group3").append("<option value='0'>无</option>");
+			 $.each(tablecols,function(n,node) {
+				    //加载快速查询字段
+	         	$("#group3").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+	         });
+		 }
+	 }
+	 
+	 function ocgroup3(obj){
+		 if(obj.value != '0'){
+			 //加载#group2的字段
+			 $("#group4").attr("disabled",false);
+			 $("#group4").empty();
+			 $("#group4").append("<option value='0'>无</option>");
+			 $.each(tablecols,function(n,node) {
+				    //加载快速查询字段
+	         	$("#group4").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+	         });
+		 }
+	 }
+	 
+	 function submitgroup(){
+		 var group1val = $("#group1").val();
+		 var groupfield = "";
+		 var collectfield="";
+		 var sumarr= new Array();
+		 var collecttypearr= new Array();
+		 var srctable = $('#tablename').val();
+		 var tmptablename = $('#filename').val();
+		 var condition = "";
+		 if(tmptablename==''){
+			 alert("请输入文件名!");
+			 return;
+		 }
+		 if(group1val=='0'){
+			 alert("请选择汇总字段");
+			 return;
+		 }else{
+			 for(var i=1;i<=8;i++){
+				 var groupval = $("#group"+i+"").val();
+				 if(groupval!='0'){
+					 var groupvalarr = groupval.split("__");
+					 groupfield = groupfield + "{\"id\":"+groupvalarr[1]+",\"fieldname\":\"AGENCIES\",\"fieldalias\":\""+groupvalarr[0]+"\"},";
+				 }
+			 }
+		 }
+		 
+		 //去掉最后的多余的逗号
+		 if(groupfield!=''){
+			 groupfield = groupfield.substring(0,groupfield.length-1);
+			 groupfield = "["+groupfield+"]";
+		 }
+			 
+		
+		 //汇总方式 
+		 var collecttypelist = document.getElementsByName("collecttype");
+		 for(var i=0;i<collecttypelist.length;i++){
+			 if(collecttypelist[i].checked==true){
+				 var val = collecttypelist[i].value;
+				 collecttypearr.push(val);
+			 }
+		 }
+		 
+		 //if(collecttypearr.length==0){
+		 //	 alert('请选择统计方式！');
+		 //	 return;
+		 //}
+		 
+		 //求和字段
+		 var groupsumlist = document.getElementsByName("groupsum");
+		 var percol="";
+		 var collectfield="";
+		 var vname="";
+		 for(var i=0;i<groupsumlist.length;i++){
+			 if(groupsumlist[i].checked==true){
+				 var ar = groupsumlist[i].value.split("__");
+				 $.each(collecttypearr,function(n,value) {
+					   if(value=='sum'){
+						   vname = '求和';
+					   }
+					   if(value=='avg'){
+						   vname = '平均';
+					   }
+					   if(value=='max'){
+						   vname = '最大';
+					   }
+					   if(value=='min'){
+						   vname = '最小';
+					   }
+					   percol = "{\"id\":"+ar[ar.length-1]+",\"collecttype\":\""+value+"\",\"fieldalias\":\""+ar[0]+"_"+vname+"\"}";
+					   collectfield = collectfield+ percol + ",";
+			     });  
+			 }
+		 }
+		 if(collectfield!=""){
+			 collectfield = collectfield.substring(0,collectfield.length-1);
+			 collectfield = "["+collectfield+"]";
+		 }
+		else{
+			 collectfield = null;
+		}
+		 
+		 var action_data = "[{\"modelid\":1,\"flowid\":\""+flowid+"\",\"tablealias\":\""+tmptablename+"\",\"srctable\":\""+srctable+"\",\"field\":"+groupfield+",\"collectfield\":"+collectfield+",\"condition\":\""+condition+"\"}]";
+		 var submitJson = "[{\"action_id\":\"group_data\",\"action_data\":"+action_data+"}]";
+		 $.ajax({
+		        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        type : 'POST',  
+		        data : {jsonmemo:submitJson.toString()},
+		        dataType: 'json',
+		        cache: false,
+		        success:function(data){
+		        	layer.close(loadindex);
+		        	var json = eval(data);
+		        	$.each(json,function(infoIndex,info){
+		        		var return_flag = eval(info["return_flag"]);
+		        		if(return_flag=='0'){
+		        			layer.msg('数据汇总成功！',{icon: 1,time: 2000});
+		        			var ret_data = eval(info["return_data"]);
+			        			$.each(ret_data,function(infoIndex,info){
+				        			temptablename = info["tablename"];
+					        		$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    }); 
+					        	});
+					        	$('#dlggroup').dialog('close');
+		        		}else{
+		        			var return_msg = info["return_msg"];
+		        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        		}
+		        	});
+				},
+				beforeSend:function(){
+					loadindex = layer.load(1, {
+	            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+	            	});
+				},
+				error:function(){
+					layer.close(loadindex);
+	            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				}
+		});
+	 }
+
+	 //插入虚拟列
+	 function avatarcols(){
+		 $('#colsname').val('');
+		 $('#colscondition').val('');
+		 $('#desc').val('');
+		 $('#colslength').val('50');
+		 $('#precision').val('2');
+		 if(tabletype==1){
+			 layer.msg('源数据表不能插入虚拟列',{icon: 5,time: 2000});
+		 }else{
+			 var tablename = $('#tablename').val();
+			 if(tablename==null || tablename==''){
+		 			layer.msg("请在左侧树菜单中选择您要操作的表",{icon: 6,time: 2000});
+		 			return;
+		 	 }
+			 $('#dlgavatarcols').dialog('open');
+		 }
+		 
+	 }
+	 
+	 //虚拟列操作提交
+	 function colssubmit(){
+		 //虚拟字段名称
+		 var filedname = $('#colsname').val();
+		 if(''==filedname){
+			 alert('请输入虚拟字段名称!');
+			 return;
+		 }
+		 //字段类型
+		 var avatarcolstyle = $('#avatarcolstyle').val();
+		 //条件
+		 var colscondition = $('#colscondition').val();
+		 if(''==colscondition){
+			 alert('请设置虚拟字段的条件!');
+			 return;
+		 }
+		 var colslength = $('#colslength').val();
+		 var precision = $('#precision').val();
+		 var tablename = $('#tablename').val();
+		 var action_data="[{\"modelid\":1,\"tablename\":\""+tablename+"\",\"fieldalias\":\""+filedname+"\",\"fieldscript\":\""+colscondition+"\",\"fieldtype\":"+avatarcolstyle+",\"fieldlength\":"+colslength+",\"beforefieldid\":0}]";
+		 var submitJson = "[{\"action_id\":\"insert_virtualfield\",\"action_data\":"+action_data+"}]";
+		 $.ajax({
+		        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        type : 'POST',  
+		        data : {jsonmemo:submitJson.toString()},
+		        dataType: 'json',
+		        cache: false,
+		        success:function(data){
+		        	layer.close(loadindex);
+		        	var json = eval(data);
+		        	$.each(json,function(infoIndex,info){
+		        		var return_flag = eval(info["return_flag"]);
+		        		if(return_flag=='0'){
+		        			layer.msg('插入虚拟列成功！',{icon: 1,time: 2000});
+		        			var ret_data = eval(info["return_data"]);
+			        			$.each(ret_data,function(infoIndex,info){
+				        			temptablename = info["tablename"];
+					        		$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    }); 
+					        	});
+					        	$('#dlgavatarcols').dialog('close');
+		        		}else{
+		        			var return_msg = info["return_msg"];
+		        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        		}
+		        		
+		        	});
+				},
+				beforeSend:function(){
+					loadindex = layer.load(1, {
+	            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+	            	});
+				},
+				error:function(){
+					layer.close(loadindex);
+	            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				}
+		        
+		 });
+	 }
+	 
+	 //选择条件
+	 function opencolsconditiondlg(){
+		 var tablename = $('#tablename').val();
+		 str = window.showModalDialog("${ctxPath!}/model/flow/condition",tablename,"dialogWidth=650px;dialogHeight=560px");
+		 $('#colscondition').val(str);
+		 
+	 }
+	 
+	 //数据排序窗口
+	 function dataorder(){
+		 $('#orderfilename').val('');
+		 //初始化排序方式 
+		 $('#orderdirection1').val('asc');
+		 $('#orderdirection2').val('asc');
+		 $('#orderdirection3').val('asc');
+		 $('#orderdirection4').val('asc');
+		 var tablename = $('#tablename').val();
+		 if(tablename==null || tablename==''){
+	 			layer.msg("请在左侧树菜单中选择您要操作的表",{icon: 6,time: 2000});
+	 			return;
+	 	 }
+		 flowid="";
+		 $('#dlgqueryorder').dialog('open');
+		 $("#orderfield1").empty();
+		 
+		 $("#orderfield2").empty();
+		 $("#orderfield2").append("<option value='0'>无</option>");
+		 $("#orderfield3").empty();
+		 $("#orderfield3").append("<option value='0'>无</option>");
+		 $("#orderfield4").empty();
+		 $("#orderfield4").append("<option value='0'>无</option>");
+		 $("#orderfield1").append("<option value='0'>无</option>");
+		 $.each(tablecols,function(n,node) {
+		 //加载快速查询字段
+      	 $("#orderfield1").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+         });
+	 }
+	 
+	 function setorderfield1(){
+		 //获取orderfield2当前的长度
+		 if($("#orderfield2").length==1 && $("#orderfield2").val()=='0'){
+			 $("#orderfield2").empty();
+			 $("#orderfield2").append("<option value='0'>无</option>");
+			 $.each(tablecols,function(n,node) {
+				//加载快速查询字段
+	   	     	$("#orderfield2").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+	   	     }); 
+		 }
+		 
+	 }
+	 
+	 function setorderfield2(){
+		 //获取orderfield3当前的长度
+		 if($("#orderfield3").length==1 && $("#orderfield3").val()=='0'){
+			 $("#orderfield3").empty();
+			 $("#orderfield3").append("<option value='0'>无</option>");
+			 $.each(tablecols,function(n,node) {
+				//加载快速查询字段
+	   	     	$("#orderfield3").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+	   	     }); 
+		 }
+		 
+	 }
+	 
+	 function setorderfield3(){
+		 //获取orderfield4当前的长度
+		 if($("#orderfield4").length==1 && $("#orderfield4").val()=='0'){
+			 $("#orderfield4").empty();
+			 $("#orderfield4").append("<option value='0'>无</option>");
+			 $.each(tablecols,function(n,node) {
+				//加载快速查询字段
+	   	     	$("#orderfield4").append("<option value='" + node.title + "__"+node.fieldid+"'>" + node.title + "</option>");
+	   	     }); 
+		 }
+		 
+	 }
+	 
+	//提交排序操作
+	 function ordersumit(){
+		 var fieldstr = "";
+		 var tablename = $('#tablename').val();
+		 //表名
+		 var orderfilename = $("#orderfilename").val();
+		 var orderfield1 = $("#orderfield1").val();
+		 var orderfield2 = $("#orderfield2").val();
+		 var orderfield3 = $("#orderfield3").val();
+		 var orderfield4 = $("#orderfield4").val();
+		 
+		 if(orderfield1!='0'){
+			 var field1id = orderfield1.split("__")[1];
+			 var ordertype = $('#orderdirection1').val();
+			 fieldstr = "{\"id\":"+field1id+",\"mode\":\""+ordertype+"\"}";
+		 }
+		 if(orderfield2!='0'){
+			 var field2id = orderfield2.split("__")[1];
+			 var ordertype = $('#orderdirection2').val();
+			 fieldstr = fieldstr + ",{\"id\":"+field2id+",\"mode\":\""+ordertype+"\"}";
+		 }
+		 if(orderfield3!='0'){
+			 var field3id = orderfield3.split("__")[1];
+			 var ordertype = $('#orderdirection3').val();
+			 fieldstr = fieldstr + ",{\"id\":"+field3id+",\"mode\":\""+ordertype+"\"}";
+		 }
+		 if(orderfield4!='0'){
+			 var field4id = orderfield4.split("__")[1];
+			 var ordertype = $('#orderdirection4').val();
+			 fieldstr = fieldstr + ",{\"id\":"+field4id+",\"mode\":\""+ordertype+"\"}";
+		 }
+		 fieldstr = "["+fieldstr+"]";
+		 var action_data="[{\"modelid\":1,\"flowid\":\""+flowid+"\",\"tablealias\":\""+orderfilename+"\",\"srctable\":\""+tablename+"\",\"field\":"+fieldstr+"}]";
+		 var submitJson = "[{\"action_id\":\"sort_data\",\"action_data\":"+action_data+"}]";
+		 $.ajax({
+		        url : ""+"${ctxPath!}/model/flow/doflow",  
+		        type : 'POST',  
+		        data : {jsonmemo:submitJson.toString()},
+		        dataType: 'json',
+		        cache: false,
+		        success:function(data){
+		        	layer.close(loadindex);
+		        	var json = eval(data);
+		        	$.each(json,function(infoIndex,info){
+		        		var return_flag = eval(info["return_flag"]);
+		        		if(return_flag=='0'){
+		        			layer.msg('数据排序成功！',{icon: 1,time: 2000});
+		        			var ret_data = eval(info["return_data"]);
+			        			$.each(ret_data,function(infoIndex,info){
+				        			temptablename = info["tablename"];
+					        		$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    }); 
+					        	});
+					        	$('#dlgqueryorder').dialog('close');
+		        		}else{
+		        			var return_msg = info["return_msg"];
+		        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        		}
+		        		
+		        	});
+				},
+				beforeSend:function(){
+					loadindex = layer.load(1, {
+	            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+	            	});
+				},
+				error:function(){
+					layer.close(loadindex);
+	            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				}
+		        
+		 });
+	 }
+	 
+	//数据关联
+	 function dlgquerydes(){
+		 //隐藏弹出菜单
+		 $('#mm3').menu('hide');
+		 var tablename = $('#tablename').val();
+		 if(tablename==null || tablename==''){
+	 			layer.msg("请在左侧树菜单中选择您要操作的表",{icon: 6,time: 2000});
+	 			return;
+	 	 }
+		 var tablename_zh = $('#tablename_zh').val();
+		 var arr = new Array();
+		 arr.push(tablename);
+		 arr.push(tablecols);
+		 arr.push(tablename_zh);
+		 str11 = window.showModalDialog("${ctxPath!}/model/flow/association",arr,"dialogWidth=530px;dialogHeight=380px");
+		 //提交
+		 if(str11!=null && str11 != "null" && str11 != ""){
+			 $.ajax({
+			        url : ""+"${ctxPath!}/model/flow/doflow",  
+			        type : 'POST',  
+			        data : {jsonmemo:str11.toString()},
+			        dataType: 'json',
+			        cache: false,
+			        success:function(data){
+			        	layer.close(loadindex);
+			        	var json = eval(data);
+			        	$.each(json,function(infoIndex,info){
+			        		var return_flag = eval(info["return_flag"]);
+			        		if(return_flag=='0'){
+			        			layer.msg('数据关联成功！',{icon: 1,time: 2000});
+			        			var ret_data = eval(info["return_data"]);
+				        			$.each(ret_data,function(infoIndex,info){
+					        			temptablename = info["tablename"];
+						        		$('#tabletree').tree({
+						        	        url: "${ctxPath!}/model/tool/gettabletree",
+						        	        loadFilter: function(data){
+						        	            return data;
+						        	        }
+						        	    }); 
+						        	});
+						        	$('#dlgqueryorder').dialog('close');
+			        		}else{
+			        			var return_msg = info["return_msg"];
+			        			layer.msg(return_msg,{icon: 5,time: 2000});
+			        		}
+			        	});
+					},
+					beforeSend:function(){
+						loadindex = layer.load(1, {
+		            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		            	});
+					},
+					error:function(){
+						layer.close(loadindex);
+		            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+					}
+			        
+			 });
+		 }
+		 
+	 }
+	 
+	 //数据去重复
+	 function dlgquerydis(){
+		 //隐藏弹出菜单
+		 $('#mm3').menu('hide');
+		 var tablename = $('#tablename').val();
+		 if(tablename==null || tablename==''){
+	 			layer.msg("请在左侧树菜单中选择您要操作的表",{icon: 6,time: 2000});
+	 			return;
+	 	 }
+		 var arr = new Array();
+		 arr.push(tablename);
+		 arr.push(tablecols);
+		 strdis = window.showModalDialog("${ctxPath!}/model/flow/distinct",arr,"dialogWidth=460px;dialogHeight=400px");
+		//提交
+		 if(strdis!=null && strdis != "null" && strdis != ""){
+			 $.ajax({
+			        url : ""+"${ctxPath!}/model/flow/doflow",
+			        type : 'POST',
+			        data : {jsonmemo:strdis.toString()},
+			        dataType: 'json',
+			        cache: false,
+			        success:function(data){
+			        	layer.close(loadindex);
+			        	var json = eval(data);
+			        	$.each(json,function(infoIndex,info){
+			        		var return_flag = eval(info["return_flag"]);
+			        		if(return_flag=='0'){
+			        			layer.msg('数据去重成功！',{icon: 1,time: 2000});
+			        			var ret_data = eval(info["return_data"]);
+				        			$.each(ret_data,function(infoIndex,info){
+					        			temptablename = info["tablename"];
+						        		$('#tabletree').tree({
+						        	        url: "${ctxPath!}/model/tool/gettabletree",
+						        	        loadFilter: function(data){
+						        	            return data;
+						        	        }
+						        	    }); 
+						        	});
+						        	$('#dlgqueryorder').dialog('close');
+			        		}else{
+			        			var return_msg = info["return_msg"];
+			        			layer.msg(return_msg,{icon: 5,time: 2000});
+			        		}
+			        		
+			        	});
+					},
+					beforeSend:function(){
+						loadindex = layer.load(1, {
+		            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		            	});
+					},
+					error:function(){
+						layer.close(loadindex);
+		            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+					}
+			        
+			 });
+		 }
+	 }
+	 
+	 //数据叠加
+	 function dataadd(){
+		 //隐藏弹出菜单
+		 $('#mm3').menu('hide');
+		 var tablename = $('#tablename').val();
+		 if(tablename==null || tablename==''){
+	 			layer.msg("请在左侧树菜单中选择您要操作的表",{icon: 6,time: 2000});
+	 			return;
+	 	 }
+		 stradd = window.showModalDialog("${ctxPath!}/model/flow/add",tablename,"dialogWidth=680px;dialogHeight=450px");
+		//提交
+		 if(stradd!=null && stradd != "null" && stradd != ""){
+			 $.ajax({
+			        url : ""+"${ctxPath!}/model/flow/doflow",  
+			        type : 'POST',  
+			        data : {jsonmemo:stradd.toString()},
+			        dataType: 'json',
+			        cache: false,
+			        success:function(data){
+			        	layer.close(loadindex);
+			        	var json = eval(data);
+			        	$.each(json,function(infoIndex,info){
+			        		var return_flag = eval(info["return_flag"]);
+			        		if(return_flag=='0'){
+			        			layer.msg('数据叠加成功！',{icon: 1,time: 2000});
+			        			var ret_data = eval(info["return_data"]);
+				        			$.each(ret_data,function(infoIndex,info){
+					        			temptablename = info["tablename"];
+						        		$('#tabletree').tree({
+						        	        url: "${ctxPath!}/model/tool/gettabletree",
+						        	        loadFilter: function(data){
+						        	            return data;
+						        	        }
+						        	    }); 
+						        	});
+						        	$('#dlgqueryorder').dialog('close');
+			        		}else{
+			        			var return_msg = info["return_msg"];
+			        			layer.msg(return_msg,{icon: 5,time: 2000});
+			        		}
+			        		
+			        	});
+					},
+					beforeSend:function(){
+						loadindex = layer.load(1, {
+		            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+		            	});
+					},
+					error:function(){
+						layer.close(loadindex);
+		            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+					}
+			 });
+		 }
+	 }
+	 
+	 //历史记录
+	 function datahis(){
+		 //隐藏弹出菜单
+		 $('#mm0').menu('hide');
+		 var tablename = $('#tablename').val();
+		 if(''==tablename || null==tablename){
+			 layer.msg("请在左边的树结构中选择您要操作的分析表!",{icon: 6,time: 2000});
+			 return;
+		 }
+		 strhis = window.showModalDialog("${ctxPath!}/model/flow/history",tablename,"dialogWidth=670px;dialogHeight=440px");
+	 }
+	 
+	 //保存模型
+	 function savemodel(){
+		 var modelname = $("#modelname").val();
+		 var tablename = $('#tablename').val();
+		 if(''==tablename || null==tablename){
+			 layer.msg("请在左边的树结构中选择您要操作的分析表!",{icon: 6,time: 2000});
+			 return;
+		 }
+		 if(''==modelname || null==modelname){
+			 alert("请输入模型名称!");
+			 return;
+		 }
+		 $.ajax({
+			url : "${ctxPath!}/model/flow/saveflow",  
+			type : 'POST',
+			data : {tablename:tablename,modelname:modelname},
+			success:function(data){
+				layer.close(loadindex);
+				if(data==1){
+					alert("保存成功!");
+					$('#dlgsave').dialog('close');
+				}else{
+					alert("保存失败!");
+				}
+			},
+			beforeSend:function(){
+				loadindex = layer.load(1, {
+            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+            	});
+			},
+			error:function(){
+				layer.close(loadindex);
+            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+			}
+		});
+		 
+	 }
+	 
+	 //快速返回源表
+	 function resetquery(){
+		 $("#tabletree").tree("select",tablenode.target);
+     	var nodeobj = tablenode.target;
+     	//触发鼠标双击事件
+         var evObj = document.createEvent('MouseEvents');
+         evObj.initMouseEvent( 'dblclick', true, true, window, 1, 12, 345, 7, 220, false, false, true, false, 0, null );
+         nodeobj.dispatchEvent(evObj);
+	 }
+	 
+	 //数据提取
+	 function dlggetdata(){
+		 $('#condition').val('');
+		 $('#tmpname').val('');
+		 $('#querysql').val('');
+		 flowid="";
+		 var tablename = $('#tablename').val();
+		 if(''==tablename || null==tablename){
+			 layer.msg("请在左边的树结构中选择您要操作的表!",{icon: 6,time: 2000});
+			 return;
+		 }
+		 $('#getdata').dialog('open');
+	 }
+	 
+	 //保存模型
+	 function dlgsavemodel(){
+		 var tablename = $('#tablename').val();
+		 if(''==tablename || null==tablename){
+			 layer.msg("请在左边的树结构中选择您要保存为模型的中间表!",{icon: 6,time: 2000});
+			 return;
+		 }
+		 if(operaternode.type==1){
+			 layer.msg("数据源表不能保存为模型!",{icon: 6,time: 2000});
+			 return;
+		 }
+		 $('#dlgsave').dialog('open');
+	 }
+	 
+	 
+	 function checkformula(){
+		 var tablename = $('#tablename').val();
+		 var funscript = $('#querysql').val();
+		 if(""==funscript || null == funscript){
+			 layer.msg("请输入需要校验的公式!",{icon: 5,time: 2000});
+			 return;
+		 }
+		 $.ajax({
+				url : "${ctxPath!}/model/function/checkfunlist?tablename="+tablename+"&funscript="+funscript,  
+				type : 'POST',
+				success:function(data){
+					layer.close(loadindex);
+		        	var json = eval(data);
+		        	$.each(json,function(infoIndex,info){
+		        		var return_flag = info["return_flag"];
+		        		var return_msg = info["return_msg"];
+		        		if(return_flag=='0'){
+		        			layer.msg(return_msg,{icon: 1,time: 2000});
+		        		}else{
+		        			layer.msg(return_msg,{icon: 5,time: 2000});
+		        		}
+		        	});
+				},
+				beforeSend:function(){
+					loadindex = layer.load(1, {
+	            	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+	            	});
+				},
+				error:function(){
+					layer.close(loadindex);
+	            	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+				}
+			});
+	 }
+	 
+	 
+	 
+	 
+</script>
+</head>
+
+<body class="easyui-layout" style="border:0px">
+
+<div data-options="region:'north'," style="height:32px;padding:5px;overflow:hidden;border:0px;" >   
+<div style="background: #E0EEEE url('') no-repeat 10px center; padding: 1px; padding-left: 10px; margin:0px;border: 1px dashed #CAE1FF;">		
+
+
+<div style="float:left;width:680px;">
+
+ 							<div class="easyui-panel panel-noscroll"  fit=true style="background: #E0EEEE url('') repeat-x ;border:0px;width:100%;height:26px;padding:0px;overflow:hidden" >
+	  
+						 		<a href="#" class="easyui-menubutton" data-options="menu:'#mm0',iconCls:'icon-save'">文件</a>
+						 		
+						        <a href="#" class="easyui-menubutton" data-options="menu:'#mm3',iconCls:'icon-sum'"> 分析</a>
+						        
+						        <a href="#" class="easyui-menubutton" data-options="menu:'#mm5',iconCls:'icon-large-chart'"> 图表</a>
+						        <a href="#" class="easyui-menubutton" data-options="menu:'#mm6',iconCls:'icon-help'">帮助</a>
+						    </div>
+						     <div id="mmmx" style="width:100px;">
+						        <div data-options="iconCls:'icon-tip'">
+						         	<span >模型测试</span>
+						        
+						        	<div>
+						                <div  data-options="iconCls:'icon-selectall'">预览</div>
+						                <div  data-options="iconCls:'icon-reload'">执行</div>
+						                <div  data-options="iconCls:'icon-redo'">单步</div>
+						            </div>
+						        
+						        </div>
+						        <div  data-options="iconCls:'icon-import'">
+					            <span>步骤</span>
+					            <div>
+					                <div  data-options="iconCls:'icon-add'">新建分析步骤</div>
+					                <div>保存当前步骤</div>
+					            </div>
+					        </div>
+						        <div>流程</div>
+						    </div>
+						    <div id="mm0" style="width:100px;">
+						        
+						        <div data-options="iconCls:'icon-save'" onclick="dlgsavemodel()">保存</div>
+						        
+						        <div  data-options="iconCls:'icon-ok'"><a onclick="datahis()">历史记录</a></div>
+						    </div>
+						    
+						   <div id="mm2" style="width:100px;">
+						   		
+						   </div>
+						    
+						    <div id="mm3" style="width:100px;">
+						        <div  data-options="iconCls:'icon-sql'" onclick="$('#dlgquery').dialog('open')">自定义查询</div>
+						        <div data-options="iconCls:'icon-upload'" onclick="dlggetdata()">数据提取</div>
+						        <div  data-options="iconCls:'icon-redo'"><a onclick="avatarcols()">插入虚拟列</a></div>
+						        <div  data-options="iconCls:'icon-sum'"><a onclick="datagroup()">汇总数据</a></div>
+						        <div  data-options="iconCls:'icon-sort'"  onclick="dataorder()">数据排序</div>
+						        <div  data-options="iconCls:'icon-menu'" onclick="dlgquerydis()">数据去重</div>
+						        <div  data-options="iconCls:'icon-group'"><a onclick="$('#dlglayer').dialog('open')">数据分层</a></div>
+						        <div  data-options="iconCls:'icon-rel'"><a onclick="dlgquerydes()">数据关联</a></div>
+						        <div  data-options="iconCls:'icon-import'"><a onclick="dataadd()">数据叠加</a></div>
+						    </div>
+						    <div id="mm4" style="width:100px;">
+						        <div onclick="$('#dlgquery').dialog('open')">数据保存</div>
+						        <div><a onclick="$('#dlg').dialog('open')">自定义sql</a></div>
+						    </div>
+						    <div id="mm5" style="width:100px;">
+						        <div>柱状图</div>
+						        <div>饼图</div>
+						        <div>折线图</div>
+						        <div>更多图形...</div>
+						    </div>
+						    <div id="mm6" class="menu-content" style="background:#f0f0f0;padding:10px;text-align:left">
+						       <div>如何进行探索式数据分析</div>
+						    </div>
+
+</div>
+<div style="clear:both"></div>       	
+</div>  
+    
+</div>
+<div data-options="region:'center'" style="padding:5px;border:0px;background-color:#ffffff" class="panel-body panel-body-noheader layout-body panel-noscroll">
+     <div class="easyui-layout" style="border:0px" fit=true>
+		<div data-options="region:'west'" split="false" style="border:0px;width: 170px; padding: 0px" title="模型内容">
+
+         <div class="easyui-accordion" fit=true>
+          <div title="数据表 " style="padding:0px" >
+			<table height="100%" width="99%" border=0 cellpadding="0" cellspacing="0">
+				<tr height=20>
+				<Td style="padding:1px">
+				 <input class="easyui-searchbox" id="searchbox" data-options="prompt:'输入要查询的表'" style="width:165px"></input>
+				</Td></tr>
+				<tr height=1>
+					<td  style="background: #cccccc"></td>
+				</tr>
+
+				<tr>
+					<td valign="top">
+					 <div class="easyui-panel" style="padding:0px;" fit="true">
+       				 	<ul id="tabletree" class="easyui-tree" data-options="lines:true"></ul>
+   					 </div>
+   					 <div id="tablemm" class="easyui-menu" style="width:120px;">
+				        <div onclick="append()" data-options="iconCls:'icon-add'">重命名</div>
+				        <div onclick="removeit()" data-options="iconCls:'icon-remove'">删除</div>
+				    </div>
+					</td>
+				</tr>
+
+			</table>
+		</div>
+		</div>
+		</div>
+		<div data-options="region:'center'">
+				    <div style="height:30px;width:auto;">
+				    	<div style="height:30px;">
+							<form target=datalist name="queryform" method="post"
+								action="../dsp_search.shtml?method=getdata&withinfo=true&key=0122">
+								<input type="hidden" name="tablename" id="tablename"> 
+								<input type="text" name="tablename_zh" id="tablename_zh"> 
+								<select name="tablecol" id="tablecol">
+								</select> 
+								<select name="operator" id="operator">
+									<option value="=">=</option>
+									<option value=">">></option>
+									<option value=">=">>=</option>
+									<option value="<"><</option>
+									<option value="<="><=</option>
+									<option value="!=">!=</option>
+									<option value=" like ">like</option>
+									<option value=" not like ">not like</option>
+									<option value=" in ">in</option>
+									<option value=" not in ">not in</option>
+							
+								</select> <input type="text"  id="queryvalue" taile="请输入查询条件">
+								<input type="hidden" id="value1" />
+								<input type="hidden" id="value2" />
+								<input type="hidden" name="where" id="where"> 
+								<a onclick="query()" class="easyui-linkbutton" style="width: 100px; height: 22px;">快速查询</a>
+								<a onclick="resetquery()" class="easyui-linkbutton" style="width: 100px; height: 22px;">返回</a>
+							</form>
+							</div>
+				    </div>
+				    <div style="height:90%;width: auto;">
+					<table id="datalist" style="height: auto;">
+					</table>
+				    </div>
+
+		</div>
+	
+	<div id="getdata" class="easyui-window" title="数据提取" closed=true
+	data-options="modal:true,iconCls:'icon-save'"
+	style="width: 655px; height: 365px; padding: 5px;">
+	<div style="width:545px;height:300px;float: left;border: 0px solid red; ">
+      <div style="width:525px;height:80px;float: left;padding: 5px;">
+       <table>
+          <tr>
+          	<td>要提取的记录：</td>
+          	<td style="width:25px;"><input type="radio" id="all"  name="scope"  checked="checked" value="all" /></td>
+          	<td>全部(A)</td>
+          	<td>&nbsp;&nbsp;&nbsp;</td>
+          	<td>首记录号码(S)</td>
+          	<td><input type="text" size="10" id="firstnum" name="firstnum" disabled="disabled" onkeyup="this.value=this.value.replace(/[^0-9-]+/,'');"/></td>
+          </tr>
+          <tr>
+          	<td>&nbsp;</td>
+          	<td style="width:25px;"><input type="radio" id="scope" name="scope" value="scope"/></td>
+          	<td>范围(R)</td>
+          	<td>&nbsp;&nbsp;&nbsp;</td>
+          	<td>末记录号码(E)</td>
+          	<td><input type="text" size="10" id="endnum" name="endnum" disabled="disabled" onkeyup="this.value=this.value.replace(/[^0-9-]+/,'');"/></td>
+          </tr>
+          <tr>
+          	<td>数据库顺序(O):</td>
+          	<td colspan="5">
+          		<select style="width:430px;">
+          			<option>无索引</option>
+          			<option>交易金额/升</option>
+          			<option>交易日期+交易金额/升</option>
+          		</select>
+          	</td>
+          </tr>
+       </table>
+      </div>
+      
+      <div style="width:525px;float: left; padding: 5px">
+      	   <table style="width: inherit; background-color: gray;" border="0" cellpadding="0" cellspacing="1">
+      	   		<tr style="height:30px;background-color: #fff;">
+      	   			<td align="center">表名称</td>
+      	   			<td>&nbsp;</td>
+      	   			<td align="center">条件</td>
+      	   		</tr>
+      	   		<tr style="height:20px;background-color: #fff;">
+      	   			<td style="width:330px;height: 30px;">
+      	   			    <input type="text" id="tmpname" name="tmpname" style="height: 28px;width: 240px;border:none;" value=""/>
+      	   			</td>
+      	   			<td style="width:30px;height: 30px;">
+      	   				<img alt="" src="${ctxPath!}/static/tool/image/condition.png" width="30" height="30" onmouseover="this.style.cursor='hand'" onclick="$('#dlgquery').dialog('open')"/> 
+      	   			</td>
+      	   			<td><input type="text" id="condition" name="condition" style="height: 28px;width: 220px;border:none;" value=""/> </td>
+      	   		</tr>
+      	   </table>
+      </div>
+    </div>
+    <div style="width:80px;height:300px;float: left;margin-left: 1px">
+      <table>
+      	<tr>
+      		<td>
+      			<input type="button" name="submitGetData" onclick="submitGetData()" value=" 确 定 "/>
+      		</td>
+        </tr>
+        <tr>
+      		<td>
+      			<input type="hidden" name="selectColumn" value=""/>
+      			<input type="button" name="getColumn1" onclick="$('#dlgselectcolumn').dialog('open')" value=" 字 段 "/>
+      		</td>
+        </tr>
+      </table>
+    </div>
+</div>
+
+
+
+<div id="dlgquery" class="easyui-window" title="sql语句查询(输入sql语句)"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 600px; height: 540px; padding: 1px;">
+	
+	<div class="easyui-layout" data-options="fit:true,border:false" style="border:0px">
+	<form target="datalist" style="padding: 0px; margin: 0px" name="querysqlform" action="../dsp_search.shtml?method=getdata&key=0123&withinfo=true" method="post">
+	
+	  <div data-options="region:'north'" split="false" style="height:30px; padding: 0px">
+	  		<table>
+	  			<tr>
+	  				<td>
+	  				<input type="button" onclick="$('#querysql').val('');" value="clear"> 
+			<input type="button" onclick="createsql('\'\'')" value="''"> 
+			<input type="button" onclick="createsql('=')" value="=">
+			<input type="button" onclick="createsql('>')" value=">">
+			<input type="button" onclick="createsql('>=')" value=">=">
+			<input type="button" onclick="createsql('<')" value="<">
+			<input type="button" onclick="createsql('<=')" value="<=">
+			<input type="button" onclick="createsql('!=')" value="!="> 
+			<input type="button" onclick="createsql('AND')" value="AND"> 
+			<input type="button" onclick="createsql('OR')" value="OR"> 
+			<input type="button" onclick="createsql('IN()')" value="IN"> 
+			<input type="button" onclick="createsql('like')" value="like"> 
+			<select><option>NOT like</option><option>NOT in</option></select>
+	  				</td>
+	  				<td>
+	  					<img alt="校验公式" title="校验公式" src="${ctxPath!}/static/tool/image/checkmark2.png" width="20" height="20" onmouseover="this.style.cursor='hand'" onclick="checkformula()"/>
+	  				</td>
+	  			</tr>
+	  		</table>
+			
+			
+		</div>asdfafd
+		<div data-options="region:'west'" split="false" style="width: 130px; padding: 0px" title="数据字段">
+				<select id="tablecollist" size=14
+					style="height: 100%;width:128px">
+	
+				</select>
+		</div>		
+		<div data-options="region:'center'" split="false" style="padding: 0px" title="查询设计">
+			<textarea  style="margin:0px;height: 98%;width:98%"  name="querysql" id="querysql"></textarea>
+		</div>
+		<div data-options="region:'east'" split="false" style="padding: 0px;width:130px" title="系统函数" >
+				<ul id="querylib" class="easyui-tree">
+				</ul>
+		</div>
+		<div data-options="region:'south'" style="height:130px" split="false" style="padding: 0px">
+					<input type="button" style="width:80px" value="确定" onclick="setcondition()"> 
+					<input type="reset" style="width:80px" onclick= "$('#dlgquery').window('close');" value="关闭">
+		</div>
+			</form>
+	</div>
+</div>
+
+
+<div id="dlgselectcolumn" class="easyui-window" title="字段"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 450px; height: 250px; padding: 10px;">
+	<div style="width: 340px; height: 190px; padding: 1px; float: left;">
+	要包括的字段为：
+	<br/>
+	<select name="tableselectcolumn" id="tableselectcolumn" multiple="multiple" style="width:330px;height: 170px;">
+	</select>
+	</div>
+	<div style="width: 60px; height: 190px; padding: 1px; float: left;">
+		<input type="button" name="" onclick="$('#dlgselectcolumn').dialog('close')" value=" 确 定 "/>
+	</div>
+</div>
+
+<div id="dlggroup" class="easyui-window" title="数据汇总" closed=true
+	data-options="modal:true,iconCls:'icon-save'"
+	style="width: 620px; height: 480px; padding: 0px;">
+	<div style="width: 250px;height: 300px;border:1px solid gray;margin: 10px;float: left;">
+	要汇总的字段：
+	<table>
+		<tr>
+			<td align="right">按：</td>
+			<td align="left"><select name="group1" id="group1" style="width: 180px" onchange="ocgroup1(this)"><option value="0">无</option></select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group2" id="group2" style="width: 180px" onchange="ocgroup2(this)"><option value="0">无</option> </select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group3" id="group3" style="width: 180px" disabled="disabled" onchange="ocgroup3(this)"><option value="0">无</option></select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group4" id="group4" style="width: 180px" disabled="disabled"><option value="0">无</option><option value="0">无</option></select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group5" id="group5" style="width: 180px" disabled="disabled"><option value="0">无</option></select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group6" id="group6" style="width: 180px" disabled="disabled"><option value="0">无</option></select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group7" id="group7" style="width: 180px" disabled="disabled"><option value="0">无</option></select></td>
+		</tr>
+		<tr>
+			<td align="right">然后按：</td>
+			<td align="left"><select name="group8" id="group8" style="width: 180px" disabled="disabled"><option value="0">无</option></select></td>
+		</tr>
+	</table>
+	<div >
+	
+	</div>
+	</div>
+	
+	<div style="width: 200px;height: 300px;border:1px solid gray;margin: 10px;float: left;overflow: scroll;">
+	要求和的数字字段：
+		<table id="grouptable">
+		</table>
+	</div>
+	
+	<div style="width: 80px;height: 300px;border:0px solid gray;margin: 10px;float: left;">
+	<table>
+		<tr>
+			<td><input type="button" name="" onclick="submitgroup()" value=" 确 定 "/></td>
+		</tr>
+		<tr>
+			<td><input type="button" name="cancle" onclick="$('#dlggroup').dialog('close')" value=" 取 消 "/></td>
+		</tr>
+	</table>
+	</div>
+	
+	<div style="width: 475px;height: 50px;border:1px solid gray;margin: 10px;float: left;">
+	要包括的统计值：<br>
+	<table>
+		<tr>
+			<td><input type="checkbox" name="collecttype"  value="sum"/>求和</td>
+			<td><input type="checkbox" name="collecttype"  value="avg"/>平均</td>
+			<td><input type="checkbox" name="collecttype"  value="max"/>最大</td>
+			<td><input type="checkbox" name="collecttype"  value="min"/>最小</td>
+		</tr>
+	</table>
+	
+	</div>
+	
+	
+	
+	<div style="width: 475px;height: 30px;border:0px solid gray;margin: 10px;float: left;">
+	文件名：<input type="text" name="filename" id="filename" style="width:200px;"/>
+	</div>
+</div>
+
+
+<div id="dlgavatarcols" class="easyui-window" title="插入虚拟字段"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 400px; height: 250px;padding: 10px;">
+	<table >
+		<tr><td width="90" align="right">字段名称：</td><td width="180"><input type="text" name="colsname" id="colsname" style="width:170px"/></td><td width="90"><input type="button" name="colssubmit" onclick="colssubmit()" value=" 确 定 "/></td></tr>
+		<tr>
+			<td width="90" align="right">字段类型：</td>
+			<td width="180">
+				<select name="avatarcolstyle" id="avatarcolstyle" style="width:170px">
+					<option value="1">虚拟字符</option>
+					<option value="3">虚拟数字</option>
+					<option value="1">虚拟日期</option>
+				</select>
+			</td>
+			<td width="90"><input type="button" name="colssubmit" value=" 取 消 " onclick="$('#dlgavatarcols').dialog('close')"/></td>
+		</tr>
+		<tr><td width="90" align="right">条件：</td><td width="180"><input type="text" name="colscondition" id="colscondition" style="width:170px"/></td><td width="90"><input type="button" name="colssubmit" onclick="opencolsconditiondlg()" value=" 条 件 "/></td></tr>
+		<tr><td width="90" align="right">长度：</td><td width="180" colspan="2"><input type="text" name="colslength" id="colslength" style="width:170px" value="50"/></td></tr>
+		<tr><td width="90" align="right">小数位数：</td><td width="180" colspan="2"><input type="text" name="precision" id="precision" style="width:170px" value="2"/></td></tr>
+		<tr><td width="90" align="right">描述：</td><td width="180" colspan="2"><input type="text" name="desc" id="desc" style="width:170px"/></td></tr>
+		
+	</table>
+</div>
+
+
+<div id="dlgqueryorder" class="easyui-window" title="数据表排序"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 400px; height: 330px; padding: 10px;">
+	<div style="width:360px;height:260px;border:0px solid gray;margin-top: 10px;">
+		<div style="width:250px;height:180px;border:0px solid gray;float:left;">
+			<table id="tt" class="easyui-datagrid" style="width:250px;height:auto;">  
+			    <thead>  
+			        <tr>  
+			            <th field="field" width="150"> 字 段 </th>  
+			            <th field="direction" width=98> 方 向 </th>
+			        </tr>                            
+			    </thead>                             
+			    <tbody>                              
+			        <tr>                             
+			            <td>
+			            	<select name="orderfield1" id="orderfield1"  style="width:145px;" onchange="setorderfield1()">
+			            	<option value='0'>无</option>
+			            	</select>
+			            </td>              
+			            <td>
+			            	<select name="orderdirection1" id="orderdirection1" style="width:90px;">
+			            		<option value="asc">升序</option>
+			            		<option value="desc">降序</option>
+			            	</select>
+			            </td>           
+			        </tr>    
+			        <tr>                             
+			            <td>
+			            	<select name="orderfield2" id="orderfield2"  style="width:145px;" onchange="setorderfield2()">
+			            	<option value='0'>无</option>
+			            	</select>
+			            </td>              
+			            <td>
+			            	<select name="orderdirection2" id="orderdirection2" style="width:90px;">
+			            		<option value="asc">升序</option>
+			            		<option value="desc">降序</option>
+			            	</select>
+			            </td>           
+			        </tr>  
+			        <tr>                             
+			            <td>
+			            	<select name="orderfield3" id="orderfield3"  style="width:145px;" onchange="setorderfield3()">
+			            	<option value='0'>无</option>
+			            	</select>
+			            </td>              
+			            <td>
+			            	<select name="orderdirection3" id="orderdirection3" style="width:90px;">
+			            		<option value="asc">升序</option>
+			            		<option value="desc">降序</option>
+			            	</select>
+			            </td>           
+			        </tr>  
+			        <tr>                             
+			            <td>
+			            	<select name="orderfield4" id="orderfield4"  style="width:145px;">
+			            	<option value='0'>无</option>
+			            	</select>
+			            </td>              
+			            <td>
+			            	<select name="orderdirection4" id="orderdirection4" style="width:90px;">
+			            		<option value="asc">升序</option>
+			            		<option value="desc">降序</option>
+			            	</select>
+			            </td>           
+			        </tr>                          
+			                             
+			    </tbody>                             
+		</table>  
+		</div>
+		<div style="width:105px;height:180px;border:0px solid gray;float:left;margin-left: 2px;">
+			<table>
+				<tr><td><input type="button" name="ordersumit" value=" 确 定 " style="width:80px;" onclick="ordersumit()"/> </td></tr>
+				<tr><td><input type="button" name="ordersumit" value=" 取 消 " style="width:80px;" onclick="$('#dlgqueryorder').dialog('close')"/> </td></tr>
+			</table>
+		</div>
+		<div style="width:360px;border:0px solid gray;float:left;">
+		文件名：<input type="text" name="orderfilename" id="orderfilename" style="width:200px;"/>
+		</div>
+	</div>
+</div>
+
+
+<div id="dlgsave" class="easyui-window" title="模型保存"
+	closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 400px; height: 250px;padding: 10px;">
+	<table>
+		<tr>
+			<td>模型名称：</td>
+			<td><input type="text" name="modelname" id="modelname" size="40"/> </td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">
+				<br/>
+				<input type="button" name="savemodel" id="savemodel" value=" 保 存 " onclick="savemodel()"/>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+	<div id="datadrill" class="easyui-window" title="数据钻取"
+		closed=true data-options="modal:true,border:false,iconCls:'icon-save'"
+		style="width: 800px; height: 500px;padding: 10px;">
+		<table id="datadrilllist" style="height: auto;">
+		</table>
+	</div>
+</div>
+	</div>  
+     
+    <div id="menu" class="easyui-menu" style="width:150px;">
+		<div id="m-delete">删除虚拟列</div>
+		<!-- 
+		<div id="m-update">更新</div>
+		<div class="menu-sep"></div>
+		<div id="m-closeall">全部关闭</div>
+		<div id="m-closeother">除此之外全部关闭</div>
+		<div class="menu-sep"></div>
+		<div id="m-close">关闭</div>
+		 -->
+	</div>
+	
+	<div id="menu2" class="easyui-menu" style="width:150px;">
+		<div id="m-edittable">编辑</div>
+		<div id="m-flushtable">刷新下级</div>
+		<div id="m-deletetable">删除</div>
+		<div id="m-rename">重命名</div>
+	</div>
+	
+	<div id="editcontent">
+		<table>
+			<tr>
+				<td>步骤名称 ：</td>
+				<td>子交易流水表排序</td>
+			</tr>
+			<tr>
+				<td>来源表 ：</td>
+				<td>子交易流水表</td>
+			</tr>
+			<tr>
+				<td>条件 ：</td>
+				<td>金额>100000</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<a href='#' class='toolbtn'>保存</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	
+	
+	
+
+</body>
+ 
+<style type="text/css">
+.datagrid-header-rownumber,.datagrid-cell-rownumber{
+   width:50px;
+ }
+</style>
+
+
+
+</html>
+
+	
+	
+
+

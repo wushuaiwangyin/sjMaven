@@ -1,0 +1,80 @@
+<script type="text/javascript">
+	$(function(){
+	   //初始化单选
+	   var haveLine='${property.haveLine!0}',haveSubject = '${property.haveSubject!0}';
+	   $("input:radio[name=haveLine][value="+haveLine+"]")[0].checked=true;
+	   $("input:radio[name=haveSubject][value="+haveSubject+"]")[0].checked=true;
+	});
+</script>
+
+<div class="layer">
+	<form name="FormPost" id="model-property-save" class="FormGrid"  method="post"
+		action="${ctxPath}/model/property/save">
+		
+		<input type="hidden" value="${property.id!}" name="id"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">属性名称</td>
+					<td class="DataTD width-100"><input type="text"  name="name" datatype="*"  nullmsg="请输入名称！" value="${property.name!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">是否有业务条线</td>
+					<td class="DataTD width-100">
+						<div class="radio inline">
+							<label>
+								<input name="haveLine" type="radio" class="ace" checked value="1"/>
+								<span class="lbl"> 有 </span>
+							</label>
+						</div>
+						<div class="radio inline">
+							<label>
+								<input name="haveLine" type="radio" class="ace" value="0"/>
+								<span class="lbl"> 无</span>
+							</label>
+						</div>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">是否有专题</td>
+					<td class="DataTD width-100">
+						<div class="radio inline">
+							<label>
+								<input name="haveSubject" type="radio" class="ace" checked value="1"/>
+								<span class="lbl"> 有 </span>
+							</label>
+						</div>
+						<div class="radio inline">
+							<label>
+								<input name="haveSubject" type="radio" class="ace" value="0"/>
+								<span class="lbl"> 无</span>
+							</label>
+						</div>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">序号</td>
+					<td class="DataTD width-100">
+						<input type="text" value="${property.sort!}" datatype="n1-10" ignore="ignore" name="sort"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">描述</td>
+					<td class="DataTD">
+						<textarea name="description" class="autosize-transition form-control "
+						style="resize: none;">${property.description!}</textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<#save formId="model-property-save" callBack="query()"/>
+
+<script type="text/javascript">
+
+//描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+
+</script>

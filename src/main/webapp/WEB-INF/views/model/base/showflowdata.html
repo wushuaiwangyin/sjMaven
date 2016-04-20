@@ -1,0 +1,33 @@
+<div class="layer">
+    <div class="widget-main padding-8">
+        <table id="table-detail_info" 
+        	   data-height="600"   data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true"
+               data-click-to-select="true" 
+               data-toolbar="#toolbar1"
+               data-smart-display="false">
+            <thead>
+            <tr>
+            	@for(headerMap in headerList){
+	                    <th data-field="${headerMap.fieldName!}" data-sortable="false">${headerMap.fieldAlias!}</th>
+	            @}
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script>
+    var $table_detail = $('#table-detail_info');
+    $table_detail.bootstrapTable({
+    iconSize:'sm',
+	pagination:true,
+	method:"post",
+	pageSize:10,
+	queryParamsType:'limit',
+	striped:true,
+	pageNumber:1,
+	sidePagination:'server',
+	url:'${ctxPath}/model/runflow/getflowdata?id=${flowid!}'
+    });
+</script>

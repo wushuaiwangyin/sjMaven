@@ -1,0 +1,133 @@
+[
+{
+    "id": 1,
+    "name": "业务条线",
+    "value": "1001",
+    "pid": 0,
+    "sort": 1,
+    "updateBy": "admin",
+    "updateDate": 1437723223000,
+    "remark": "描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息",
+    "delFlag": "0"
+},
+{
+    "id": 2,
+    "name": "柜面",
+    "value": "10011",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 3,
+    "name": "对公信贷",
+    "value": "10012",
+    "pid": 1,
+    "updateBy": "admin",
+    "updateDate": 1437723715000,
+    "delFlag": "0"
+},
+{
+    "id": 4,
+    "name": "对私信贷",
+    "value": "10013",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 5,
+    "name": "信用卡",
+    "value": "10014",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 6,
+    "name": "国结业务",
+    "value": "10015",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 7,
+    "name": "电子银行",
+    "value": "10016",
+    "pid": 1,
+    "updateBy": "admin",
+    "updateDate": 1437723352000,
+    "remark": "",
+    "delFlag": "0"
+},
+{
+    "id": 8,
+    "name": "资金",
+    "value": "10017",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 9,
+    "name": "票据",
+    "value": "10018",
+    "pid": 1,
+    "updateBy": "admin",
+    "updateDate": 1437723655000,
+    "remark": "说明",
+    "delFlag": "0"
+},
+{
+    "id": 10,
+    "name": "理财",
+    "value": "10019",
+    "pid": 1,
+    "updateBy": "admin",
+    "updateDate": 1437723701000,
+    "remark": "3",
+    "delFlag": "0"
+},
+{
+    "id": 11,
+    "name": "员工道德",
+    "value": "10020",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 12,
+    "name": "财务",
+    "value": "10021",
+    "pid": 1,
+    "status": 1,
+    "delFlag": "0"
+},
+{
+    "id": 14,
+    "name": "32",
+    "value": "100111",
+    "pid": 0,
+    "sort": 3,
+    "createBy": "admin",
+    "createDate": 1437709920000,
+    "updateBy": "admin",
+    "updateDate": 1437720956000,
+    "remark": "描述",
+    "delFlag": "0"
+},
+{
+    "id": 15,
+    "name": "23",
+    "value": "23",
+    "pid": 0,
+    "sort": 3,
+    "createBy": "admin",
+    "createDate": 1437710280000,
+    "updateBy": "admin",
+    "updateDate": 1437722065000,
+    "remark": "3",
+    "delFlag": "0"
+}]

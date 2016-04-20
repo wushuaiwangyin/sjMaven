@@ -1,0 +1,76 @@
+<script type="text/javascript"> 
+var cols = [{ field: 'testName', title: '<span class="dropitem">测试名</span>', align: 'center',width:120 },
+               { field: 'testValue', title: '<span class="dropitem">测试值</span>', align: 'center', width: 120}]; 
+               var url="/Test/Test1Data";
+    $(document).ready(function () {
+        init();
+        drag();//绑定datagrid，绑定拖拽
+    }); 
+    function init() {
+        $("#test").datagrid({
+            url: url,
+            type: "post",
+            datatype: "json",
+            width: 600,
+            height: 280,
+            loadMsg: "数据加载中，请稍后...",
+            nowrap: true,
+            rownumbers: false,
+            pagination: true,
+            singleSelect: true,
+            columns: [cols], //bind数据成功重新设置拖动对象  onLoadSuccess: function (data) {          
+                drag();
+            }
+        });
+    } //拖动drag和drop都是datagrid的头的datagrid-cell  
+    function drag() {
+        $('.datagrid-header-inner .datagrid-cell').draggable({
+            revert: true,
+            proxy: 'clone' });
+    } 
+    
+  //询问框
+	 $.layer({
+		    shade: [0],
+		    area: ['auto','auto'],
+		    dialog: {
+		        msg: '您确定要删除这个中间表吗？',
+		        btns: 2,                    
+		        type: 4,
+		        btn: ['确定','取消'],
+		        yes: function(index){
+		        	layer.close(index);
+		        	$.ajax({
+				        url : ""+"${ctxPath!}/model/tool/deletetable?tablename="+operaternode.name,  
+				        type : 'POST',  
+				        data : {},
+				        dataType: 'json',
+				        cache: false,
+				        success:function(data){
+				        	var json = eval(data);
+				        	$.each(json,function(infoIndex,info){
+				        		var return_flag = eval(info["return_flag"]);
+				        		if(return_flag=='0'){
+				        			layer.msg("删除中间表成功",{icon: 1,time: 2000});
+				        			$('#tabletree').tree({
+					        	        url: "${ctxPath!}/model/tool/gettabletree",
+					        	        loadFilter: function(data){
+					        	            return data;
+					        	        }
+					        	    });
+				        		}else{
+				        			var return_msg = info["return_msg"];
+				        			layer.msg(return_msg,{icon: 2,time: 2000});
+				        		}
+				        		
+				        	});
+						}
+				    });
+		        }, no: function(){
+		            
+		        }
+		    }
+		});
+	</script> 
+	
+	<div id="test"></div>

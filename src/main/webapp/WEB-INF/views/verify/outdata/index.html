@@ -1,0 +1,184 @@
+
+<div class="widget-box">
+    <div class="widget-header clearfix">
+        <h5 class="widget-title">外部数据查询</h5>
+        <div class="widget-toolbar">
+            <a href="#" data-action="fullscreen" class="orange2"> <i
+                    class="ace-icon fa fa-expand"></i>
+            </a>
+        </div>
+        <div class="widget-toolbar no-border">
+					<a href="${ctxPath}/verify/out/data/downtemplate">模板下载</a>
+        </div>
+        <div class="widget-toolbar no-border">
+        			<a class="btn btn-purple btn-minier" href="javascript:void(0);"
+		               data-mode="page" data-title="导入Excel"
+		               data-url="${ctxPath}/verify/out/data/showimportlayer"
+		               data-width="50%"
+		               data-data="{}">
+					<span class="btn btn-purple btn-xs">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导入Excel</span>
+					</a>
+        </div>
+        <div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+                          onclick="Angel.downloadFile('search-form','${ctxPath}/verify/out/data/download')">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导出Excel</span>
+        </div>
+    </div>
+
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+            <table id="table"    data-pagination="true"
+                   data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+                   data-toolbar="#toolbar"
+                   data-smart-display="true">
+                <thead>
+					<tr>
+						<th data-field="state" data-checkbox="true"></th>
+						<th data-field="eventDesc" data-sort-name="eventDesc"  data-sortable="true">事件</th>
+						<th data-field="eventUser"  data-sortable="true">事件人</th>
+						<th data-field="eventDate"  data-sort-name="eventDate" data-sortable="true">事件时间</th>
+						<th data-field="source" data-sortable="true">网站来源</th>
+						<th data-field="busType" data-sort-name="busType" data-sortable="true">行业性质</th>
+						<th data-field="province" data-sortable="true">所属省份</th>
+						<th data-field="idNum" data-sort-name="idNum" data-sortable="true">事件人证件号码</th>
+						<th data-field="importDate"  data-sortable="false">导入日期</th>
+					</tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+<div id="toolbar">
+	<form method="post" class="form-search" id="search-form" >
+    <div class="form-inline" role="form">
+        <div class="form-group">
+            <div class="form-group">
+                <span>字段</span>
+                <select name="column"  class="chosen-select form-control w70" id="column-select" >
+					<option value="event_desc">事件</option>
+					<option value="event_user">事件人</option>
+					<option value="event_date">事件时间</option>
+					<option value="source">网站来源</option>
+					<option value="bus_type">行业性质</option>
+					<option value="province">所属省份</option>
+					<option value="id_num">事件人证件号码</option>
+					<option value="import_date">导入日期</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <select name="operator"  class="chosen-select form-control w70" id="operator-select" >
+                <option value=1 selected="selected">等于</option>
+                <option value=2>大于</option>
+                <option value=3>小于</option>
+                <option value=4>大于等于</option>
+                <option value=5>小于等于</option>
+                <option value=6>区间</option>
+                <option value=7>包含</option>
+                <option value=8>不包含</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input id="columnValue"  name="columnValue" class="form-control w70" type="text" >
+            <input id="columnValue2" name="columnValue2" class="form-control w70" type="hidden" >
+        </div>
+
+        <button id="ok" type="button" onclick = "query()" class="btn btn-primary btn-sm">查询</button>
+    </div>
+    </form>
+</div>
+</div>
+<script>
+
+    $(function(){
+        var $table = $('#table');
+        $("#column-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+        $("#operator-select").chosen({width: "100px", search_contains: true, disable_search_threshold: 10});
+
+        $table.bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:'${ctxPath}/verify/out/data/list'
+	    });
+        
+    })
+
+	$("#operator-select").chosen().change(function(){
+		var value1 = document.getElementById("columnValue");
+		var value2 = document.getElementById("columnValue2");
+		var columnValue = $("#column-select").trigger("liszt:updated").val();
+		if($("#operator-select").trigger("liszt:updated").val() == 6){
+			if(columnValue == 'event_date' || columnValue == 'import_date'){
+				value1.type = 'date';
+				value2.type = 'date';
+			}else{
+				value1.type = 'text';
+				value2.type = 'text';
+			}
+		}else{
+			value2.type = 'hidden';
+		}
+	});
+
+    $("#column-select").chosen().change(function(){
+    	var dateDate = document.getElementById("dateDate");
+    	var value1 = document.getElementById("columnValue");
+		var value2 = document.getElementById("columnValue2");
+		var columnValue = $("#column-select").trigger("liszt:updated").val();
+    	//条件为时间时，点击触发时间控件
+    	if(columnValue == 'event_date' || columnValue == 'import_date'){
+    		if($("#operator-select").trigger("liszt:updated").val() == 6){
+    			$("#columnValue").removeClass('hide');
+    	    	value1.type = 'date';
+    	    	value2.type = 'date';
+    		}else{
+    			$("#columnValue").removeClass('hide');
+    			value1.type = 'date';
+    		}
+    	}
+    	//非上述三种状态时，正常显示
+    	if(columnValue != 'event_date' && columnValue != 'import_date'){
+    		if($("#operator-select").trigger("liszt:updated").val() == 6){
+    			$("#columnValue").removeClass('hide');
+    			value1.type = 'text';
+    			value2.type = 'text';
+    		}else{
+    			$("#columnValue").removeClass('hide');
+    			value1.type = 'text';
+    			value2.type = 'hidden';
+    		}
+    	}
+    });
+
+    function formatter1(value,row,index){
+        return ' <a  href="javascript:void(0);"'+
+                ' data-mode="detail" data-title="'+value+'    关联信息"'+
+                ' data-url="view/query/resourceData/relation.html?id='+row.id+ '"'+
+                'data-width="50%"'+
+                'data-data="{id:'+row.id+'}" >'+
+                value +
+                '</a>';
+
+    }
+    
+    function query(){
+    	var params = jQuery("#search-form").serialize();
+    	params = decodeURIComponent(params,true);
+		params = encodeURI(encodeURI(params));
+		$('#table').bootstrapTable("refresh",{url:"${ctxPath}/verify/out/data/list?"+params+"&property=2"})
+    }
+    
+    
+
+
+</script>

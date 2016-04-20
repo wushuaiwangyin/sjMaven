@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelPropertyMapper">
+
+	<sql id="modelPropertyColumns">
+		id,name,sort,have_line,have_subject,description,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasModelPropertyColumns">
+		b.id,b.name,b.sort,b.have_line,b.have_subject,b.description,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.model.model.ModelProperty">
+		select  <include refid="aliasModelPropertyColumns" />  
+			from model_buz_property  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(sort)">
+			    and b.sort =  #{sort}
+			 </if>
+			 <if test="@Ognl@isNotBlank(haveLine)">
+			    and b.have_line =  #{haveLine}
+			 </if>
+			 <if test="@Ognl@isNotBlank(haveSubject)">
+			    and b.have_subject =  #{haveSubject}
+			 </if>
+			 <if test="@Ognl@isNotBlank(description)">
+			    and b.description like '%' || #{description} ||'%' 
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

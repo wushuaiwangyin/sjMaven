@@ -1,0 +1,177 @@
+
+<div class="widget-box widget-color-green2">
+    <div class="widget-header clearfix">
+        <h5 class="widget-title">参数设置</h5>
+        <div class="widget-toolbar">
+            <a href="#" data-action="fullscreen" class="orange2"> <i
+                    class="ace-icon fa fa-expand"></i>
+            </a>
+        </div>
+        <div class="widget-toolbar no-border">
+			<span class="btn btn-purple btn-xs"
+                  onclick="Angel.downloadFile('search-form','${ctxPath}/area/export')">
+			<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+			导出Excel</span>
+        </div>
+    </div>
+
+
+
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+            <div class="row">
+                <div class="col-sm-12" id="list-page">
+                    <table id="table" data-height="550"   data-pagination="true"
+                           data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+                           data-toolbar="#toolbar"
+                           data-smart-display="true">
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="id" data-align="center" data-width="30" data-sortable="true">编号</th>
+                            <th data-field="name"  data-sortable="true" data-formatter="modelNameFormatter">模型名称</th>
+                            <th data-field="property" data-sortable="true">业务属性</th>
+                            <th data-field="bizLine" data-sortable="true">业务条线</th>
+                            <th data-field="publishDate" data-sortable="true">发布时间</th>
+                            <th data-field="configStatus" data-sortable="true">配置状态</th>
+                            <th data-field="id" data-align="center" data-sortable="false" data-width="100"  data-formatter="operatorBtn">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toolbar">
+    <div class="form-inline" role="form">
+        <div class="form-group">
+            <span>模型名称</span>
+            <input name="property" class="form-control w70" type="text" >
+        </div>
+        <div class="form-group">
+            <span>业务属性</span>
+            <select name="property"  class="chosen-select form-control w70" id="property-select" >
+
+            </select>
+        </div>
+        <div class="form-group">
+            <span>业务条线</span>
+            <select name="property"  class="chosen-select form-control w70" id="buzLine-select" >
+
+            </select>
+        </div>
+        <div class="form-group">
+            <span>风险级别</span>
+            <select name="property"  class="chosen-select form-control w70" id="riskLevel-select" >
+                <option>全部</option>
+                <option>一般问题</option>
+                <option>比较严重</option>
+                <option>特别严重</option>
+            </select>
+        </div>
+
+        <button id="ok" type="submit" class="btn btn-primary btn-sm">查询</button>
+    </div>
+</div>
+
+<div id="rowBtn_edit" style="display: none;">
+    <div class="hidden-sm hidden-xs action-buttons">
+        <a class="green" href="javascript:void(0);"
+           data-mode="page" data-title="结果配置"
+           data-url="${ctxPath}/mconfig/set1"
+           data-width="50%"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-pencil-square bigger-130"></i>
+        </a>
+        <a class="green" href="javascript:void(0);"
+           data-mode="page" data-title="查询配置"
+           data-url="${ctxPath}/mconfig/set2"
+           data-width="80%"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-search bigger-130"></i>
+        </a>
+    </div>
+</div>
+
+
+<script>
+    var id = null;
+    $.ajax({
+        url: "./data/model.json",
+        dataType: "json",
+        async: false,
+        success: function(data) {
+            var v_datas = [];
+            $.each(data,function(i,obj){
+                if(obj.status == "已发布"){
+                    obj["publishDate"] = "2015-08-05";
+                    v_datas.push(obj);
+                }
+            })
+            var $table = $('#table');
+            $table.bootstrapTable({
+                iconSize:'sm',
+                onClickCell:function(field,value,row){
+                    id = row.id;
+                },
+                data:v_datas
+            });
+        }
+    });
+
+
+    $("#riskLevel-select").chosen({width: "100px",disable_search_threshold:10});
+    $.ajax({
+        url: "./data/property.json",
+        dataType: "json",
+        async: false,
+        success: function(data) {
+            properties = data;
+            $("#property-select").append("<option>全部</option>");
+            $.each(data,function(i,obj){
+                $("#property-select").append("<option value="+obj.id+">"+obj.name+"</option>");
+            })
+            $("#property-select").chosen({width: "100px",search_contains: true,disable_search_threshold:10});
+            loadBuzLine();
+        }
+    });
+
+    function loadBuzLine(){
+        $.ajax({
+            url: "./data/dic.json",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $("#buzLine-select").append("<option>全部</option>");
+                $.each(data, function (i, obj) {
+                    if (obj.pid == 1) {
+                        $("#buzLine-select").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+                    }
+                })
+                $("#buzLine-select").chosen({width: "100px", search_contains: true, disable_search_threshold: 10});
+            }
+        })
+    }
+
+
+    function riskLevelCellStyle(value,row,index){
+        if(value == "特别严重"){
+            return {css:{background:'#ffb752'}};
+        }
+        return {};
+    }
+    function modelNameFormatter(value,row,index){
+    	return ' <a  href="javascript:void(0);"'+
+		' data-mode="detail" data-title="'+value+'    详细"'+
+		' data-url="${ctxPath}/model/base/detail/showlayer?id='+row.id+ '"'+
+		'data-width="50%"'+
+		'data-data="{id:41}" >'+
+		value +
+		'</a>';
+
+    }
+</script>

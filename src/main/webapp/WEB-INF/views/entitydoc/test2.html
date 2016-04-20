@@ -1,0 +1,173 @@
+<div class="row">
+	<div class="col-xs-3">
+		<div class="widget-box">
+			<div class="widget-header clearfix">
+				<h5 class="widget-title"></h5>
+				<div class="widget-toolbar width-30">
+				</div>
+				<div class="widget-toolbar no-border width-70" style="padding-top: 2px;">
+					<form method="post" class="form-search" target="list-page"
+						  action="">
+						<div class="input-group" style="line-height: 0px;">
+							<input type="text" class="form-control search-query"
+								   name="name" placeholder="关键词" id="search-input">
+								<span class="input-group-btn">
+									<span class="btn  btn-success btn-sm"
+										  id="search-btn">
+										 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+									</span>
+								</span>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main padding-8">
+					<ul id="ztree" class="ztree" style="min-height: 480px;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="col-xs-9">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">机构用户档案信息</h5>
+				
+			</div>
+			<div class="widget-body">
+			<iframe src="${ctxPath}/entitydoc/main/showdata" height="600px" width="100%" style="border: 0px;"></iframe>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+<div id="rowBtn_edit" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" title="详细"
+		   data-mode="tableDetails" data-title="详细"
+		   data-url="${ctxPath}/data/queryHeaders"
+		   data-width="80%"
+		   data-data="{modelId:'{row.id}'}"
+		   data-table = "table"
+				>
+			<i class="ace-icon fa fa-list bigger-130"></i>
+		</a>
+	</div>
+</div>
+
+<script>
+	var treeObj;
+	var key = null,nodeList=[];
+	var id = null;
+	var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		},
+
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : 'id',
+				pIdKey :'parentId',
+				rootPid: 0
+			},
+			key:{
+				name:"name"
+			}
+		},
+		callback: {
+			onClick: onClickNode
+		}
+	};
+	
+	var loadWay = "buzLine";
+	$(function(){
+		loadByBuzLine();
+		key = $("#search-input");
+		$("#riskLevel-select").chosen({width: "120px",disable_search_threshold:10});
+		$("#dealStatus-select").chosen({width: "120px",disable_search_threshold:10});
+
+		$("#search-btn").on("click",function(e){
+			treeObj.cancelSelectedNode();
+			searchNode(e);
+		})
+
+	})
+
+	
+	 $("#riskLevel-select").chosen({width: "100px",disable_search_threshold:10});
+	 $("#status-select").chosen({width: "100px",disable_search_threshold:10});
+
+	function searchNode(e) {
+		// 取得输入的关键字的值
+		var value = $.trim(key.get(0).value);
+		
+		// 按名字查询
+		var	keyType = "name";
+		if (key.hasClass("empty")) {
+			value = "";
+		}
+
+		// 如果要查空字串，就退出不查了。
+		if (value === "") {
+			return;
+		}
+		updateNodes(false);
+		if(loadWay == "buzLine"){
+			nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+			var buzlines = "";
+			$.each(nodeList,function(i,obj){
+				buzlines = (buzlines + obj.value) + (((i + 1)== nodeList.length) ? '':','); 
+			})
+			loadData(buzlines);
+		}
+		updateNodes(true);
+	}
+
+	function updateNodes(highlight) {
+		for(var i=0, l=nodeList.length; i<l; i++) {
+			nodeList[i].highlight = highlight;
+			treeObj.updateNode(nodeList[i]);
+			treeObj.expandNode(nodeList[i].getParentNode(), true, false, false);
+		}
+	}
+
+
+	function onClickNode(e, treeId, treeNode){
+	}
+	
+
+	var zTreeNodes;
+	function loadByBuzLine(){
+		$.ajax({
+			url: "${ctxPath}/office/tree",
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				var treeData = [];
+				$.each(data,function(i,obj){
+					treeData.push(obj);
+				})
+
+				$.fn.zTree.init($("#ztree"), setting,treeData);
+				treeObj = $.fn.zTree.getZTreeObj("ztree");
+				
+				
+			}
+		});
+	}
+
+
+</script>

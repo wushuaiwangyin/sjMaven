@@ -1,0 +1,58 @@
+
+<div class="layer">
+	<form name="FormPost" id="audit-type-save-form" class="FormGrid"  method="post" 
+	    action="${ctxPath}/model/audit/type/save">
+		<input type="hidden" value="${type.id!}" name="id"/>
+		<input type="hidden" value="${type.parentIds!}" name="parentIds"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr style="display: none;">
+					<td class="ui-state-error" id="FormError"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">上级分类</td>
+					<td class="DataTD">
+					<#treeselect url="model/audit/type/tree" modelNameValue="${pType.name!}" 
+							modelIdValue="${pType.id!0}" selectIds="${pType.id!}"
+							curId="${type.id!}" rootNodeName="审计专项分类列表"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="name" datatype="*"  nullmsg="请输入名称！"
+						value="${type.name!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">序号</td>
+					<td class="DataTD width-100">
+						<input type="text" value="${type.sort!}" datatype="n1-10" ignore="ignore"  name="sort"/>
+					</td>
+				</tr>
+
+				<tr class="FormData">
+					<td class="CaptionTD">描述</td>
+					<td class="DataTD">
+						<textarea name="description" class="autosize-transition form-control "
+						style="resize: none;">${type.description!}</textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="top-type-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+<#save formId="audit-type-save-form" callBack="reloadTree()"/>
+
+
+<script type="text/javascript">
+//描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+</script>

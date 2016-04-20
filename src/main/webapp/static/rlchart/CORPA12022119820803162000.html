@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="GB2312">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+<body>
+<div id="muchart" style="height:900px"></div>
+</body>
+</html>
+ <script src="jquery.min.js"></script>
+ <script src="echarts_rl.js"></script>
+<script>
+   var myChart;  
+   var eCharts; 
+  
+    myChart = echarts.init(document.getElementById('muchart'));  
+    myChart.showLoading({  
+        text : "图表数据正在努力加载..."  
+    });
+option = {
+  //  title : {
+      //  text: '担保关系',
+    //    x:'right',
+   //     y:'bottom'
+ //   },
+    tooltip : {
+        trigger: 'item',
+        formatter: '{a} : {b}'
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            restore : {show: true},
+            magicType: {show: true, type: ['force', 'chord']},
+            saveAsImage : {show: true}
+        }
+    },
+   /*  legend: {
+        x: 'left',
+        data:['担保机构','被担保机构']
+    }, */
+    series : [
+        {
+            type:'force',
+            name : "担保关系",
+            ribbonType: false,
+            categories : [
+                {
+                    name: '担保机构'
+                },
+                {
+                    name: '被担保机构'
+                },
+                {
+                    name:'朋友'
+                }
+            ],
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true,
+                        textStyle: {
+                            color: '#333'
+                        }
+                    },
+                    nodeStyle : {
+                        brushType : 'both',
+                        borderColor : 'rgba(255,215,255,0.4)',
+                        width:100,
+                        borderWidth : 1
+                    },
+                    linkStyle: {
+                        type: 'curve'
+                    }
+                },
+                emphasis: {
+                    label: {
+                        show: true
+                        // textStyle: null      // 默认使用全局文本样式，详见TEXTSTYLE
+                    },
+                    nodeStyle : {
+                        //r: 30
+                        brushType : 'both',
+                        borderColor : 'rgba(255,215,255,100)',
+                        borderWidth : 1,
+                       width:100
+                    },
+                    linkStyle : {}
+                }
+            },
+            useWorker: false,
+            minRadius : 25,
+            maxRadius : 100,
+            gravity: 1.1,
+            scaling: 1.1,
+            roam: 'move',
+            linkSymbol: 'arrow',
+            nodes:[
+                
+            ],
+            links : [
+                
+            ]
+        }
+    ]
+};
+
+function focus(param) {
+    var data = param.data;
+    var links = option.series[0].links;
+    var nodes = option.series[0].nodes;
+   
+    if (
+            data.source !== undefined
+            && data.target !== undefined
+    ) { //点击的是边
+        var sourceNode = nodes.filter(function (n) {return n.name == data.source})[0];
+        var targetNode = nodes.filter(function (n) {return n.name == data.target})[0];
+        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    } else { // 点击的是点
+    	// alert(data.name);
+        console.log("选中了" + data.name + '(' + data.value + ')');
+        window.open('capitalFlow/frame.html', '_blank')
+        
+    	/* if(data.name == 'CORPA12011019700814122800'){
+            window.open('${ctxPath}/verify/capital/flow3','_blank'); 	
+    	}if(data.value == '2'){
+            window.open('${ctxPath}/verify/capital/flow4','_blank'); 	
+    	}if(data.value == '3'){
+            window.open('${ctxPath}/verify/capital/flow4','_blank'); 	
+    	}if(data.value == '4'){
+            window.open('${ctxPath}/verify/capital/flow7','_blank'); 	
+    	}if(data.value == '5'){
+            window.open('${ctxPath}/verify/capital/flow6','_blank'); 	
+    	} */
+    }
+}
+var tpnodes=[{"category":1,"name":"CORPA12022119820803162000","value":30},{"category":0,"name":"@2010081000041396","value":30},{"category":0,"name":"P0002085646658021960451","value":30},{"category":0,"name":"P0002514782733139701532","value":30},{"category":0,"name":"@2010081000041321","value":30},{"category":0,"name":"P0006306070049702858086","value":30},{"category":0,"name":"@2010081000041576","value":30},{"category":0,"name":"@2010081000041397","value":30},{"category":0,"name":"P0001493100012195694739","value":30},{"category":0,"name":"@2010081000041472","value":30},{"category":0,"name":"P0004418656180343082496","value":30},{"category":0,"name":"P0003712071912065874816","value":30},{"category":0,"name":"P0003712071912065874816","value":20}];
+
+var tplinks =[{"source":"CORPA12022119820803162000","target":"@2010081000041396","weight":10},{"source":"@2010081000041396","target":"P0002085646658021960451","weight":10},{"source":"P0002085646658021960451","target":"P0002514782733139701532","weight":10},{"source":"P0002514782733139701532","target":"@2010081000041321","weight":10},{"source":"@2010081000041321","target":"P0006306070049702858086","weight":10},{"source":"P0006306070049702858086","target":"@2010081000041576","weight":10},{"source":"@2010081000041576","target":"@2010081000041397","weight":10},{"source":"@2010081000041397","target":"P0001493100012195694739","weight":10},{"source":"P0001493100012195694739","target":"@2010081000041472","weight":10},{"source":"@2010081000041472","target":"P0004418656180343082496","weight":10},{"source":"P0004418656180343082496","target":"P0003712071912065874816","weight":10},{"source":"P0003712071912065874816","target":"CORPA12022119820803162000","weight":10},{"source":"@2010081000041472","target":"CORPA12022119820803162000","weight":10},{"source":"P0001493100012195694739","target":"P0003712071912065874816","weight":10},{"source":"P0003712071912065874816","target":"P0004418656180343082496","weight":10},{"source":"P0004418656180343082496","target":"@2010081000041472","weight":10},{"source":"@2010081000041397","target":"CORPA12022119820803162000","weight":10},{"source":"@2010081000041576","target":"@2010081000041472","weight":10},{"source":"P0004418656180343082496","target":"@2010081000041397","weight":10},{"source":"@2010081000041576","target":"P0003712071912065874816","weight":10},{"source":"P0006306070049702858086","target":"P0001493100012195694739","weight":10},{"source":"P0001493100012195694739","target":"@2010081000041397","weight":10},{"source":"@2010081000041397","target":"@2010081000041576","weight":10},{"source":"@2010081000041321","target":"CORPA12022119820803162000","weight":10},{"source":"P0002514782733139701532","target":"CORPA12022119820803162000","weight":10},{"source":"P0002085646658021960451","target":"CORPA12022119820803162000","weight":10}];
+  option.series[0].nodes=tpnodes;
+  option.series[0].links=tplinks;
+  myChart.setOption(option); //先把可选项注入myChart中  
+  myChart.hideLoading();  
+  myChart.on(echarts.config.EVENT.CLICK, focus)
+ // setdata();
+/*
+var ecConfig = require('echarts/config');
+function focus(param) {
+    var data = param.data;
+    var links = option.series[0].links;
+    var nodes = option.series[0].nodes;
+    if (
+        data.source !== undefined
+        && data.target !== undefined
+    ) { //点击的是边
+        var sourceNode = nodes.filter(function (n) {return n.name == data.source})[0];
+        var targetNode = nodes.filter(function (n) {return n.name == data.target})[0];
+        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    } else { // 点击的是点
+        console.log("选中了" + data.name + '(' + data.value + ')');
+        alert(data.name);
+    }
+}
+myChart.on(ecConfig.EVENT.CLICK, focus)
+
+myChart.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+    console.log(myChart.chart.force.getPosition());
+});
+*/
+
+/*
+function setdata()
+   {
+		var url="node.json";
+
+		//alert(url);
+		$.getJSON(url,function (data) {
+
+		    //对请求返回的JSON格式进行分解加载
+		      
+		    option.series[0].nodes=data;
+		  	myChart.setOption(option)
+		       
+		    });
+		   
+
+	   ;
+   }
+*/
+</script>
+                    

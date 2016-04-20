@@ -1,0 +1,81 @@
+<div class="layer">
+    <div class="alert-success">存款账户详细信息</div>
+    <div class="widget-main padding-8">
+        <table id="table_detail"  calss="table_responsive" data-pagination="true" data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true">
+            <thead>
+              <!--  <tr>
+					<th data-field="modelId" data-sortable="true">模型编号</th>
+					<th data-field="tabName" data-sortable="true">物理表名</th>
+					<th data-field="colName" data-sortable="true">列名称</th>
+					<th data-field="alise" data-sortable="true">列中文名称</th>
+					<th data-field="id" data-sortable="false" data-width="200" data-formatter="operatorBtn">操作</th>
+				</tr>
+				-->
+				<tr id="th_detail"></tr>
+				
+				
+            </thead>
+        </table>
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+<script>
+ 
+$(function(){
+	//存款账户详细信息
+	var acctno='${acctno!}';
+	//acctno=new String("'"+178512010103849493+"'");
+	var isPublic=${isPublic!};
+ //alert(acctno);
+	 
+	  var params={"acctno":acctno,"isPublic":isPublic};
+	 $.ajax({
+	        url: "${ctxPath}/cust360/main/detail/getDspDetail?acctno="+acctno+"&isPublic="+isPublic,
+	        dataType: "json",
+	        async: false,
+	        method:"post",
+	        success: function (data) {
+	        	//alert(data);
+	        	var str="";
+	    		//var parsedJson = jQuery.parseJSON(data); 
+	    		var parsedJson =data;
+	    		var colName='';
+	    		$("#th_detail").html("");
+	    		 $.each(parsedJson.cols, function(i, item) {
+	    			// alert(i);
+	    				str="<th data-field='"+i+"' data-align='center' data-width='30' data-sortable='true' ";
+	    			 $.each(item,function(n,obj){
+	    				if("alise"==n){
+	    				colName=obj;
+	    				//alert(colName);
+	    				}
+	    			 });
+	    	    	 str+=">"+colName+"</th>";
+	    	    	 //alert(str);
+	    	  			$("#th_detail").append(str);
+	    	 });
+	    		 
+	    		var dataList=parsedJson.list
+	    		
+	    	 $('#table_detail').bootstrapTable('load',dataList);
+	    			$('#table_detail').bootstrapTable({
+	                   iconSize:'sm',
+	                  data:dataList
+	               });
+	        }
+	       }); 
+})
+    
+
+
+
+
+</script>

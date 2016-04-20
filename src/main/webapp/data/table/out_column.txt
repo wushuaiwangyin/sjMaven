@@ -1,0 +1,9 @@
+<tr><th data-field="EVENT" data-sortable="true">事件</th>
+<th data-field="NAME" data-sortable="true">事件人</th>
+<th data-field="EVENTDATE" data-sortable="true">事情时间</th>
+<th data-field="SOURCE" data-sortable="true">网站来源</th>
+<th data-field="NATRURE" data-sortable="true">行业性质 </th>
+<th data-field="PROVINCE" data-sortable="true">所属省份</th>
+<th data-field="NUMBERS" data-sortable="true">事件人证件号码</th>
+<th data-field="CREATEDATE" data-sortable="true">导入日期</th>
+</tr>

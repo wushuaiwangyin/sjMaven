@@ -1,0 +1,348 @@
+<div class="row">
+	<div class="col-xs-5">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="widget-box transparent">
+					<div class="widget-body">
+						<div class="widget-main padding-0">
+							<ul class="item-list ui-sortable" id="tasks">
+								@var total;
+								@var lastMonthRunList = risk.findRunAmount(1);
+								@for(map in lastMonthRunList){
+									@total = map.total;
+								@}
+								@if(total == 0){
+									<li class="item-red clearfix ui-sortable-handle"><span
+									class="lbl">上月无跑批模型！</span>
+									<div data-percent="42"
+										class="pull-right easy-pie-chart percentage">
+										<span class="badge badge-important ">0</span>
+									</div></li>
+								@}else{
+									@for(map in lastMonthRunList){
+										@if(!mapLP.last){
+											@if(mapLP.odd){
+												<li class="item-orange clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}" href="javascript:(0);" onclick="clickGoto('${map.name!}')">
+														${map.name!}</a>上月跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart percentage">
+														<span class="badge badge-success ">${map.value!}/${total!}</span>
+													</div>
+												</li>
+											@}else{
+												<li class="item-blue clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}" href="javascript:(0);" onclick="clickGoto('${map.name!}')">
+														${map.name!}</a>上月跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart">
+													<span class="badge badge-info">${map.value!}/${total!}</span>
+													</div>
+											</li>
+											@}
+										@}
+									@}
+								@}
+							</ul>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div><!--row end-->
+
+		<div class="hr hr32 hr-dotted"></div>
+
+		<div class="row">
+			<div class="col-xs-12 ">
+				<div class="widget-box transparent">
+					<div class="widget-body">
+						<div class="widget-main padding-0">
+							<ul class="item-list ui-sortable" id="tasks1">
+								@var total1;
+								@var yesterdayRunList = risk.findRunAmount(0);
+								@for(map in yesterdayRunList){
+									@total1 = map.total;
+								@}
+								@if(total1 == 0){
+									<li class="item-red clearfix ui-sortable-handle"><span
+									class="lbl">昨日无跑批模型！</span>
+									<div data-percent="42"
+										class="pull-right easy-pie-chart percentage">
+										<span class="badge badge-important ">0</span>
+									</div></li>
+								@}else{
+									@for(map in yesterdayRunList){
+										@if(!mapLP.last){
+											@if(mapLP.odd){
+												<li class="item-orange clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}_1" href="javascript:(0);" onclick="clickGoto_1('${map.name!}')">
+													${map.name!}</a>昨日跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart percentage">
+														<span class="badge badge-success ">${map.value!}/${total1!}</span>
+													</div>
+												</li>
+											@}else{
+												<li class="item-blue clearfix ui-sortable-handle">
+													<span class="lbl"> <a id="${map.name!}_1" href="javascript:(0);" onclick="clickGoto_1('${map.name!}')">
+													${map.name!}</a>昨日跑批${map.value!}个</span>
+													<div data-percent="42" class="pull-right easy-pie-chart">
+													<span class="badge badge-info">${map.value!}/${total1!}</span>
+													</div>
+											</li>
+											@}
+										@}
+									@}
+								@}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--row-->
+	</div>	
+<!--	
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+-->	
+	<div class="col-xs-7">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">图表</h5>
+				<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs" onclick="countByBar()">
+						<i class="ace-icon fa fa-pie bigger-130"></i>柱状图
+					</span>
+				</div>
+				<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs" onclick="countByPie(0)">
+						<i class="ace-icon fa fa-pie bigger-130"></i>昨日饼图
+					</span>
+				</div>
+			<div class="widget-toolbar">
+					<span class="btn btn-purple btn-xs" onclick="countByPie(1)">
+						<i class="ace-icon fa fa-pie bigger-130"></i>上月饼图
+					</span>
+				</div>
+			<div class="widget-body">
+				<div class="widget-main padding-0">
+					<div id="picBody" style="height: 500px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</div>
+
+<script>
+	$(function() {
+		// 路径配置
+		require.config({
+			paths : {
+				echarts : './static/echarts-2.1.10/build/dist'
+			}
+		});
+		countByPie(1);
+	})
+
+	//饼形图
+	function countByPie(flag){
+		var data; 
+		var models = [];
+		var title;
+		$.ajax({
+			url: "${ctxPath}/risk/detection/countByPie?flag="+flag,
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(result) {
+				data = result
+				$.each(result,function(i,obj){
+					models.push(obj.name);
+				})
+			}
+		}); 
+		if(flag == 1){
+			title = '上月模型新增饼图';
+		}else{
+			title = '昨日模型新增饼图';
+		}
+		var option = {
+			title : {
+				text: '',
+				subtext: '',
+				x:'center'
+			},
+			tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend: {
+				orient : 'vertical',
+				x : 'left',
+				data : models
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {
+						show: true,
+						type: ['pie', 'funnel'],
+						option: {
+							funnel: {
+								x: '25%',
+								width: '50%',
+								funnelAlign: 'left',
+								max: 1548
+							}
+						}
+					},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			calculable : true,
+			
+			series : [
+				{
+					name: title,
+					type:'pie',
+					radius : '55%',
+					center: ['50%', '60%'],
+					data: data
+				}
+			]
+			
+		};
+		require(
+				[
+					'echarts',
+					'echarts/chart/pie',
+					'echarts/chart/funnel'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+
+	function countByBar(){
+		var models = []; 
+		var value1 = [];
+		var value2 = [];
+		$.ajax({
+			url: "${ctxPath}/risk/detection/countByBar",
+			method:"post",
+			dataType: "json",
+			async: false,
+			success: function(result) {
+				$.each(result,function(i,obj){
+					models.push(obj.key);
+					value1.push(obj.value1);
+					value2.push(obj.value2);
+				})
+			}
+		}); 
+		
+		var option = {
+			title : {
+				text: '',
+				subtext: ''
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			legend: {
+				data:['上月','昨日'],
+				y:'bottom'
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {show: true, type: ['line', 'bar']},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			xAxis : [
+				{
+					type : 'value',
+					boundaryGap : [0, 0.01]
+				}
+			],
+			calculable : true,
+			yAxis : [
+				{
+					type : 'category',
+					data : models
+				}
+			],
+
+			series : [
+				{
+					name:'上月',
+					type:'bar',
+					data:value1
+				},
+				{
+					name:'昨日',
+					type:'bar',
+					data:value2
+				}
+			]
+		};
+
+		require(
+				[
+					'echarts',
+					'echarts/chart/line',
+					'echarts/chart/bar'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+	
+	function clickGoto(name){
+		var a = document.getElementById(name);
+		var link = a.getAttribute('href');
+		if(name == "合规模型"){
+			a.href = "#/ajax/risk/detection/hg";
+		}else if(name == "监管模型"){
+			a.href = "#/ajax/risk/detection/jg";
+		}else if(name == "重大风险模型"){
+			a.href = "#/ajax/risk/detection/big";
+		}else if(name == "审计专项模型"){
+			a.href = "#/ajax/risk/detection/sjzx";
+		}else if(name == "二次分析模型"){
+			a.href = "#/ajax/second/model";
+		}
+	}
+	
+	function clickGoto_1(name){
+		var a = document.getElementById(name+"_1");
+		var link = a.getAttribute('href');
+		if(name == "合规模型"){
+			a.href = "#/ajax/risk/detection/hg";
+		}else if(name == "监管模型"){
+			a.href = "#/ajax/risk/detection/jg";
+		}else if(name == "重大风险模型"){
+			a.href = "#/ajax/risk/detection/big";
+		}else if(name == "审计专项模型"){
+			a.href = "#/ajax/risk/detection/sjzx";
+		}else if(name == "二次分析模型"){
+			a.href = "#/ajax/second/model";
+		}
+	}
+
+</script>

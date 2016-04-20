@@ -1,0 +1,31 @@
+<tr>
+<th data-field="a" data-sortable="true">帐号</th>
+<th data-field="b" data-sortable="true">交易金额</th>
+<th data-field="c" data-sortable="true">摘要代码</th>
+<th data-field="d" data-sortable="true">交易日期</th>
+<th data-field="e" data-sortable="true">主机日期</th>
+<th data-field="f" data-sortable="true">交易时间</th>
+<th data-field="g" data-sortable="true">交易码</th>
+<th data-field="h" data-sortable="true">凭证代号</th>
+<th data-field="i" data-sortable="true">借贷标记</th>
+<th data-field="j" data-sortable="true">帐户余额</th>
+<th data-field="k" data-sortable="true">余额性质</th>
+<th data-field="l" data-sortable="true">余额方向</th>
+<th data-field="m" data-sortable="true">客户号</th>
+<th data-field="n" data-sortable="true">客户帐号类型</th>
+<th data-field="o" data-sortable="true">客户帐号子序号</th>
+<th data-field="p" data-sortable="true">营业机构号</th>
+<th data-field="q" data-sortable="true">帐务机构号</th>
+<th data-field="r" data-sortable="true">帐户营业机构</th>
+<th data-field="s" data-sortable="true">帐户会计机构</th>
+<th data-field="t" data-sortable="true">交易柜员</th>
+<th data-field="u" data-sortable="true">授权柜员</th>
+<th data-field="v" data-sortable="true">柜员流水号</th>
+<th data-field="w" data-sortable="true">原柜员流水号</th>
+<th data-field="x" data-sortable="true">现转标志</th>
+<th data-field="y" data-sortable="true">传票子序号</th>
+<th data-field="z" data-sortable="true">冲补标志</th>
+<th data-field="aa" data-sortable="true">原交易日期</th>
+<th data-field="ab" data-sortable="true">时间戳</th>
+<th data-field="ac" data-sortable="true">记录状态</th>
+</tr>

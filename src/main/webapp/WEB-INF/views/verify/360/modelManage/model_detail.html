@@ -1,0 +1,138 @@
+<div class="layer">
+    <div class="widget-main padding-8">
+        <table id="table-detail_col"  data-height="500"   data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true" 
+                data-toolbar="#toolbar" data-smart-display="true">
+            <thead>
+              <tr>
+					<th data-field="modelId"   data-sortable="true">模型编号</th>
+					<th data-field="tab_id" data-formatter="tabNameFormatter"  data-sortable="true">物理表编码</th> 
+					<th data-field="tabName" data-formatter="tabNameFormatter"  data-sortable="true">物理表名</th>
+					<th data-field="id"   data-sortable="true">列编码</th>
+					<th data-field="colName"  data-sortable="true">列名称</th>
+					<th data-field="alise" data-sortable="true">列中文名称</th>
+					<th data-field="modelId" nowrap="nowrap" data-sortable="false" data-width="260" data-formatter="operatorBtn1">操作</th>
+				</tr>
+            </thead>
+        </table>
+    </div>
+<div id="toolbar">
+<div class="widget-toolbar no-border width-80" style="padding-top: 2px;">
+			<form method="post" class="form-search" target="list-page"
+						  action="">
+	<div class="input-group" style="line-height: 0px;">
+	@if(!mode){
+	
+			<a class="btn btn-purple btn-minier" href="javascript:void(0);"
+               data-mode="page" data-title="配置物理表信息"
+               data-url="${ctxPath}/cust360/model/manage/add/table/showLayer?modelId=${modelId!}"
+               data-width="80%"
+                >配置物理表 </a>
+      @}           
+               <a class="btn btn-purple btn-minier" id="addcols" name="addcols"  href="javascript:void(0);"
+               data-mode="page" data-title="配置物理列信息"
+               data-url="${ctxPath}/cust360/model/manage/getCols"
+               data-width="80%">配置物理列 </a>
+    
+			<input type="hidden" name="tableName" id="tableName" value="${tableName!}"/>
+	</div>
+			</form>
+</div>
+</div>
+<div id="rowBtn_edit1" style="display: none;">
+		<div class="hidden-sm hidden-xs action-buttons">
+			<a class="green" href="javascript:void(0);"
+			   data-mode="page" data-title="编辑" 
+			   data-url="${ctxPath}/cust360/model/manage/getColInfo"
+			   data-width="90%"
+			   data-data="{tableid:'{row.tab_id}',id:'{row.id}'}"
+					>
+				<i class="ace-icon fa fa-pencil bigger-130"></i>编辑</a>
+
+			<a class="red" href="javascript:void(0);"
+			   data-mode="del" data-title="删除操作"
+			   data-msg="你确定删除此数据吗?"
+			   data-url="${ctxPath}/cust360/model/manage/deleteCols" data-callback=""
+			  data-data="{tableid:'{row.tab_id}',colId:'{row.id}',modelId:'{row.modelId}'}"
+					>
+				<i class="ace-icon fa fa-trash-o bigger-130"></i>删除对照记录
+			</a>
+			
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+
+function tabNameFormatter(value,row,index){
+	return ' <a  href="javascript:void(0);"'+
+			' data-mode="detail" data-title="'+value+'    配置物理表信息"'+
+			' data-url="${ctxPath}/cust360/model/manage/edit/table/showLayer"'+
+			'data-width="50%"'+
+			'data-data="{modelId:'+row.modelId+',tableId:'+row.tab_id+'}" >'+
+			value +
+			'</a>';
+}
+
+$(function(){
+	
+	var $table_detail = $('#table-detail_col');
+    $table_detail.bootstrapTable({
+        iconSize:'sm',
+		pagination:true,
+		method:"post",
+		toolbar:"#toolbar",
+		pageSize:10,
+		queryParamsType:'limit',
+		striped:true,
+		pageNumber:1,
+		sidePagination:'server',
+		url:'${ctxPath}/cust360/model/manage/list?modelId='+${modelId!}
+    });
+    
+    
+})
+
+function operatorBtn1(value, row) {
+	//{tableid:'{row.tab_id}',colId:'{row.id}',modelId:'{row.modelId}'}
+		return $("#rowBtn_edit1").html()
+		.replace(new RegExp("{row.tab_id}", "g"), row.tab_id)
+		.replace(new RegExp("{row.id}", "g"), row.id)
+		.replace(new RegExp("{row.modelId}", "g"), row.modelId);
+	}
+
+
+
+/*   
+$("#add_table").click(function(){
+    	
+    }) */
+
+/*     function operatorBtn1(value, row){
+        return $("#rowBtn_edit1").html().replace(new RegExp("{row.id}","g"),row.id);
+    }
+
+    $("#column-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+    $("#operator-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+
+
+    function cardFormatter(value,row,index){
+        return ' <a  href="javascript:void(0);"'+
+                ' data-mode="page" data-title="'+row.cname+'    详细"'+
+                ' data-url="./view/query/360/result-index.html" '+
+                ' data-width="80%" data-height="100%" '+
+                ' data-data="{id:'+row.id+'}" >'+
+                value +
+                '</a>';
+
+    }
+
+    function nameFormatter(value, row) {
+    } */
+
+</script>

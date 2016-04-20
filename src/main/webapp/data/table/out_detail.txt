@@ -1,0 +1,32 @@
+<div class="profile-info-row">
+<div class="profile-info-name">事件</div>
+<div class="profile-info-value" id='base_EVENT'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">事件人</div>
+<div class="profile-info-value" id='base_NAME'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">事情时间</div>
+<div class="profile-info-value" id='base_EVENTDATE'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">网站来源</div>
+<div class="profile-info-value" id='base_SOURCE'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">行业性质 </div>
+<div class="profile-info-value" id='base_NATRURE'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">所属省份</div>
+<div class="profile-info-value" id='base_PROVINCE'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">事件人证件号码</div>
+<div class="profile-info-value" id='base_NUMBERS'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">导入日期</div>
+<div class="profile-info-value" id='base_CREATEDATE'></div>
+</div>

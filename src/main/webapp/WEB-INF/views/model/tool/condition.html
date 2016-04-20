@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/tool/styles/table.css" />
+		
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/layer2.1/layer.js"></script>
+	
+<title>条件设置</title>
+<style type="text/css">
+td 
+{ 
+border: solid #8ddad6 1px; 
+height:25px;
+text-align: center;
+} 
+
+</style>
+<script type="text/javascript">
+
+//alert("您传递的参数为：" +window.dialogArguments);
+
+function opnewin(){
+	//window.showModalDialog("www.hao123.com",'',"dialogWidth=500px;dialogHeight=300px");
+	window.returnValue="";
+	window.close();
+}
+
+$(function(){
+	 //加载字段
+	 var dlgargs = window.dialogArguments;
+	 var tablename;
+	 if(dlgargs[0]=='edit_table_condition'){
+		 tablename = dlgargs[1];
+		 $('#querysql').val(dlgargs[2]);
+	 }else{
+		 tablename = window.dialogArguments;
+	 }
+	 
+	 //var tablename = 'T_LOG_DS';
+	 var columns = new Array();
+	 var cols = new Array();
+	 var colData = new Object();
+	 $.ajax({ url: "${ctxPath!}/model/tool/gettablefield?tablename="+tablename, 
+			success: function(data){
+				var resfiled=data;
+				for(var i=0;i<resfiled.length;i++){
+					var fieldalias = resfiled[i].fieldalias;
+					var fieldname = resfiled[i].fieldname;
+					var fieldtype = resfiled[i].fieldtype;
+					var fieldid = resfiled[i].id;
+					var fieldlengt = resfiled[i].fieldlengt;
+					colData = new Object();
+					colData.field = fieldalias;
+				    colData.title = fieldalias;
+				    colData.fieldtype = fieldtype;
+				    colData.fieldid = fieldid;
+				    colData.width = 100;//也可以配置在数据库，这样整个页面的生成全部是配置的
+				    colData.fieldlengt = fieldlengt;
+				    cols.push(colData);
+				}
+				columns.push(cols);
+				$.each(cols,function(n,node) {
+					    //加载数据提取字段
+		            	$("#tablecollist").append("<option value='" + node.title + "_"+node.fieldtype+"' id='"+node.title+"__"+node.fieldtype+"__"+node.fieldlengt+"'>" + node.title + "</option>");
+		        });  
+	    }});
+	 $("#tablecollist").change(function(){
+		 createsql($("#tablecollist").find("option:selected").text());
+		 
+		 //显示用户选择的字段类型长度信息
+		 var fieldinfo = $("#tablecollist").find("option:selected").attr("id");
+		 var fieldname = fieldinfo.split('__')[0];
+		 var fieldtype = fieldinfo.split('__')[1];
+		 var fieldlength = fieldinfo.split('__')[2];
+		 
+		 if(fieldtype=="1"){
+			 fieldtype = "字符";
+		 }else if(fieldtype=="2"){
+			 fieldtype = "日期";
+		 }else if(fieldtype=="3"){
+			 fieldtype = "数字";
+		 }else{
+			 fieldtype = "其它";
+		 }
+		 
+		 var trstr = "<tr><td>1</td><td>"+fieldname+"</td><td>"+fieldtype+"</td><td>"+fieldlength+"</td></tr>";
+		 if($("#columntype tr").length>1){
+			 $("#columntype tr:last").remove();
+		 }
+		 $("#columntype").append(trstr);
+	});
+	 
+	 
+	 $('#querylib').tree({
+		 url: "${ctxPath!}/model/function/getfunlist",
+	     loadFilter: function(data){
+	         return data;   
+	     },
+	     onDblClick: function(node){
+	    	 //双击函数时加载函数到条件编辑窗口中
+	    	 createsql(node.name+"()");
+	     },
+	     onLoadSuccess:function(node){
+	    	 var nodes = $('#querylib').tree("getChildren");
+	    	 $.each(nodes,function(ni,nnode){
+	    		 if(nnode.type!=0){
+	    			 $(nnode.target).attr("title","函数说明："+nnode.funmemo+"\n参数说明："+nnode.funscript);
+	    		 }
+	    	 });
+	     }
+	 });
+	 
+	 
+});
+
+(function($){
+	  $.fn.extend({
+	  insertAtCaret: function(myValue){
+	  var $t=$(this)[0];
+	  if (document.selection) {
+	  this.focus();
+	  sel = document.selection.createRange();
+	  sel.text = myValue;
+	  this.focus();
+	  }
+	  else
+	  if ($t.selectionStart || $t.selectionStart == '0') {
+	  var startPos = $t.selectionStart;
+	  var endPos = $t.selectionEnd;
+	  var scrollTop = $t.scrollTop;
+	  $t.value = $t.value.substring(0, startPos) + myValue + $t.value.substring(endPos, $t.value.length);
+	  this.focus();
+	  $t.selectionStart = startPos + myValue.length;
+	  $t.selectionEnd = startPos + myValue.length;
+	  $t.scrollTop = scrollTop;
+	  }
+	  else {
+	  this.value += myValue;
+	  if(myValue!=" '' ")
+	  this.focus();
+	  }
+	  }
+	  })
+	})(jQuery);
+
+function createsql(text)
+	{       
+		$("#querysql").insertAtCaret(text);
+	}
+	
+function querylib(obj){
+	$("#querysql").insertAtCaret(obj.innerHTML);
+}
+
+function colsecols(){
+	$('#dlgquery').window('close');
+	window.close();
+}
+function setcondition(){
+	var convalue=$("#querysql").val();
+	window.returnValue=convalue;
+	colsecols();
+	
+}
+
+function checkformula(){
+	 var tablename = $('#tablename').val();
+	 var funscript = $('#querysql').val();
+	 if(""==funscript || null == funscript){
+		 layer.msg("请输入需要校验的公式!",{icon: 5,time: 2000});
+		 return;
+	 }
+	 $.ajax({
+			url : "${ctxPath!}/model/function/checkfunlist?tablename="+tablename+"&funscript="+funscript,  
+			type : 'POST',
+			success:function(data){
+				layer.close(loadindex);
+	        	var json = eval(data);
+	        	$.each(json,function(infoIndex,info){
+	        		var return_flag = info["return_flag"];
+	        		var return_msg = info["return_msg"];
+	        		if(return_flag=='0'){
+	        			layer.msg(return_msg,{icon: 1,time: 2000});
+	        		}else{
+	        			layer.msg(return_msg,{icon: 5,time: 2000});
+	        		}
+	        	});
+			},
+			beforeSend:function(){
+				loadindex = layer.load(1, {
+           	    shade: [0.1,'#fff'] //0.1透明度的白色背景
+           	});
+			},
+			error:function(){
+				layer.close(loadindex);
+           	layer.msg("抱歉，出错啦！",{icon: 5,time: 2000});
+			}
+		});
+}
+</script>
+</head>
+<body>
+<div id="dlgquery" class="easyui-window" title="条件设置"
+	data-options="modal:true,border:false,iconCls:'icon-save'"
+	style="width: 600px; height: 540px; padding: 1px;">
+	<div class="easyui-layout" data-options="fit:true,border:false" style="border:0px">
+	  <div data-options="region:'north'" split="false" style="height:30px; padding: 0px">
+			<table>
+	  			<tr>
+	  				<td>
+	  				<input type="button" onclick="$('#querysql').val('');" value="clear"> 
+			<input type="button" onclick="createsql('\'\'')" value="''"> 
+			<input type="button" onclick="createsql('=')" value="=">
+			<input type="button" onclick="createsql('>')" value=">">
+			<input type="button" onclick="createsql('>=')" value=">=">
+			<input type="button" onclick="createsql('<')" value="<">
+			<input type="button" onclick="createsql('<=')" value="<=">
+			<input type="button" onclick="createsql('!=')" value="!="> 
+			<input type="button" onclick="createsql('AND')" value="AND"> 
+			<input type="button" onclick="createsql('OR')" value="OR"> 
+			<input type="button" onclick="createsql('IN()')" value="IN"> 
+			<input type="button" onclick="createsql('like')" value="like"> 
+			<select><option>NOT like</option><option>NOT in</option></select>
+	  				</td>
+	  				<td>
+	  					<img alt="校验公式" title="校验公式" src="${ctxPath!}/static/tool/image/checkmark2.png" width="20" height="20" onmouseover="this.style.cursor='hand'" onclick="checkformula()"/>
+	  				</td>
+	  			</tr>
+	  		</table>
+		</div>
+		<div data-options="region:'west'" split="false" style="width: 130px; padding: 0px" title="数据字段">
+				<select id="tablecollist" size=14
+					style="height: 100%;width:128px">
+	
+				</select>
+		</div>		
+		<div data-options="region:'center'" split="false" style="padding: 0px" title="查询设计">
+			<textarea  style="margin:0px;height: 98%;width:98%"  name="querysql" id="querysql"></textarea>
+		</div>
+		<div data-options="region:'east'" split="false" style="padding: 0px;width:130px" title="系统函数" >
+				<ul id="querylib" class="easyui-tree">
+					
+				</ul>
+		</div>
+		<div data-options="region:'south'" style="height:120px;" split="false">
+		<table style="width:100%;">
+			<tr>
+				<td align="center">
+					<input type="button" style="width:80px" value="确定" onclick="setcondition()">
+					<input type="reset" style="width:80px" onclick= "colsecols()" value="关闭">
+				</td>
+			</tr>
+		</table>
+		
+		<table style="border-collapse: collapse;border: none;width:99%;" id="columntype">
+		        <tr> 
+		        	<td  width="100" align="center">序号</td>
+		            <td  width="160" align="center">字段名称</td>
+		            <td  width="155" align="center">字段类型</td>
+		            <td  width="155" align="center">字段长度</td>
+		        </tr>                             
+	
+		</table>
+					
+		</div>
+	</div>
+		
+</div>
+</body>
+</html>

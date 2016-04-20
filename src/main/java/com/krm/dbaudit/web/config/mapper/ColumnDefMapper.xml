@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.config.mapper.ColumnDefMapper">
+
+	<sql id="columnDefColumns">
+		id,table_id,table_name,column,zn_name,create_by,create_date,update_by,update_date,DEL_FLAG,type,is_query,is_list,value_type,value_ref
+	</sql>
+
+	<sql id="aliasColumnDefColumns">
+		b.id,b.table_id,b.table_name,b.column,b.zn_name,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG,b.type,b.is_query,b.is_list,b.value_type,b.value_ref
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.config.model.ColumnDef">
+		select  <include refid="aliasColumnDefColumns" />  
+			from column_def  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(tableId)">
+			    and b.table_id =  #{tableId}
+			 </if>
+			 <if test="@Ognl@isNotBlank(tableName)">
+			    and b.table_name =  #{tableName}
+			 </if>
+			 <if test="@Ognl@isNotBlank(column)">
+			    and b.column like '%' || #{column} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(znName)">
+			    and b.zn_name like '%' || #{znName} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(type)">
+			    and b.type like '%' || #{type} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(isQuery)">
+			    and b.is_query =  #{isQuery}
+			 </if>
+			 <if test="@Ognl@isNotBlank(isList)">
+			    and b.is_list =  #{isList}
+			 </if>
+			 <if test="@Ognl@isNotBlank(valueType)">
+			    and b.value_type =  #{valueType}
+			 </if>
+			 <if test="@Ognl@isNotBlank(valueRef)">
+			    and b.value_ref like '%' || #{valueRef} ||'%' 
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>绘制图形</title>
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/static/draw/styles/grapheditor.css"/>
+	<!--[if !IE]> -->
+	<script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	<!-- <![endif]-->
+
+	<!--[if IE]>
+	<script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+	<![endif]-->
+	<script type="text/javascript">
+	var ctxPath = '${ctxPath}';
+	var flow_id = ${id};
+	</script>
+	<script type="text/javascript" src="${ctxPath}/static/draw/js/config.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/draw/js/diagramly.onlyread.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/draw/js/jscolor/jscolor.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		new EditorUi(new Editor());
+	});
+	</script>
+<head>
+<title>流程图绘制工具</title>
+
+</head>
+<body class="geEditor">
+	<div id="geInfo">
+		<div class="geBlock">
+			<h1>流程图在线绘制工具</h1>
+			<p>支持导出</p>
+			<p>支持在线打印</p>
+			<p>支持页面设置等。</p>
+		</div>
+		<div class="geBlock"
+			style="margin-top: 20px; padding: 0px; text-align: center;">
+			<h3 id="geStatus">载入中，请稍等....</h3>
+		</div>
+	</div>
+	<noscript>
+		<br>
+		<p>你不要使用古代浏览器</p>
+	</noscript>
+
+</body>
+</html>

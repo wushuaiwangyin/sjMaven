@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelMonitorMapper">
+<select id="getModelStatusData" resultType="java.util.Map">
+	select nvl(a.dcount,0) as modelcount,round(nvl(a.dcount,0)*100/c.dcount,2) as modelpercent from (select status,count(1) dcount from MODEL_BASE group by status) a,SYS_DICT b,(select count(1) dcount from MODEL_BASE) c where a.status(+)=b.value and b.type='model_status' order by b.value
+</select>
+<select id="getModelDealData" resultType="java.util.Map">
+	select * from (
+	select  1 as type, COUNT(1) as value 
+		from (select  mrl.run_date as runTime,b.PROPERTY as property from MODEL_BASE b
+            left join model_run_log mrl on b.id = mrl.model_id
+            where
+            	b.del_flag = 0
+			    and b.status = 8
+		    	and mrl.RUN_DATE is not null
+           		and mrl.RUN_DATE &gt;= add_months(trunc(sysdate,'MM'),-1)
+           		and mrl.RUN_DATE &lt;= add_months(trunc(sysdate,'MM'),0) 
+           		and mrl.RUN_DATE in(
+				select modelRunTime from(
+				select id,max(modelRunTime) modelRunTime from
+					(select mrl.run_date AS modelRunTime, b.id from model_base b 
+						left join model_run_log mrl on b.id = mrl.model_id 
+						where
+							b.del_flag = 0 
+							and mrl.run_result_count > 0
+							and b.status = 8)mm 
+				where
+					modelRunTime IS NOT NULL
+				    group by ID))
+            )m
+    union all
+	select 2 as type,count(1) as modelcount from MODEL_RUN_LOG where to_char(run_date,'yyyymmdd')=to_char(sysdate-1,'yyyymmdd') union all
+	select 3 as type,0 as modelcount from dual union all
+	select 4 as type,0 as modelcount from dual union all
+	select 5 as type,count(1) as modelcount from MODEL_base where status=8 union all
+	select 6 as type,0 as modelcount from dual) order by type
+</select>
+<select id="getModelRunError" resultType="java.util.Map">
+	select aa.name,
+	case when (aa.timelong*24 &lt; 1) then round(aa.timelong*24*60,0)||'分钟前'
+	    when (aa.timelong &lt; 1) then round(aa.timelong*24,0)||'小时前'
+	    when (aa.timelong &lt; 2) then '昨天'
+	    else round(aa.timelong,0)||'天前' end as timelong from
+	(select a.id,a.model_id,b.name,sysdate-a.run_date as timelong from MODEL_RUN_LOG a,MODEL_BASE b where a.model_id=b.id and a.run_status=0 and rownum &lt;=10 order by a.id desc) aa
+	order by aa.timelong 
+</select>
+</mapper>

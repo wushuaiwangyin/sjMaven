@@ -1,0 +1,42 @@
+<div class="layer">
+    <div class="widget-main padding-8">
+        <table class="table table-condensed" id="capital-flow-data" data-height="500"   data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true"
+               data-smart-display="true">
+            <thead>
+                <tr>
+                <th data-field="trandate" data-sortable="true">交易日期</th>
+		        <th data-field="acctno" data-sortable="true">账号</th>
+		        <th data-field="serseqno" data-sortable="true">流水号</th>
+		        <th data-field="name" data-sortable="true">客户名称</th>
+		        <th data-field="cusid" data-sortable="true">客户号</th>
+		        <th data-field="acctno1" data-sortable="true">对方账号</th>
+		        <th data-field="name1" data-sortable="true">对方户名</th>
+		        <th data-field="tranamt" data-sortable="true">交易金额 </th>
+		        <th data-field="cdflag" data-sortable="true">借贷标志 </th>
+		        <th data-field="cashtranflag" data-sortable="true">现转标志 </th>
+		        <th data-field="brc" data-sortable="true">交易机构 </th>
+		        <th data-field="trancode" data-sortable="true">交易码 </th>
+		        <th data-field="teller" data-sortable="true">柜员 </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+</div>
+<script>
+$(function(){
+	var $table = $('#capital-flow-data');
+	$table.bootstrapTable({
+    	iconSize:'sm',
+		pagination:true,
+		method:"post",
+		pageSize:10,
+		queryParamsType:'limit',
+		striped:true,
+		pageNumber:1,
+		sidePagination:'server',
+		url:'${ctxPath}/capitalflow/showdatalist?acctno=${acctno}&search_flow=${search_flow}'
+    });
+});
+</script>

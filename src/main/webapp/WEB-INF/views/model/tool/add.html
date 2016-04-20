@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/tool/styles/table.css" />
+		
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+<title>数据叠加</title>
+<script type="text/javascript">
+
+var dlgargs = window.dialogArguments;
+var flowid;
+var edit_srctable;
+$(function(){
+	
+	//加载树结构
+	$('#tabletree').tree({
+        url: "${ctxPath!}/model/tool/gettabletree",
+        checkbox:true,
+        loadFilter: function(data){
+            return data;
+        },
+        onDblClick: function(node){
+        	if(node.type==0){
+        		alert('这不是一张可操作的数据表');
+        	}else{
+        		var selectobj =  document.myform.list2;
+        		var flag = true;
+        		$('#addtablelist option').each(function(opindex,opinfo){
+        			if(opinfo.value==node.name){
+        				flag = false;
+        				alert('请不要重复添加');
+        			}
+        		});
+        		//如果不是重复的节点
+        		if(flag){
+        			selectobj.options.add(new Option(node.text,node.name));
+        		}
+        		
+        	}
+        }
+    });
+	
+	//编辑入口 
+	if(dlgargs[0]=='edit_overlay_data'){
+		var action_data = dlgargs[1];
+		$.each(action_data,function(gindex,ginfo){
+			var tablealias = ginfo.tablealias;
+			var condition = ginfo.contition;
+			var edittablename = ginfo.tablename;
+			var srctable1 = ginfo.srctable1;
+			flowid = ginfo.flowid;
+			edit_srctable = srctable1;
+			$('#tablename').val(tablealias);
+			$('#condition').val(condition);
+			
+			//处理已选择的叠加表
+			var overlayinfo = ginfo.overlayinfo;
+			
+			var selectobj =  document.myform.list2;
+			$.each(overlayinfo[0].overlaytable,function(otindex,otinfo){
+				selectobj.options.add(new Option(otinfo.tablealias,otinfo.tablename));
+			});
+			
+			
+		});
+	}
+});
+
+//选择条件
+function dlgcondition(){
+	if(flowid==''||flowid==null){
+		str = window.showModalDialog("${ctxPath!}/model/flow/condition",dlgargs,"dialogWidth=650px;dialogHeight=560px");
+		if(str!=''&&str!=null){
+			$('#condition').val(str);
+		}
+	}else{
+		var arr = new Array();
+		arr.push("edit_table_condition");
+		arr.push(edit_srctable);
+		arr.push($('#condition').val());
+		str = window.showModalDialog("${ctxPath!}/model/flow/condition",arr,"dialogWidth=650px;dialogHeight=560px");
+		if(str!=''&&str!=null){
+			$('#condition').val(str);
+		}
+	}
+}
+
+function addsubmit(){ 
+	 var tablename = $('#tablename').val();
+	 var condition = $('#condition').val();
+	 var srctable = dlgargs;
+	 if(dlgargs[0]=='edit_overlay_data'){
+		 srctable = edit_srctable;
+	 }else{
+		 flowid = "";
+	 }
+	 var overlaytable = "";
+	 if(tablename==''){
+		alert('请输入文件名！');
+		return;
+	 }
+     
+	 //处理选择的叠加表
+	//相符的字段
+	var selectobj = document.getElementById("addtablelist");
+		 
+	for(var i=0;i<selectobj.length;i++){
+		var value = selectobj.options[i].value;
+		var text = selectobj.options[i].text;
+		overlaytable = overlaytable + "{\"tablename\":\""+value+"\"},";
+	
+	}
+	
+	if(overlaytable!=''){
+		overlaytable = overlaytable.substring(0,overlaytable.length-1);
+		overlaytable = "[" +overlaytable+ "]";
+	 }else{
+		 alert('请选择要叠加的表');
+		 return;
+	 }
+
+	 var action_data = "[{\"modelid\":1,\"flowid\":\""+flowid+"\",\"tablealias\":\""+tablename+"\",\"srctable\":\""+srctable+"\",\"overlaytable\":"+overlaytable+",\"condition\":\""+condition+"\"}]";
+	 var submitJson = "[{\"action_id\":\"overlay_data\",\"action_data\":"+action_data+"}]";
+	 window.returnValue=submitJson;
+	 window.close();
+}
+
+function myselected(){
+	var nodelist = $('#tabletree').tree('getChecked');
+	
+}
+
+function moveOption(e2){
+    try{
+    	//获取选中的节点
+    	var nodelist = $('#tabletree').tree('getChecked');
+        //过滤掉已经存在的节点
+        for(var i=0;i<nodelist.length;i++){
+        	var node = nodelist[i];
+        	var flag = true;
+        	$('#addtablelist option').each(function(opindex,opinfo){
+        		if(opinfo.value==node.name){
+    				flag = false;
+    			}
+    		});
+        	
+        	//如果不是重复的并且不是文件夹
+        	if(flag && node.type!=0){
+        		if($('#checkleaf').is(':checked')){
+        			if($('#tabletree').tree('isLeaf',node.target)){
+        				e2.options.add(new Option(node.text, node.name));
+        			}else{
+        				//不是页节点自动过滤
+        			}
+        		}else{
+        			e2.options.add(new Option(node.text, node.name));
+        		}
+        		
+        	}else{
+        		//donothing
+        		//存在重复的节点,自动过滤
+        	}
+        	
+        	//alert(node.text+"----"+$('#tabletree').tree('isLeaf',node.target));
+        	
+        }
+        
+    }
+    catch(e){}
+}
+
+function deleteOption(e1){
+	for(var i=0;i<e1.options.length;i++){
+		if(e1.options[i].selected){
+			e1.remove(i);
+			i=i-1;
+		}
+	}
+}
+
+function clearOption(e1){
+	for(var i=0;i<e1.options.length;i++){
+		e1.remove(i);
+		i=i-1;
+	}
+}
+</script>
+<style type="text/css">
+body{font-size: 12px;}
+</style>
+</head>
+<body>
+<div style="width: 650px;height:420px;margin: 5px;  ">
+	<div style="width: 500px;height:400px;margin: 5px; float: left;">
+		<div style="width: 500px;height:60px;  float: left;">
+			<table>
+				<tr><td>文件名：</td><td><input type="text" id="tablename" style="width:200px;"/> </td></tr>
+				<tr><td>条件：</td><td><input type="text" id="condition" style="width:200px;"/> </td><td><input type="button" value=" 选 择 " onclick="dlgcondition()"/> </td> </tr>
+			</table>
+		</div>
+		<div style="width: 500px;height:340px; float: left;">
+		    <form method="post" name="myform">
+			<table>  
+				<tr>  
+				<td width="40%" style="height:330px;">  
+					<div class="easyui-panel" style="padding:0px;" fit="true">
+						<ul id="tabletree" class="easyui-tree" data-options="lines:true"></ul>
+					</div>
+				</td>  
+				<td width="20%" align="center" style="height:330px;">
+					<input type="checkbox" name="checkleaf" id="checkleaf" />只取页节点
+					<br/>
+					<br/>
+					<input type="button" value="添加" onclick="moveOption(document.myform.list2)"><br/>  
+					<br/>
+					<input type="button" value="删除" onclick="deleteOption(document.myform.list2)"><br/>
+					<br/>
+					<input type="button" value="清空" onclick="clearOption(document.myform.list2)">  
+				</td>  
+				<td width="40%" style="height:330px;">  
+					<select style="WIDTH:100%;height:330px;" id="addtablelist" multiple name="list2" size="12" ondblclick="moveOption(document.myform.list2, document.myform.list1)">  
+					</select>  
+				</td>  
+				<td>
+				&nbsp;
+				</td>  
+				</tr>  
+			</table>
+			</form>
+		</div>
+	</div>
+	<div style="width: 100px;height:400px;margin: 5px; border: 0px solid red;float: left;">
+		<table>
+			<tr><td><input type="button" name="submit" value=" 确 定 " onclick="addsubmit()" style="width:90px;"/> </td> </tr>
+			<tr><td><input type="button" name="submit" value=" 取 消 " onclick="window.close()" style="width:90px;"/> </td> </tr>
+		</table>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.modeltool.mapper.ToolModelMapper">
+	<!-- 获取全部流程 -->
+	<select id="getToolFlowTree" resultType="java.lang.String">
+		select F_MK_FLOWTREE('0',#{tablename}) as flowstr from dual
+	</select>
+	
+	<!-- 获取模型id -->
+	<select id="intiModelId" resultType="java.lang.String">
+		select MODEL_BASE_SEQ.nextval as modelid from dual
+	</select>
+	
+	<insert id="deleteModelTableFlow">
+		call PROC_DELETETABLE(#{tablename})
+	</insert>
+	
+	<!--  -->
+	<insert id="insertModelTableFlow">
+		call PROC_SAVETABLE(#{modelid},#{tablename})
+	</insert>
+	<!-- 插入模型信息 -->
+	<insert id="InsertModelInfo">
+		insert into MODEL_BASE(ID,NAME,STATUS,DESCRIPTION,CREATE_BY,CREATE_DATE,DEL_FLAG) values(#{modelid},#{modelname},1,#{modelname},#{createuser},sysdate,0)
+	</insert>
+	
+	<!-- 建立数据表与模型源表字段关联关系 -->
+	<insert id="relationModelField">
+		call PROC_RELATION_MODELFIELD(#{modeid})
+	</insert>
+</mapper>

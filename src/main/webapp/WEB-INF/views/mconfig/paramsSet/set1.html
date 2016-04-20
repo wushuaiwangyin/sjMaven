@@ -1,0 +1,392 @@
+<div class="layer">
+
+    <div class="alert  alert-danger">
+        文件框的值为默认值；下拉框的值请在码表配置，这里直接填写码表编号；日期不用填写
+    </div>
+
+    <form name="FormPost" id="sysuser-save" class="FormGrid"  method="post"  action="${ctxPath}/sysuser/save">
+        <table class="table table-striped table-bordered table-hover nomargin-bottom">
+            <thead>
+                <tr>
+                    <th class="center">字段</th>
+                    <th class="center">可用于查询</th>
+                    <th class="center">标签</th>
+                    <th class="center">类型</th>
+                    <th class="center">操作符</th>
+                    <th class="center">值</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>
+
+                            <label>
+                                <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                                <span class="lbl"></span>
+                            </label>
+                        
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>NAME</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>ORG_NAME</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>ORG_NO</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>CUSTOMER_ID</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>REG_DATE</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>CODE</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>MON</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+
+                <tr>
+                    <td>DEL_FLAG</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+                <tr>
+                    <td>RUNG_DATE</td>
+                    <td>
+
+                        <label>
+                            <input name="config[${itemLP.index}].isQuery" type="checkbox" class="ace"  value="true"/>
+                            <span class="lbl"></span>
+                        </label>
+
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                    <td>
+                        <select name="" clas="select-type">
+                            <option>文本框</option>
+                            <option>下拉框</option>
+                            <option>时间选择器</option>
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <select name="property"  class="" >
+                            <option value="等于" selected="">等于</option>
+                            <option value="大于">大于</option>
+                            <option value="小于">小于</option>
+                            <option value="大于等于">大于等于</option>
+                            <option value="小于登记">小于登记</option>
+                            <option value="区间">区间</option>
+                            <option value="包含">包含</option>
+                            <option value="不包含">不包含</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="" class="FormElement ui-widget-content ui-corner-all" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="user-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+<style>
+    input{
+        padding: 2px 6px !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+        $("#submitForm").click(function () {
+            //validId.submitForm(false);
+            return false;
+        });
+
+        $("#user-save-cancel").click(function () {
+            layer.closeAll();
+            return false;
+        });
+
+
+</script>

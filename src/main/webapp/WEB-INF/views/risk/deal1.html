@@ -1,0 +1,205 @@
+        
+<div class="layer">
+<div class="alert-success">提示信息：红色星号为必填选项</div>
+    <form name="FormPost" id="dic-save" class="FormGrid"  method="post" enctype="multipart/form-data"
+          action="">
+		<input type="hidden" value="${dataId!}" name="dataId"/>
+		<input type="hidden" value="${modelId!}" name="modelId"/>
+		<input type="hidden" value="${organId!}" name="organId"/>
+		<input type="hidden" value="${dealType!}" name="dealType"/>
+		<input type="hidden" name="noticeId" value="${noticeId!}"/>
+		<input type="hidden" name="custNo" value="${custNo!}"/>
+		<input type="hidden" value="${flag!}" name="flag"/>
+       <table class="EditTable" width="100%">
+            <tbody>
+             <tr class="FormData">
+                    <td class="CaptionTD">交易机构</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="organName" datatype="*" onClick="alert(this.value;)"readonly  nullmsg="请输入交易机构！"  value="${bnoticeorganName!}">
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">交易时间</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="tranDate" datatype="*" onClick="alert(this.value;)"readonly  nullmsg="请输入交易时间！"  value="${trandate!}">
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+
+                <tr class="FormData">
+                    <td class="CaptionTD">预警原因</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="reason" datatype="*"  nullmsg="请输入预警原因！"  value="${model.name!}">
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+
+                <tr class="FormData">
+                    <td class="CaptionTD">处理情况简述</td>
+                    <td class="DataTD">
+                            <textarea name="dealEscription" class="autosize-transition form-control "
+                            		datatype="*" nullmsg="请输入处理情况简述！"
+                                      style="resize: none;"></textarea>
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+
+                <tr class="FormData">
+                    <td class="CaptionTD">处理措施</td>
+                    <td class="DataTD">
+                            <textarea name="dealDetail" class="autosize-transition form-control "
+                            		datatype="*" nullmsg="请输入处理措施！"
+                                      style="resize: none;"></textarea>
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+               @if(dealType == '2'){
+	                <tr class="FormData">
+	                    <td class="CaptionTD">处理依据</td>
+	                    <td class="DataTD">
+	                    	
+	                         <a href="#/ajax/repository/kbstd" target="_blank" class="btn btn-primary btn-xs " role="button"
+	                          	title="查看依据"
+	                          >查看依据</a>
+	                    </td>
+	                </tr>
+                @}
+                <tr class="FormData">
+                    <td class="CaptionTD">交易类型</td>
+                    <td class="DataTD">
+                     <#select name="tranType" id="type-select">
+                    		<option value="正常交易">正常交易</option>
+                            <option value="可疑交易">可疑交易</option>
+                            <option value="违规交易">违规交易</option>
+                            <option value="其他">其他</option>
+                    	</#select>
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">联系人</td>
+                    <td class="DataTD">
+                        <input type="text" name="relative" datatype="*"  nullmsg="请输入联系人！"  value="">
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">电话或邮箱</td>
+                    <td class="DataTD">
+                        <input type="text" name="phoneOrMail" datatype="*"  nullmsg="请输入电话或邮箱！"  value="">
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">附件</td>
+                    <td class="DataTD">
+                        <input type="file" id="inputfile" name="file">
+                    </td>
+                </tr>
+                <tr class="FormData">
+	                    <td class="CaptionTD">查看历史处理记录</td>
+	                    <td class="DataTD">
+	                    	<a class="btn btn-primary btn-xs" href="javascript:void(0);"
+				               data-mode="page" data-title="查看历史处理记录"
+				               data-url="${ctxPath}/data/toHistory?modelId=${modelId!}&organId=${organId!}&dataId=${dataId!}
+				               			&dealType=${dealType!}&flag=${flag!}&noticeId=${noticeId!}"
+				               data-width="80%"
+				               data-reloadurl="true"
+				               >
+								<span>点击查看</span>
+							</a>
+	                    </td>
+	                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="dic-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+
+
+
+<script type="text/javascript">
+    //描述框自动扩张高度
+    $('textarea[class*=autosize]').autosize({append: "\n"});
+
+    $(function(){
+    	
+    	var index = layer.index;
+    	var re = /^[1-9]+[0-9]*]*$/ ; 
+        //提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交
+        var ajaxS = $("#dic-save input[ajaxurl]");
+        $.each(ajaxS,function(i,obj){
+            $(obj).focus();
+        })
+
+        var validId = $("#dic-save").Validform({
+        	tiptype : 4,
+            ajaxPost : true,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#dic-save").data('loadi',loadi);
+                curform.ajaxSubmit({
+                	type:'post',
+                	url:'${ctxPath}/data/dataDeal',
+                	success:function(data){
+                        layer.close($("#dic-save").data('loadi'));
+                        if(data !=null && re.test(data)) {
+                            layer.msg('核实成功', 1, 1,function(){
+                                layer.close(index);
+                               	query();
+                            });
+                        }else if(data == 0){
+                        	layer.msg('<span class="red bigger-120">数据已核实，请勿重复核实</span>',3, 1);
+                        }else if(data == -2){
+                        	layer.msg('<span class="red bigger-120">数据已下发,请耐心等待下级机构处理</span>',3, 1);
+                        }else{
+                        	layer.msg('<span class="red bigger-120">核实失败</span>',3, 1);
+                        }
+                    }
+                	
+                });
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+
+        $("#submitForm").click(function() {
+            validId.submitForm(false);
+            return false;
+        });
+
+        $("#dic-save-cancel").click(function(){
+            layer.close(layer.index);
+        });
+
+        $("#dic-save input,#dic-save textarea").blur(function(){
+            layer.closeTips();
+            return false;
+        })
+
+    });
+    var index = layer.index;
+	$("#dic-save-cancel").click(function(){
+	    layer.close(index);
+	});
+</script>
+
+
+
+
+

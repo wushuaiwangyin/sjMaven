@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+	<script src="./jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="./echarts-2.1.10/build/dist/echarts.js"></script>
+</head>
+<body>
+		<div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="picBody" style="height: 400px;"></div>
+			</div>
+		</div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+
+
+	$(function(){
+		
+		// 路径配置
+	    require.config({
+	        paths: {
+	            echarts : './echarts-2.1.10/build/dist'
+	        }
+	    });
+		
+		countModelBarByMonth();
+	})
+
+	function countModelBarByMonth(){
+			var option = {
+				title : {
+					text: '贷款金额柱状图(单位：万元)',
+					subtext: ''
+				},
+				tooltip : {
+					trigger: 'axis'
+				},
+				toolbox: {
+					show : true,
+					feature : {
+						mark : {show: true},
+						dataView : {show: true, readOnly: false},
+						magicType : {show: true, type: ['line', 'bar']},
+						restore : {show: true},
+						saveAsImage : {show: true}
+					}
+				},
+				yAxis : [
+					{
+						type : 'value',
+						boundaryGap : [0, 0.01]
+					}
+				],
+				calculable : true,
+				xAxis : [
+					{
+						axisLabel : {
+						rotate : -18,
+						}, 
+						type : 'category',
+						data:['2010081000041580','2010081000041396','201008100004139','2010081000041321','2010081000041472']
+					}
+				],
+				series : [
+					{
+						type:'bar',
+						data:[4,6,10,20,5]
+					}
+				]
+			};
+	
+			require(
+					[
+						'echarts',
+						'echarts/chart/line',
+						'echarts/chart/bar'
+					],
+					function (ec) {
+						var myChart = ec.init(document.getElementById('picBody'));
+						var ecConfig = require('echarts/config');
+						myChart.setOption(option,true);
+					}
+			);
+		}
+	
+	
+</script>

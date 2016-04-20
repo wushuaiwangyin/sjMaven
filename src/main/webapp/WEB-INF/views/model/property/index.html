@@ -1,0 +1,160 @@
+
+<div class="widget-box widget-color-green2">
+    <div class="widget-header widget-header-small clearfix">
+        <h5 class="widget-title">业务属性管理</h5>
+        <div class="widget-toolbar">
+            <a href="#" data-action="fullscreen" class="orange2"> <i
+                    class="ace-icon fa fa-expand"></i>
+            </a>
+        </div>
+        <div class="widget-toolbar  width-40" style="padding-top: 2px;">
+            <form method="post" class="form-search" id="search-form" target="list-page">
+                <div class="input-group" style="line-height: 0px;">
+					<span class="input-group-btn">
+						<span  class=" btn  btn-success btn-minier"
+                               id="search-all-btn" onclick="queryAll();">
+							 显示全部 
+						</span> 
+					</span>
+                    <input type="text" class="form-control search-query input-minier"
+                           name="name" placeholder="请输入名称" id="search-input">
+						<span class="input-group-btn">
+						<span class="btn  btn-success btn-minier"
+                              id="search-btn" onclick="query();">
+							搜索 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+						</span>
+					</span>
+                </div>
+                <input type="hidden" name="id" />
+                <input type="hidden" name="sortColumn" value="sort" />
+                <input type="hidden" name="sortWay" value="asc"/>
+            </form>
+        </div>
+        <div class="widget-toolbar">
+            <a class="btn btn-purple btn-xs"
+               data-mode="delSelect" data-title="删除"
+               data-msg="你确定删除选中数据吗?"
+               data-table='table'
+               data-url="${ctxPath}/model/property/deletes"
+               data-data="{id:'{row.id}'}"
+                    >
+                <i class="ace-icon fa fa-remove bigger-130"></i>
+                <span>删除</span>
+            </a>
+        </div>
+
+        <div class="widget-toolbar no-border">
+            <a class="btn btn-purple btn-xs" href="javascript:void(0);"
+               data-mode="page" data-title="添加业务属性"
+               data-url="${ctxPath}/model/property/add/showlayer"
+               data-width="50%"
+               data-data="{}">
+                <i class="ace-icon fa fa-plus-circle bigger-130"></i>
+                <span>添加</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="widget-body">
+        <div class="widget-main padding-2">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="table" >
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="id" data-align="center"  data-width="80"  data-sortable="true">编号</th>
+                            <th data-field="name"  data-sortable="true" data-formatter="nameFormatter" >名称</th>
+                            <th data-field="sort" data-sortable="true" data-align="center"  data-width="40">序号</th>
+                            <th data-field="haveLine" data-sortable="true" data-align="center" data-formatter='lineFormatter' data-width="40">是否有条线</th>
+                            <th data-field="haveSubject" data-sortable="true" data-align="center" data-formatter='subjectFormatter' data-width="40">是否有专题</th>
+                            <th data-field="remark" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="rowBtn_edit" style="display: none;">
+    <div class="hidden-sm hidden-xs action-buttons">
+        <a class="green" href="javascript:void(0);"
+           data-mode="page" data-title="编辑"
+           data-url="${ctxPath}/model/property/edit/showlayer"
+           data-width="50%"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-pencil bigger-130"></i>编辑
+        </a>
+
+        <a class="red" href="javascript:void(0);"
+           data-mode="del" data-title="删除操作"
+           data-msg="你确定删除此数据吗?"
+           data-url="${ctxPath}/model/property/delete"
+           data-data="{id:'{row.id}'}" data-callback="query();"
+                >
+            <i class="ace-icon fa fa-trash-o bigger-130"></i>删除
+        </a>
+    </div>
+</div>
+
+
+
+<script style="text/javascript">
+
+    $(function(){
+        var $table = $('#table');
+        $table.bootstrapTable({
+        	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:'${ctxPath}/model/property/list?'+$("#search-form").serialize()
+        });
+    })
+
+    
+    function query(){
+    	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/model/property/list?"+$("#search-form").serialize()})
+    }
+    
+    
+    function queryAll(){
+    	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/model/property/list"})
+    }
+    
+    function nameFormatter(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+				' data-mode="detail" data-title="'+value+'    详细"'+
+				' data-url="${ctxPath}/model/property/detail/showlayer"'+
+				'data-data="{id:'+row.id+'}" >'+ value + '</a>';
+
+	}
+    
+    function subjectFormatter(value,row,index){
+    	if(value != null){
+    		if(value == 1){
+    			return "<font style='color:red;text-align:center;' size='3' >√</font>";
+    		}else{
+    			return "无";
+    		}
+    	}
+    }
+    function lineFormatter(value,row,index){
+    	if(value != null){
+    		if(value == 1){
+    			return "<font style='color:red;text-align:center;' size='3' >√</font>";
+    		}else{
+    			return "无";
+    		}
+    	}
+    }
+    
+</script>
+

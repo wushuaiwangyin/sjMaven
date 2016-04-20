@@ -1,0 +1,178 @@
+
+<div class="layer">
+	 <div class="alert-success">提示信息：红色星号为必填选项</div>
+    <form name="FormPost" id="dic-save" class="FormGrid"  method="post" enctype="multipart/form-data"
+          action="">
+          <input type="hidden" name="auditId"  value="${kbAudit.auditId!}"/>
+	      <input type="hidden" name="status"  value="${kbAudit.status!}"/>
+	      <input type="hidden" name="disporder"  value="${kbAudit.disporder!}"/>
+        <table class="EditTable" width="100%">
+            <tbody>
+                <tr class="FormData">
+                    <td class="CaptionTD">编码</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="auditCode" readonly datatype="*" value="${kbAudit.auditCode!}"/>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">名称</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="auditTitle"  datatype="*"  value="${kbAudit.auditTitle!}"
+                        	nullmsg="请输入名称！"/>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+               
+                <tr class="FormData">
+                    <td class="CaptionTD">类型</td>
+                    <td class="DataTD width-100">
+                    	<input type="text" readonly  value="${kbAudit.type!}"/>
+                    	<input type="hidden" name="auditType" readonly  value="${kbAudit.auditType!}"/>
+                    </td>
+                    <td><font color="red" size="+1">*</font></td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">审计对象</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="auditObject" value="${kbAudit.auditObject!}"/>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">关键字</td>
+                    <td class="DataTD">
+                            <textarea name="keyword" 
+                            		  class="autosize-transition form-control "
+                                       style="resize: none;">${kbAudit.keyword!}</textarea>
+                    </td>
+                </tr>
+                 <tr class="FormData">
+                    <td class="CaptionTD">简要描述</td>
+                    <td class="DataTD">
+                            <textarea name="auditDesc" 
+                            		  class="autosize-transition form-control "
+                                       style="resize: none;">${kbAudit.auditDesc!}</textarea>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">审计程序文件</td>
+                    <td class="DataTD">
+                           <input type="file" id="inputfile" name="file" class="file" >
+                    </td>
+                </tr>
+                 @if(fileName != null){
+                <tr class="FormData">
+                    <td class="CaptionTD"><font color="green">已上传附件</font></td>
+                    <td class="DataTD">
+                          <a href="#" class="btn btn-primary btn-sm " role="button"
+                          	title="查看附件"
+							data-mode="page" data-title="查看附件"
+							data-url="${ctxPath}/sysAccessory/file/showlayer?id=${kbAudit.docId!}&mode=edit" 
+							data-width="50%"
+                          >查看附件</a>
+                    </td>
+                </tr>
+                 @}else{
+	                 <tr class="FormData">
+	                    <td class="CaptionTD"></td>
+	                    <td class="DataTD">
+	                    	<font color="red">未上传附件</font>
+	                    </td>
+	                </tr>
+                @}
+                <tr class="FormData">
+                    <td >
+                    <div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+                        <button class="btn btn-primary btn-sm bigger-110 width-50  pull-left" id="submitForm" >保存</button>
+                        <span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="dic-save-cancel">
+							<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+						</span>
+                    </div>    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+    //描述框自动扩张高度
+    $('textarea[class*=autosize]').autosize({append: "\n"});
+    var index;
+    var treeObj = $.fn.zTree.getZTreeObj('treeRepository');
+	var parentId = '';
+	var type = '';
+	var nodes = treeObj.getSelectedNodes();
+	$.each(nodes,function(i,obj){
+		parentId = obj.parentId;
+		type = obj.id;
+	})
+    $(function(){
+    	index = layer.index;
+    	var re = /^[1-9]+[0-9]*]*$/ ; 
+        //提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交
+        var ajaxS = $("#dic-save input[ajaxurl]");
+        $.each(ajaxS,function(i,obj){
+            $(obj).focus();
+        })
+
+        var validId = $("#dic-save").Validform({
+        	tiptype : 4,
+            ajaxPost : true,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#dic-save").data('loadi',loadi);
+                curform.ajaxSubmit({
+                	type:'post',
+                	url:'${ctxPath}/repository/audit/save',
+                	success:function(data){
+                        layer.close($("#dic-save").data('loadi'));
+                        if(data !=null && re.test(data)) {
+                            layer.msg('修改成功', 1, 1,function(){
+                            	layer.closeAll();
+                            	$('#table2').bootstrapTable("refresh",{url:"${ctxPath!}/repository/audit/list?type="+type+"&parentId="+parentId})
+                            });
+                        }else{
+                            layer.msg('修改失败', 3, 1);
+                        }
+                    }
+                	
+                });
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+
+        $("#submitForm").click(function() {
+            validId.submitForm(false);
+            return false;
+        });
+
+        $("#dic-save-cancel").click(function(){
+        	layer.closeAll();
+        });
+
+        $("#dic-save input,#dic-save textarea").blur(function(){
+            layer.closeTips();
+            return false;
+        })
+
+    });
+
+
+	$("#dic-save-cancel").click(function(){
+		layer.closeAll();
+	});
+	
+	
+</script>

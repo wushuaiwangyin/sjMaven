@@ -1,0 +1,57 @@
+<div class="layer">
+	<div class="profile-user-info profile-user-info-striped wordbreak" >
+		<div class="profile-info-row">
+			<div class="profile-info-name">编号</div>
+			<div class="profile-info-value">${item.id!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">名称</div>
+			<div class="profile-info-value">${item.name!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">顺序号</div>
+			<div class="profile-info-value">${item.sort!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">是否有业务条线</div>
+			<div class="profile-info-value">
+				@if(item.haveLine == 1){
+					<font style='color:red;text-align:center;' size='3' >√</font>
+				@}else{
+					无
+				@}
+			
+			</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">是否有专题</div>
+			<div class="profile-info-value">
+				@if(item.haveSubject == 1){
+					<font style='color:red;text-align:center;' size='3' >√</font>
+				@}else{
+					无
+				@}
+			</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">描述</div>
+			<div class="profile-info-value">${item.description!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">创建人</div>
+			<div class="profile-info-value">${item.createBy!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">创建时间</div>
+			<div class="profile-info-value">${item.createDate!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">修改人</div>
+			<div class="profile-info-value">${item.updateBy!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">修改时间</div>
+			<div class="profile-info-value">${item.updateDate!}</div>
+		</div>
+	</div>
+</div>

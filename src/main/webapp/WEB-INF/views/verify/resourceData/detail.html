@@ -1,0 +1,32 @@
+<div class="layer">
+    <div class="profile-user-info profile-user-info-striped wordbreak" id="detail_column" >
+
+    </div>
+</div>
+
+<script>
+
+
+    $.ajax({
+        url: "./data/table/table"+tid+"_detail.txt",
+        dataType: "text",
+        async: false,
+        success: function (data) {
+            $("#detail_column").html(data);
+
+            $.ajax({
+                url: "./data/table/table"+tid+"_data.json",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+
+                    $.each(json[0],function(key,value){
+                        $("#base_"+key).text(value);
+                    })
+
+                }
+            })
+
+        }
+    })
+</script>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.krm.dbaudit.web.modeltool.mapper.ToolOperateMapper">
+	<!-- 提取表树形菜单 -->
+	<select id="getTableTree" resultType="com.krm.dbaudit.web.modeltool.model.ToolTable">
+			<!-- select table_name,table_alias,table_parent,table_flag,table_type_id from TOOL_DEF_TABLE start with table_parent='0' connect by prior table_name=table_parent  -->
+			select table_name,table_alias,table_parent,table_flag from 
+	(select to_char(id) as table_name,name as table_alias,to_char(parent_id) as table_parent,0 as table_flag from srcdata_type b where b.type_flag='0' or (b.type_flag='1' and b.create_by=to_char(#{createBy})) union all
+	select table_name,table_alias,to_char(table_type_id) as table_parent,table_flag  from TOOL_DEF_TABLE where table_flag=1 union all
+	select table_name,table_alias,table_parent,table_flag from TOOL_DEF_TABLE where table_flag=2 and create_by=to_char(#{createBy})) a
+	start with a.table_parent='0' connect by prior a.table_name=a.table_parent
+		</select>
+	<!-- 指定表字段 -->
+	<select id="getTableField" resultType="com.krm.dbaudit.web.modeltool.model.ToolTableField">
+			select id,field_name,field_alias,field_entity_type,field_type,field_length from TOOL_DEF_TABLEFIELD where table_name=#{tablename} order by field_order
+		</select>
+	
+	<!-- -->
+	<select id="getTableFieldByZhTableName" resultType="com.krm.dbaudit.web.modeltool.model.ToolTableField">
+			select id,field_name,field_alias,field_entity_type,field_type,field_length 
+				from 
+			TOOL_DEF_TABLEFIELD 
+			where table_name=(SELECT table_name FROM  TOOL_DEF_TABLE where table_alias=#{tablename}) order by field_order
+	</select>
+	
+	<!-- 获取查询表数据sql -->
+	<select id="getTableShowDataSql" resultType="com.krm.dbaudit.web.modeltool.model.ToolDataSql">
+			select F_MK_TABLESHOWSQL(#{tablename},#{condition},#{page},#{rows}) as runsql from dual
+		</select>
+	
+	<!-- 获取查询表数据数量 -->
+	<select id="getTableShowDataCountSql" resultType="java.lang.String">
+		select F_MK_TABLESHOWCOUNT(#{tablename},#{condition}) as runsql from dual
+		</select>
+		
+	<!--  -->
+	<select id="getTableNameByZhTableName" resultType="com.krm.dbaudit.web.modeltool.model.ToolTable">
+			select table_name,table_alias,table_parent,table_flag,table_type_id from TOOL_DEF_TABLE where  table_alias=#{tablename}
+	</select>
+
+	<!-- 检测指定表是否有下级流程在使用 -->
+	<select id="getChildTableCount" resultType="java.lang.Integer">
+		select
+		(select count(1) as a from TOOL_DEF_FLOW where source_table1=#{tablename} or source_table1=#{tablename})
+		+(select count(1) as a from TOOL_FLOW_OVERLAY where src_table=#{tablename})
+		from dual
+	</select>
+	
+	<!-- 删除指定分析表-->
+	<update id="deleteTable">
+		call PORC_TOOL_DELETETABLE(#{tablename})
+	</update>
+	
+	<!-- 修改分析表别名-->
+	<update id="updateTableName">
+		update TOOL_DEF_TABLE set table_alias = #{tablealias} where table_name=#{tablename} 
+	</update>
+	
+	<!-- 修改流程名称 -->
+	<update id="updateFlowName">
+		update TOOL_DEF_FLOW set flow_name = #{tablealias} where target_table=#{tablename} 
+	</update>
+	
+	<!-- 修改字段顺序 -->
+	<update id="updateFieldOrder">
+		update TOOL_DEF_TABLEFIELD set field_order = #{fieldorder} where id=#{fieldid} 
+	</update>
+	
+	
+	<sql id="toolDefFlow">
+		id,flow_name,parent_flow_id,proc_script,target_table,source_table1,source_table2,proc_mode
+	</sql>
+	
+	<select id="getFlowById" resultType="com.krm.dbaudit.web.modeltool.model.ToolFlow">
+		select  <include refid="toolDefFlow" />,F_CHANGE_TO_DICT('procaction_to_webaction',proc_script) as web_action,F_GET_TOOL_TABLEALIAS(source_table1) as source_table1_name,F_GET_TOOL_TABLEALIAS(source_table2) as source_table2_name from TOOL_DEF_FLOW 
+		<where>
+			id=#{flowid}
+		</where>
+	</select>
+	
+	<select id="getFlowByTableName" resultType="com.krm.dbaudit.web.modeltool.model.ToolFlow">
+		select  <include refid="toolDefFlow" />,F_CHANGE_TO_DICT('procaction_to_webaction',proc_script) as web_action,F_GET_TOOL_TABLEALIAS(source_table1) as source_table1_name,F_GET_TOOL_TABLEALIAS(source_table2) as source_table2_name from TOOL_DEF_FLOW 
+		<where>
+			target_table=#{targettable}
+		</where>
+	</select>
+	
+	<!-- 字段信息，返回map，直接转换为json格式 -->
+	<select id="getToolDeffieldInfo" resultType="java.util.Map">
+		select a.id,a.field_name as fieldname,a.field_alias as fieldalias,a.field_type as fieldtype,a.field_length as fieldlength from TOOL_DEF_TABLEFIELD a,TOOL_DEF_TABLEFIELD b where a.id=b.from_fieldid and b.table_name=#{tablename} order by b.field_order
+	</select>
+	
+	<!-- 提取条件信息 -->
+	<select id="getToolDefFlowConditionInfo" resultType = "java.lang.String">
+		select replace(str_condition,'''''','''') as condition from TOOL_FLOW_CONDITION where flow_id=#{flowid}
+	</select>
+	
+	<!-- 数据提取范围 -->
+	<select id="getToolGetRangeInfo" resultType="java.util.Map">
+		select begin_line as firstnum,end_line as endnum from TOOL_FLOW_RANGE where flow_id=#{flowid}
+	</select>
+	
+	<!-- 数据汇总，汇总字段信息 -->
+	<select id="getToolGroupFieldInfo" resultType="java.util.Map">
+		select a.id,a.field_name as fieldname,a.field_alias as fieldalias,a.field_type as fieldtype,a.field_length as fieldlength from TOOL_DEF_TABLEFIELD a,TOOL_DEF_TABLEFIELD b where a.id=b.from_fieldid and b.table_name=#{tablename} and b.field_script is null order by b.field_order
+	</select>
+	
+	<!-- 数据汇总，合计字段信息 -->
+	<select id="getToolCollectFieldInfo" resultType="java.util.Map">
+		select a.id,a.field_name as fieldname,a.field_alias as fieldalias,a.field_type as fieldtype,a.field_length as fieldlength,b.field_script as collecttype from TOOL_DEF_TABLEFIELD a,TOOL_DEF_TABLEFIELD b where a.id=b.from_fieldid and b.table_name=#{tablename} and b.field_script is not null order by b.field_order
+	</select>
+	
+	<!-- 数据排重，排重字段信息 -->
+	<select id="getToolDistinctFieldInfo" resultType="java.util.Map">
+		select b.id as id,b.field_alias as fieldalias from TOOL_FLOW_DISTINCT a,TOOL_DEF_TABLEFIELD b where a.field_id=b.id and a.flow_id=#{flowid} order by a.id
+	</select>
+	
+	<!-- 数据排序，排序字段信息 -->
+	<select id="getToolSortFieldInfo" resultType="java.util.Map">
+		select b.id as id,b.field_alias as fieldalias,a.sort_type as sortmode from TOOL_FLOW_SORT a,TOOL_DEF_TABLEFIELD b where a.sort_field_id=b.id and a.flow_id=#{flowid} order by a.id
+	</select>
+	
+	<!-- 数据合并，合并字段信息 -->
+	<select id="getToolMergeFieldInfo" resultType="java.util.Map">
+		select b.id as id1,c.id as id2,b.field_alias as fieldalias1,c.field_alias as fieldalias2 from TOOL_FLOW_MERGE a,TOOL_DEF_TABLEFIELD b,TOOL_DEF_TABLEFIELD c where a.check_field_id1=b.id and a.check_field_id2=c.id and a.flow_id=#{flowid} order by a.id
+	</select>
+	<!-- 数据合并，合并字段信息 -->
+	<select id="getToolOverlayFieldInfo" resultType="java.util.Map">
+		select b.table_name as tablename,b.table_alias as tablealias from TOOL_FLOW_OVERLAY a,TOOL_DEF_TABLE b where a.src_table=b.table_name and a.flow_id=#{flowid} order by id
+	</select>
+	
+	<!-- 提取所有下级流程，不包含本流程 -->
+	<select id="getFlowChildTree" resultType="java.lang.String">
+		select F_MK_CHILC_FLOWTREE(#{flowid},#{targettable}) as flowtree from dual
+	</select>
+</mapper>

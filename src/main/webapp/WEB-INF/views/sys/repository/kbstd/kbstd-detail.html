@@ -1,0 +1,102 @@
+
+<div class="layer">
+   <div class="profile-user-info profile-user-info-striped wordbreak" >
+   	  <div class="profile-info-row">
+ 			<div class="profile-info-name">审计依据编码</div>
+          <div class="profile-info-value">${kbstd.stdCode!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">依据出处</div>
+          <div class="profile-info-value">${kbstd.kbstdtype!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">标准文号</div>
+          <div class="profile-info-value">${kbstd.fileNo!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">文件名称</div>
+          <div class="profile-info-value">${kbstd.fileName!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">依据类型</div>
+          <div class="profile-info-value">${kbstd.filetype!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">业务类型</div>
+          <div class="profile-info-value">${kbstd.businesstype!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">文件出处作者</div>
+          <div class="profile-info-value">${kbstd.fileSrc!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">出版单位</div>
+          <div class="profile-info-value">${kbstd.publisher!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">出版日期</div>
+          <div class="profile-info-value">${kbstd.fileDate!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">关键字</div>
+          <div class="profile-info-value">${kbstd.keyword!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">版次</div>
+          <div class="profile-info-value">${kbstd.fileVersion!}</div>
+      </div>
+         @var flag = kbstd.publicFlag;
+      @if(flag == 1){
+	      <div class="profile-info-row">
+	          <div class="profile-info-name">发布标志</div>
+	          <div class="profile-info-value">已发布</div>
+	      </div>
+	  @}else{
+	  	<div class="profile-info-row">
+	          <div class="profile-info-name">发布标志</div>
+	          <div class="profile-info-value">未发布</div>
+	      </div>
+	  @}
+         <div class="profile-info-row">
+          <div class="profile-info-name">启用日期</div>
+          <div class="profile-info-value">${kbstd.startDate!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">废止日期</div>
+          <div class="profile-info-value">${kbstd.endDate!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">文件联系人</div>
+          <div class="profile-info-value">${kbstd.contact!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">联系电话</div>
+          <div class="profile-info-value">${kbstd.telephone!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">备注</div>
+          <div class="profile-info-value">${kbstd.memo!}</div>
+      </div>
+      @if(fileName != null){
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">附件</div>
+          <div class="profile-info-value">已上传附件&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-sm " role="button"
+                          	title="查看附件"
+							data-mode="page" data-title="查看附件"
+							data-url="${ctxPath}/sysAccessory/file/showlayer?id=${kbstd.docId!}&mode=detail" 
+							data-width="50%"
+                          >查看附件</a></div>
+      	</div>
+      @}else{
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">附件</div>
+          <div class="profile-info-value">未上传附件</div>
+      	 </div>
+      @}
+   </div>   
+        
+</div>
+
+
+
+

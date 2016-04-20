@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.risk.mapper.SecondRiskModelMapper">
+		
+		<sql id="secondRiskModelColumns">
+		id, model_id, cust_no, cust_name, teller, cust_manager, organ_id, data_date
+		</sql>
+		
+		<select id="findResultByMonth" resultType="java.util.Map">
+			select cust_no as custNo,cust_name as custName,count(1) as amount from second_risk_model 
+			<where>
+			  1=1
+		    	and data_date &gt;= add_months(trunc(sysdate,'MM'),0)
+		    	and data_date &lt;= add_months(trunc(sysdate,'MM'),1)
+			 	<if test="@Ognl@isNotBlank(custNo)">
+			    	and cust_no = #{custNo}
+			 	</if>
+			 group by cust_no,cust_name
+			 <if test="@Ognl@isBlank(times)">
+				having count(1) &gt;= 3
+			</if>
+			<if test="@Ognl@isNotBlank(times)">
+				having count(1) &gt;= #{times}
+			</if>
+			</where>
+		</select>
+		
+		<select id="findResultByDay" resultType="java.util.Map">
+			select cust_no as custNo,cust_name as custName,count(1) as amount from second_risk_model 
+			<where>
+			  1=1
+			  and data_date &gt;= trunc(sysdate, 'dd')-0.5
+              and data_date &lt;= trunc(sysdate, 'dd')
+			  <if test="@Ognl@isNotBlank(custNo)">
+			    	and cust_no = #{custNo}
+			  </if>
+			</where>
+			group by cust_no,cust_name
+			<if test="@Ognl@isBlank(times)">
+			having count(1) &gt;= 3
+			</if>
+			<if test="@Ognl@isNotBlank(times)">
+			having count(1) &gt;= #{times}
+			</if>
+		</select>
+		
+		<select id="findDetails" resultType="java.util.Map">
+			select m.id as id, m.name as modelName, s.cust_no as custNo, s.cust_name as custName from second_risk_model s 
+			left join model_base m  on m.id = s.model_id
+			<where>
+				1=1
+				 <if test="@Ognl@isNotBlank(custNo)">
+			    	and s.cust_no= #{custNo}
+			 	</if>
+			</where>
+		</select>
+		
+		<insert id="save" parameterType="java.util.List">
+			insert into second_risk_model (id, model_id, cust_no,cust_name,data_date)
+			select second_risk_model_seq.nextval, A.* from(
+			<foreach collection="list" item="item" index="index" separator="union all">  
+	            SELECT
+	            #{item.modelid,jdbcType=INTEGER},
+				#{item.custno,jdbcType=VARCHAR},
+				#{item.custname,jdbcType=VARCHAR},
+				#{item.datadate,jdbcType=VARCHAR}
+	            FROM dual  
+	        </foreach>  
+	        ) A  
+		</insert>
+		</mapper>

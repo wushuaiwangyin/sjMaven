@@ -1,0 +1,486 @@
+<div class="page-header">
+    <h1>
+        模型监控
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            模型状态监管和运行监控
+        </small>
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 infobox-container">
+        <div class="infobox infobox-green">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-comments"></i>
+            </div>
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[0].modelcount!}</span>
+                <div class="infobox-content">未提交</div>
+            </div>
+            <div class="badge badge-success">${sl[0].modelpercent!}%</div>
+        </div>
+
+        <div class="infobox infobox-blue">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-twitter"></i>
+            </div>
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[1].modelcount!}</span>
+                <div class="infobox-content">待验证</div>
+            </div>
+            <div class="badge badge-success">
+                ${sl[1].modelpercent!}%
+            </div>
+        </div>
+
+        <div class="infobox infobox-pink">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-shopping-cart"></i>
+            </div>
+
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[2].modelcount!}</span>
+                <div class="infobox-content">验证失败</div>
+            </div>
+            <div class="badge badge-success">${sl[2].modelpercent!}%</div>
+        </div>
+
+        <div class="infobox infobox-orange">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-flask"></i>
+            </div>
+
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[3].modelcount!}</span>
+                <div class="infobox-content">待审批</div>
+            </div>
+            <div class="badge badge-success">${sl[3].modelpercent!}%</div>
+        </div>
+
+        <div class="infobox infobox-green2">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-flask"></i>
+            </div>
+
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[4].modelcount!}</span>
+                <div class="infobox-content">审批失败</div>
+            </div>
+            <div class="badge badge-success">${sl[4].modelpercent!}%</div>
+        </div>
+        <div class="infobox infobox-purple">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-flask"></i>
+            </div>
+
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[5].modelcount!}</span>
+                <div class="infobox-content">待发布</div>
+            </div>
+            <div class="badge badge-success">${sl[5].modelpercent!}%</div>
+        </div>
+        <div class="infobox infobox-blue">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-flask"></i>
+            </div>
+
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[6].modelcount!}</span>
+                <div class="infobox-content">发布失败</div>
+            </div>
+            <div class="badge badge-success">${sl[6].modelpercent!}%</div>
+        </div>
+        <div class="infobox infobox-red">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-flag"></i>
+            </div>
+
+            <div class="infobox-data">
+                <span class="infobox-data-number">${sl[7].modelcount!}</span>
+                <div class="infobox-content">已投产</div>
+            </div>
+            <div class="badge badge-success">${sl[7].modelpercent!}%</div>
+        </div>
+
+
+        <div class="space-6"></div>
+
+        <div class="infobox infobox-pink infobox-small infobox-dark">
+            <div class="infobox-progress">
+                <div data-size="39" data-percent="61" class="easy-pie-chart percentage" style="height: 39px; width: 39px; line-height: 38px;">
+                    <span class="percent">${dl[0].modelcount!}</span>
+                    <canvas height="39" width="39"></canvas></div>
+            </div>
+
+            <div class="infobox-data">
+                <div class="infobox-content">上月</div>
+                <div class="infobox-content">跑批结果</div>
+            </div>
+        </div>
+
+
+        <div class="infobox infobox-green infobox-small infobox-dark">
+            <div class="infobox-progress">
+                <!-- #section:pages/dashboard.infobox.easypiechart -->
+                <div data-size="39" data-percent="61" class="easy-pie-chart percentage" style="height: 39px; width: 39px; line-height: 38px;">
+                    <span class="percent">${dl[1].modelcount!}</span>
+                    <canvas height="39" width="39"></canvas></div>
+            </div>
+
+            <div class="infobox-data">
+                <div class="infobox-content">昨日</div>
+                <div class="infobox-content">跑批结果</div>
+            </div>
+        </div>
+
+        <div class="infobox infobox-green2 infobox-small infobox-dark">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-dedent"></i>
+            </div>
+
+            <div class="infobox-data">
+                <div class="infobox-content">已处理</div>
+                <div class="infobox-content">${dl[2].modelcount!}</div>
+            </div>
+        </div>
+
+        <div class="infobox infobox-blue2 infobox-small infobox-dark">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-area-chart"></i>
+            </div>
+
+            <div class="infobox-data">
+                <div class="infobox-content">未处理</div>
+                <div class="infobox-content">${dl[3].modelcount!}</div>
+            </div>
+        </div>
+
+        <div class="infobox infobox-blue infobox-small infobox-dark">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-area-chart"></i>
+            </div>
+            <div class="infobox-data">
+                <div class="infobox-content">共有模型</div>
+                <div class="infobox-content">${dl[4].modelcount!}</div>
+            </div>
+        </div>
+
+        <div class="infobox infobox-grey infobox-small infobox-dark">
+            <div class="infobox-icon">
+                <i class="ace-icon fa fa-download"></i>
+            </div>
+
+            <div class="infobox-data">
+                <div class="infobox-content">导出次数</div>
+                <div class="infobox-content">${dl[5].modelcount!}</div>
+            </div>
+        </div>
+
+        <!-- /section:pages/dashboard.infobox.dark -->
+    </div>
+</div>
+
+<div class="hr hr32 hr-dotted"></div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div id="recent-box" class="widget-box transparent">
+            <div class="widget-header">
+                <h4 class="widget-title lighter smaller">
+                    <i class="ace-icon fa fa-rss orange"></i>跑批提醒
+                </h4>
+
+                <div class="widget-toolbar no-border">
+                    <ul id="recent-tab" class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#task-tab" data-toggle="tab" aria-expanded="true">错误信息</a>
+                        </li>
+                        <li class="">
+                            <a href="#comment-tab" data-toggle="tab" aria-expanded="false">警告信息</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main padding-4">
+                    <div class="tab-content padding-8">
+                        <div class="tab-pane active" id="task-tab">
+                            <ul class="item-list ui-sortable" id="tasks">
+                            	@if(el.~size>0){
+                                <li class="item-orange clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"><a>${el[0].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[0].timelong!}</span>
+                                    </div>
+                                </li>
+                                @}
+                                @if(el.~size>1){
+                                <li class="item-red clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"> <a>${el[1].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[1].timelong!}</span>
+                                    </div>
+                                </li>
+                                @}
+
+                                @if(el.~size>2){
+                                <li class="item-default clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"> <a>${el[2].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[2].timelong!}</span>
+                                    </div>
+                                </li>
+                                @}
+
+								@if(el.~size>3){
+                                <li class="item-blue clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"> <a>${el[3].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[3].timelong!}</span>
+                                    </div>
+                                </li>
+                                @}
+
+								@if(el.~size>4){
+                                <li class="item-grey clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"> <a>${el[4].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[4].timelong!}</span>
+                                    </div>
+                                </li>
+                                @}
+								
+								@if(el.~size>5){
+                                <li class="item-green clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"> <a>${el[5].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[5].timelong!}</span>
+                                    </div>
+                                </li>
+								@}
+								@if(el.~size>6){
+                                <li class="item-pink clearfix ui-sortable-handle">
+                                    <label class="inline">
+                                        <span class="lbl"> <a>${el[6].name!}</a></span>
+                                    </label>
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o"></i>
+                                        <span class="red">${el[6].timelong!}</span>
+                                    </div>
+                                </li>
+                                @}
+                            </ul>
+                        </div>
+
+
+                        <div class="tab-pane" id="comment-tab">
+                            <!-- #section:pages/dashboard.comments -->
+                            <div class="comments ace-scroll" style="position: relative;">
+                                <div class="scroll-track scroll-active" style="display: block; height: 300px;">
+                                    <div class="scroll-bar" style="height: 283px; top: 0px;">
+                                    </div>
+                                </div>
+                                <div class="scroll-content" style="max-height: 300px;">
+                                <div class="itemdiv commentdiv">
+                                    <div class="body">
+                                        <div class="name">
+                                            <a href="#">归还银行贷款资金来源于小贷公司</a>
+                                        </div>
+                                        <div class="time">
+                                            <i class="ace-icon fa fa-clock-o"></i>
+                                            <span class="green">6小时前</span>
+                                        </div>
+                                        <div class="text">
+                                            <i class="ace-icon fa fa-quote-left"></i>
+                                            跑批超过20小时，进度处于78%，请检查 …
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="itemdiv commentdiv">
+                                    <div class="body">
+                                        <div class="name">
+                                            <a href="#">向不符合条件的融资平台新发放贷款</a>
+                                        </div>
+
+                                        <div class="time">
+                                            <i class="ace-icon fa fa-clock-o"></i>
+                                            <span class="blue">15 分钟前</span>
+                                        </div>
+
+                                        <div class="text">
+                                            <i class="ace-icon fa fa-quote-left"></i>
+                                            模型已审批完成20天，一直没有发布 …
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="itemdiv commentdiv">
+                                    <div class="body">
+                                        <div class="name">
+                                            <a href="#">向已有不良企业新增贷款</a>
+                                        </div>
+
+                                        <div class="time">
+                                            <i class="ace-icon fa fa-clock-o"></i>
+                                            <span class="orange">22 小时前</span>
+                                        </div>
+
+                                        <div class="text">
+                                            <i class="ace-icon fa fa-quote-left"></i>
+                                            运行出现未知异常 …
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="itemdiv commentdiv">
+                                    <div class="body">
+                                        <div class="name">
+                                            <a href="#">贷款抵质押率超标</a>
+                                        </div>
+
+                                        <div class="time">
+                                            <i class="ace-icon fa fa-clock-o"></i>
+                                            <span class="red">1月前</span>
+                                        </div>
+
+                                        <div class="text">
+                                            <i class="ace-icon fa fa-quote-left"></i>
+                                            07月16日发送的数据没有处理…
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div></div>
+
+                            <div class="hr hr8"></div>
+
+                            <div class="center">
+                                <i class="ace-icon fa fa-comments-o fa-2x green middle"></i>
+
+                                &nbsp;
+                                <a class="btn btn-sm btn-white btn-info" href="#">
+                                   查看更多 &nbsp;
+                                    <i class="ace-icon fa fa-arrow-right"></i>
+                                </a>
+                            </div>
+
+                            <div class="hr hr-double hr8"></div>
+                            <!-- /section:pages/dashboard.comments -->
+                        </div>
+                    </div>
+                </div><!-- /.widget-main -->
+            </div><!-- /.widget-body -->
+        </div>
+
+    </div>
+
+    <div class="col-sm-6">
+        <div class="widget-box transparent">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title lighter">
+                    <i class="ace-icon fa fa-signal"></i>
+                    模型统计
+                </h4>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main padding-4">
+                    <div id="picBody" style="height: 400px;"></div>
+                </div><!-- /.widget-main -->
+            </div><!-- /.widget-body -->
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .infobox,.ui-sortable-handle .lbl{
+        cursor:pointer;
+    }
+    .itemdiv > .body{
+        margin-left: 0px;;
+    }
+</style>
+
+<script>
+    $(function(){
+        countView();
+    })
+    function countView(){
+        var option = {
+            title : {
+                text: '',
+                subtext: ''
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {show: true, type: ['line', 'bar']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            yAxis : [
+                {
+                    type : 'value',
+                    boundaryGap : [0, 0.01]
+                }
+            ],
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+                    data:['未提交','待验证','验证失败','待审批','审批失败','待发布','发布失败','已投产']
+                }
+            ],
+            series : [
+                {
+                    type:'bar',
+                    data:[${sl[0].modelcount!},${sl[1].modelcount!},${sl[2].modelcount!},${sl[3].modelcount!},${sl[4].modelcount!},${sl[5].modelcount!},${sl[6].modelcount!},${sl[7].modelcount!}]
+                }
+            ]
+        };
+
+        require(
+                [
+                    'echarts',
+                    'echarts/chart/line',
+                    'echarts/chart/bar'
+                ],
+                function (ec) {
+                    var myChart = ec.init(document.getElementById('picBody'));
+                    var ecConfig = require('echarts/config');
+                    myChart.setOption(option,true);
+                }
+        );
+    }
+</script>

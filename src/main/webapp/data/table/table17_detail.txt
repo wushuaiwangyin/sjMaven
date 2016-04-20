@@ -1,0 +1,64 @@
+<div class="profile-info-row">
+<div class="profile-info-name">客户号</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">开户网点</div>
+<div class="profile-info-value" id='base_b'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">客户名称2</div>
+<div class="profile-info-value" id='base_c'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">客户类别</div>
+<div class="profile-info-value" id='base_d'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">客户状态</div>
+<div class="profile-info-value" id='base_e'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">证件类别</div>
+<div class="profile-info-value" id='base_f'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">证件号码</div>
+<div class="profile-info-value" id='base_g'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">开户日期</div>
+<div class="profile-info-value" id='base_h'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">开户用户</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">销户日期</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">销户用户</div>
+<div class="profile-info-value" id='base_k'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">信贷许可</div>
+<div class="profile-info-value" id='base_l'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">是否股东</div>
+<div class="profile-info-value" id='base_m'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">CUSTTG</div>
+<div class="profile-info-value" id='base_n'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">TIMESTAMP</div>
+<div class="profile-info-value" id='base_o'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">证件1</div>
+<div class="profile-info-value" id='base_p'></div>
+</div>

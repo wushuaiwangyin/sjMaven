@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.sys.mapper.KbStdEntryMapper">
+	<sql id="kbStdEntryColumns">
+		entry_id, std_code, entry_code, disporder, keyword, content, status, creator_id, create_time, editor_id, edit_time
+	</sql>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.sys.model.KbStdEntry">
+		select <include refid="kbStdEntryColumns"/>
+		from kb_std_entry kb
+		<where>
+			<if test="@Ognl@isNotBlank(stdCode)">
+				kb.std_code = #{stdCode}
+			</if>
+		</where>
+		order by kb.create_time desc
+	</select>
+</mapper>

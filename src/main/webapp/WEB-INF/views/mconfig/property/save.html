@@ -1,0 +1,133 @@
+<div class="layer">
+	<form name="FormPost" id="model-save-form" class="FormGrid"  method="post"
+		action="${ctxPath}/sysuser/save">
+		
+		<input type="hidden" value="${user.id!}" name="id"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">属性名称</td>
+					<td class="DataTD width-100"><input type="text" name="name" datatype="*"  nullmsg="请输入名称！" value=""></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">是否有业务条线</td>
+					<td class="DataTD width-100">
+						<div class="radio inline">
+							<label>
+								<input name="hasLine" type="radio" class="ace" checked value="1"/>
+								<span class="lbl"> 有 </span>
+							</label>
+						</div>
+						<div class="radio inline">
+							<label>
+								<input name="hasLine" type="radio" class="ace" value="0"/>
+								<span class="lbl"> 无</span>
+							</label>
+						</div>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">是否有专题</td>
+					<td class="DataTD width-100">
+						<div class="radio inline">
+							<label>
+								<input name="hasTopic" type="radio" class="ace" checked value="1"/>
+								<span class="lbl"> 有 </span>
+							</label>
+						</div>
+						<div class="radio inline">
+							<label>
+								<input name="hasTopic" type="radio" class="ace" value="0"/>
+								<span class="lbl"> 无</span>
+							</label>
+						</div>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">序号</td>
+					<td class="DataTD width-100">
+						<input type="text" value="" datatype="n1-10" ignore="ignore" style="max-width: 200px;" name="sort"/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">描述</td>
+					<td class="DataTD">
+						<textarea name="remarks" class="autosize-transition form-control "
+						style="resize: none;"></textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="model-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+<script type="text/javascript">
+
+//描述框自动扩张高度
+$("#property1-select").chosen({width: "100%",search_contains: true});
+$("#riskLevel1-select").chosen({width: "100%",search_contains: true});
+$("#buzLine1-select").chosen({width: "100%",search_contains: true});
+$("#modelLevel1-select").chosen({width: "100%",search_contains: true});
+
+
+$(function() {
+	$("#submitForm").click(function () {
+		validId.submitForm(false);
+		return false;
+	});
+
+	$("#model-save-cancel").click(function () {
+		layer.closeAll();
+		return false;
+	});
+
+	var validId = $("#model-save-form").Validform({
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#model-save-form").data('loadi',loadi);
+		},
+		callback:function(data){
+			layer.close($("model-save-form").data('loadi'));
+			if(data>0) {
+				layer.msg('操作成功', 1, 1,function(){
+
+					location.reload();
+
+					layer.closeAll();
+				});
+			}else{
+				layer.msg('操作失败', 3, 1);
+			}
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true
+	});
+
+	$.fn.krmPullDownTree({
+		id:"pullDownTreethree",
+		sort:"three",
+		url:'data/depart.json',
+		isRoot:true,
+	});
+
+});
+
+
+	
+</script>

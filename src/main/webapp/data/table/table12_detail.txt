@@ -1,0 +1,116 @@
+<div class="profile-info-row">
+<div class="profile-info-name">帐号</div>
+<div class="profile-info-value" id='base_a'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易金额</div>
+<div class="profile-info-value" id='base_b'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">摘要代码</div>
+<div class="profile-info-value" id='base_c'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易日期</div>
+<div class="profile-info-value" id='base_d'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">主机日期</div>
+<div class="profile-info-value" id='base_e'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易时间</div>
+<div class="profile-info-value" id='base_f'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易码</div>
+<div class="profile-info-value" id='base_g'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">凭证代号</div>
+<div class="profile-info-value" id='base_h'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">借贷标记</div>
+<div class="profile-info-value" id='base_i'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">帐户余额</div>
+<div class="profile-info-value" id='base_j'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">余额性质</div>
+<div class="profile-info-value" id='base_k'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">余额方向</div>
+<div class="profile-info-value" id='base_l'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">客户号</div>
+<div class="profile-info-value" id='base_m'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">客户帐号类型</div>
+<div class="profile-info-value" id='base_n'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">客户帐号子序号</div>
+<div class="profile-info-value" id='base_o'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">营业机构号</div>
+<div class="profile-info-value" id='base_p'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">帐务机构号</div>
+<div class="profile-info-value" id='base_q'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">帐户营业机构</div>
+<div class="profile-info-value" id='base_r'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">帐户会计机构</div>
+<div class="profile-info-value" id='base_s'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">交易柜员</div>
+<div class="profile-info-value" id='base_t'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">授权柜员</div>
+<div class="profile-info-value" id='base_u'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">柜员流水号</div>
+<div class="profile-info-value" id='base_v'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">原柜员流水号</div>
+<div class="profile-info-value" id='base_w'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">现转标志</div>
+<div class="profile-info-value" id='base_x'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">传票子序号</div>
+<div class="profile-info-value" id='base_y'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">冲补标志</div>
+<div class="profile-info-value" id='base_z'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">原交易日期</div>
+<div class="profile-info-value" id='base_aa'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">时间戳</div>
+<div class="profile-info-value" id='base_ab'></div>
+</div>
+<div class="profile-info-row">
+<div class="profile-info-name">记录状态</div>
+<div class="profile-info-value" id='base_ac'></div>
+</div>

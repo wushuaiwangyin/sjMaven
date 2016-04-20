@@ -1,0 +1,10 @@
+<option value="a">科目号</option>
+<option value="b">科目名称</option>
+<option value="c">是否明细科目</option>
+<option value="d">余额性质</option>
+<option value="e">报表启用标志</option>
+<option value="f">损益表项目归属项目</option>
+<option value="g">损益表项目归属方法</option>
+<option value="h">科目级次</option>
+<option value="i">UPITEM</option>
+<option value="j">IOSHTG</option>

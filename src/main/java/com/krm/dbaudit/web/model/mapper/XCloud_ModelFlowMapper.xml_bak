@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 不同数据库差异化处理，行云 -->
+<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelFlowMapper">
+	<!-- 获取建表语句 -->
+	<select id="getCreateTable" resultType="java.lang.String">
+		select X_FORMAL_CREATETABLESQL(#{targettable},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取提取操作sql,行云提取数据行数使用limit，与oracle不同 -->
+	<select id="getFormalGetDataSql" resultType="java.lang.String">
+		select X_FORMAL_GETDATASQL(#{flowid},#{targettable},#{srctable},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取关联操作sql2 -->
+	<select id="getFormalMergeDataSql2" resultType="java.lang.String">
+		select X_FORMAL_MERGEDATASQL_MODE2(#{flowid},#{targettable},#{srctable1},#{srctable2},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取关联操作sql3 -->
+	<select id="getFormalMergeDataSql3" resultType="java.lang.String">
+		select X_FORMAL_MERGEDATASQL_MODE3(#{flowid},#{targettable},#{srctable1},#{srctable2},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取叠加操作sql -->
+	<select id="getFormalOverlayDataSql" resultType="java.lang.String">
+		select X_FORMAL_OVERLAYDATASQL(#{flowid},#{targettable},#{srctable},#{curtable},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取查询数据语句  -->
+	<select id="getFormalShowTableSql" resultType="java.lang.String">
+		select X_FORMAL_TABLESHOWSQL(#{targettable},'',#{pageNum},#{pageSize},#{serial}) as runsql from dual
+	</select> 
+</mapper>

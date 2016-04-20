@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.CusGuarFlowMapper">
+
+	<sql id="cusGuarFlowColumns">
+		cont_no, guar_cont_no, borrower_no, borrower_name, cert_code, guar_no, guar_name, cer_no, guar_way, guar_start_date, guar_end_date, guar_cont_state, guar_amt, fina_br_id, organname, customer_mgr, actorname, gage_name, right_cert_no, eval_amt, book_amt, bill_no, loan_amount, loan_start_date, loan_end_date, account_status, search_seq, search_step, search_flow 
+	</sql>
+
+	<sql id="aliasCusGuarFlowColumns">
+		a.cont_no, a.guar_cont_no, a.borrower_no, a.borrower_name, a.cert_code, a.guar_no, a.guar_name, a.cer_no, a.guar_way, a.guar_start_date, a.guar_end_date, a.guar_cont_state, a.guar_amt, a.fina_br_id, a.organname, a.customer_mgr, a.actorname, a.gage_name, a.right_cert_no, a.eval_amt, a.book_amt, a.bill_no, a.loan_amount, a.loan_start_date, a.loan_end_date, a.account_status, a.search_seq, a.search_step, a.search_flow
+	</sql>
+	
+	<sql id="aliasCusGuarFlowColumnsUser">
+		a.cont_no, a.guar_cont_no, a.borrower_no, a.borrower_name, a.cert_code, a.guar_no, a.guar_name, a.cer_no, a.guar_way, a.guar_start_date, a.guar_end_date, a.guar_cont_state, a.guar_amt, a.fina_br_id, a.organname, a.customer_mgr, a.actorname, a.gage_name, a.right_cert_no, a.eval_amt, a.book_amt, a.bill_no, a.loan_amount, a.loan_start_date, a.loan_end_date, a.account_status,a.search_user
+	</sql>
+	
+	<select id = "callProSerachFlow" parameterType="java.util.Map" 
+		statementType="CALLABLE" resultType="Integer"> 
+		{call P_GET_CUS_GUAR_LOAN_FLOW(
+		#{IN_GUAR_NO,mode=IN,jdbcType=VARCHAR},
+		#{IN_AMT,mode=IN,jdbcType=INTEGER},
+		#{IN_STEP,mode=IN,jdbcType=INTEGER},
+		#{IN_SEARCH_ID,mode=IN,jdbcType=INTEGER},
+		#{IN_GUAR_START_DATE,mode=IN,jdbcType=VARCHAR},
+		#{OUT_STEP,mode=OUT,jdbcType=INTEGER}
+		)}
+	</select>
+	
+	<select id = "getSearchFlowMaxStep" parameterType="java.util.Map" resultType="java.lang.Integer"> 
+		select  max(search_step) search_step
+			from CUS_GUAR_LOAN_REL_TEMP_1  a 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and a.search_flow =  #{search_flow}
+			 </if>
+		</where>
+	</select>
+	
+	<resultMap id="CusGuarFlowDpsGroup" type="com.krm.dbaudit.web.verify.model.CusGuarFlow">  
+        <result column="guar_no" property="guarNo" />
+        <result column="name" property="name" />
+        <result column="search_step" property="searchStep" />
+        <result column="search_flow" property="searchFlow" />
+    </resultMap>
+	
+	<select id = "getDpsSearchFlowGroup2" resultMap="CusGuarFlowDpsGroup"> 
+		select search_flow,max(guar_name) name,max(guar_no) guar_no,
+		(select max(search_step) from CUS_GUAR_LOAN_REL_TEMP_1 WHERE search_flow=72 ) search_step 
+		from CUS_GUAR_LOAN_REL_TEMP_1 
+		where 
+		search_flow=#{search_flow} and search_step=1  group by search_flow
+	</select>
+	
+	<resultMap id="cusGuarFlow" type="com.krm.dbaudit.web.verify.model.CusGuarFlow">
+		<result column="cont_no" property="contNo" />
+		<result column="guar_cont_no" property="guarContNo" />
+		<result column="borrower_no" property="borrowerNo" />
+		<result column="borrower_name" property="borrowerName" />
+		<result column="cert_code" property="certCode" />
+		<result column="guar_no" property="guarNo" />
+		<result column="guar_name" property="guarName" />
+		<result column="cer_no" property="cerNo" />
+		<result column="guar_way" property="guarWay" />
+		<result column="guar_start_date" property="guarStartDate" />
+		<result column="guar_end_date" property="guarEndDate" />
+		<result column="guar_cont_state" property="guarContState" />
+		<result column="guar_amt" property="guarAmt" />
+		<result column="fina_br_id" property="finaBrId" />
+		<result column="organname" property="organname" /> 
+        <result column="customer_mgr" property="customerMgr" />
+        <result column="actorname" property="actorname" />
+        <result column="gage_name" property="gageName" />
+        <result column="right_cert_no" property="rightCertNo" />
+        <result column="eval_amt" property="evalAmt" />
+        <result column="book_amt" property="bookAmt" />
+        <result column="bill_no" property="billNo" />
+        <result column="loan_amount" property="loanAmount" />
+        <result column="loan_start_date" property="loanStartDate" />
+        <result column="loan_end_date" property="loanEndDate" />
+        <result column="account_status" property="accountStatus" />
+        <result column="search_seq" property="searchSeq" />
+        <result column="search_step" property="searchStep" />
+        <result column="search_flow" property="searchFlow" />
+        <result column="search_user" property="searchUser" />
+    </resultMap>
+    
+    <resultMap id="cusGuarFlowUser" type="com.krm.dbaudit.web.verify.model.CusGuarFlowLoan">
+		<result column="guar_no" property="guarNo" />
+		<result column="guar_start_date" property="guarStartDate" />
+    </resultMap>
+    
+    
+	<select id = "listCusGuarFlow" resultMap="cusGuarFlow"> 
+		select  <include refid="aliasCusGuarFlowColumns" />  
+			from CUS_GUAR_LOAN_REL_TEMP_1  a 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and a.search_flow =  #{search_flow}
+			 </if>
+		</where>
+	</select>
+	
+	
+	<select id = "getSearchFlowNodes" parameterType="java.util.Map" resultType="java.util.Map"> 
+		SELECT guar_no cusid,guar_name name,search_flow FROM  CUS_GUAR_LOAN_REL_TEMP_1 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and search_flow =  #{search_flow}
+			 </if>
+		</where>
+		union
+		select a.BORROWER_NO cusid,a.BORROWER_NAME name,a.search_flow FROM  CUS_GUAR_LOAN_REL_TEMP_1 a
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_flow)">
+			    and search_flow =  #{search_flow}
+			 </if>
+		</where>
+	</select>
+	
+	
+	<select id="getDataByGuarNo" resultType="com.krm.dbaudit.web.verify.model.CusGuarFlow">
+		select distinct  a.cont_no, a.guar_cont_no, a.borrower_no, a.borrower_name, a.cert_code, a.guar_no, a.guar_name, a.cer_no, a.guar_way, a.guar_start_date, a.guar_end_date, a.guar_cont_state, a.guar_amt, a.fina_br_id, a.organname, a.customer_mgr, a.actorname, a.gage_name, a.right_cert_no, a.eval_amt, a.book_amt, a.bill_no, a.loan_amount, a.loan_start_date, a.loan_end_date, a.account_status
+			from CUS_GUAR_LOAN_REL_TEMP_1  a
+		<where>
+			1=1 
+			<if test="@Ognl@isNotBlank(guar_no)">
+				and guar_no = #{guar_no}
+			</if>
+			<if test="@Ognl@isNotBlank(search_flow)">
+				and search_flow =  #{search_flow}
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+	
+	<select id = "callProSerachFlowNotCusId" parameterType="java.util.Map" 
+		statementType="CALLABLE" resultType="Integer"> 
+		{call P_GET_STEP_NOT_CUSID(
+		#{IN_USER,mode=IN,jdbcType=VARCHAR},
+		#{IN_AMT,mode=IN,jdbcType=INTEGER},
+		#{IN_GUAR_START_DATE,mode=IN,jdbcType=VARCHAR},
+		#{OUT_ROWNUM,mode=OUT,jdbcType=INTEGER}
+		)}
+	</select>
+	
+	<select id = "getGuarList" resultMap="cusGuarFlowUser"> 
+		select guar_no,  guar_start_date 
+			from CUS_GUAR_LOAN_REL_TEMP_2  a 
+		<where>
+			1=1 
+			 <if test="@Ognl@isNotBlank(search_user)">
+			    and a.search_user =  #{search_user}
+			 </if>
+		</where>
+	</select>
+	
+	<select id = "callProSerachFlowGuar" parameterType="java.util.Map" 
+		statementType="CALLABLE" resultType="Integer"> 
+		{call P_GET_CUS_GUAR_LOAN_FLOW_USER(
+		#{IN_GUAR_NO,mode=IN,jdbcType=VARCHAR},
+		#{IN_STEP,mode=IN,jdbcType=INTEGER},
+		#{IN_SEARCH_ID,mode=IN,jdbcType=INTEGER},
+		#{IN_GUAR_START_DATE,mode=IN,jdbcType=VARCHAR},
+		#{IN_SEARCH_USER,mode=IN,jdbcType=VARCHAR},
+		#{OUT_STEP,mode=OUT,jdbcType=INTEGER}
+		)}
+	</select>
+	
+	
+	<select id = "getGuarSearchFlowGroup" resultMap="CusGuarFlowDpsGroup"> 
+		select search_flow,search_step,
+			(select guar_name from CUS_GUAR_LOAN_REL_TEMP_1 b where b.search_flow=a.search_flow and search_user = #{search_user} and search_step=1 and rownum=1) name,
+			(select guar_no from CUS_GUAR_LOAN_REL_TEMP_1 b where b.search_flow=a.search_flow and search_user = #{search_user} and search_step=1 and rownum=1) guar_no
+		 from(
+			select search_flow,max(search_step) search_step from CUS_GUAR_LOAN_REL_TEMP_1  a where search_user = #{search_user} group by search_flow
+			 ) a 
+			 where a.search_step > #{search_step}
+	</select>
+	
+</mapper>

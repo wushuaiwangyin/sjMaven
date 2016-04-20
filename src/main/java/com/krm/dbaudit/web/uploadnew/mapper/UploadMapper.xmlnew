@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.krm.dbaudit.web.upload.mapper.UploadMapper">
+	
+	<insert id="saveTable" parameterType="java.util.List">
+			insert into TOOL_DEF_TABLE (TABLE_NAME, TABLE_ALIAS, TABLE_PARENT, TABLE_FLAG, TABLE_TYPE_ID, CREATE_BY)
+			<foreach collection="list" open="(" close=")" item="item" index="index" separator="union">  
+	            select
+	            #{item.tableName,jdbcType=VARCHAR},
+	            #{item.tableAlias,jdbcType=VARCHAR},
+				#{item.tabelParent,jdbcType=VARCHAR},
+				#{item.tableFlag,jdbcType=VARCHAR},
+				#{item.tableTypeId,jdbcType=VARCHAR},
+				#{item.userid,jdbcType=VARCHAR}
+	            from dual  
+	        </foreach>  
+		</insert>
+		
+	<select id="generateId" resultType="java.lang.Long">
+		select SEQ_TABLEFIELD_ID.nextval from dual
+	</select>	
+		
+	<insert id="saveTableAlians" parameterType="java.util.List">
+		
+		insert into TOOL_DEF_TABLEFIELD (id, table_name, field_name, field_alias, field_entity_type, field_type, 
+					field_length) 
+		<foreach collection="list" open="(" close=")" item="item" index="index" separator="union">  
+            select  
+            #{item.id,jdbcType=INTEGER},
+            #{item.tableName,jdbcType=VARCHAR},
+            #{item.filedName,jdbcType=VARCHAR},
+            #{item.filedAlias,jdbcType=VARCHAR},
+			#{item.filedEntityType,jdbcType=VARCHAR},
+			#{item.filedType,jdbcType=VARCHAR},
+            #{item.filedLength,jdbcType=VARCHAR}
+            from dual  
+        </foreach>  
+	</insert>
+</mapper>

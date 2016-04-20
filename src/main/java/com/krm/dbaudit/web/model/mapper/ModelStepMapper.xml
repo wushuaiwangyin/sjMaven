@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelStepMapper">
+
+	<sql id="modelStepColumns">
+		id,name,talble_name,status,step_desc,sql_code,model,create_by,create_date,update_by,update_date,srot,DEL_FLAG
+	</sql>
+
+	<sql id="aliasModelStepColumns">
+		b.id,b.name,b.talble_name,b.status,b.step_desc,b.sql_code,b.model,b.create_by,b.create_date,b.update_by,b.update_date,b.srot,b.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.model.model.ModelStep">
+		select  <include refid="aliasModelStepColumns" />  
+			from model_step  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(talbleName)">
+			    and b.talble_name like '%' || #{talbleName} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(status)">
+			    and b.status =  #{status}
+			 </if>
+			 <if test="@Ognl@isNotBlank(setupDesc)">
+			    and b.step_desc like '%' || #{stepDesc} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(sqlCode)">
+			    and b.sql_code like '%' || #{sqlCode} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(model)">
+			    and b.model =  #{model}
+			 </if>
+			 <if test="@Ognl@isNotBlank(srot)">
+			    and b.srot =  #{srot}
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

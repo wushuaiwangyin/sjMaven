@@ -1,0 +1,49 @@
+<div class="layer">
+
+    <form name="FormPost" id="model-step-save" class="FormGrid"  method="post" action="">
+        <table class="EditTable" width="100%">
+            <tbody>
+            <tr class="FormData">
+                <td class="CaptionTD">步骤名称</td>
+                <td class="DataTD width-100"><input type="text" name="name" datatype="*"  nullmsg="请输入名称！" value=""></td>
+            </tr>
+            <tr class="FormData">
+                <td class="CaptionTD">序号</td>
+                <td class="DataTD width-100"><input type="text" name="name" datatype="*"  nullmsg="请输入序号！" value=""></td>
+            </tr>
+            <tr class="FormData">
+                <td class="CaptionTD">SQL</td>
+                <td class="DataTD width-100">
+                    <textarea name="remark" class="autosize-transition form-control "style="resize: none;"></textarea>
+                </td>
+            </tr>
+            <tr class="FormData">
+                <td class="CaptionTD">描述</td>
+                <td class="DataTD width-100">
+                    <textarea name="remark" class="autosize-transition form-control "style="resize: none;"></textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+</div>
+
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="model-step-save-btn">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="step-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+<script type="text/javascript">
+    $("#step-save-cancel").click(function () {
+        layer.close(lastIndex);
+        layer.close(layer.index);
+        return false;
+    });
+
+
+</script>

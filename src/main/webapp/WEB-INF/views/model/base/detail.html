@@ -1,0 +1,356 @@
+﻿<div class="layer">
+    <ul class="nav nav-tabs"  id="myTab">
+        <li class="active"><a data-toggle="tab" href="#baseInfo"> <i
+                class="green ace-icon fa fa-graduation-cap bigger-120"></i> 基本信息
+        </a></li>
+
+        <li class=""><a data-toggle="tab" href="#stepInfo">
+            <i class="green ace-icon fa fa-send bigger-120"></i> 步骤信息
+        </a></li>
+
+        <li class=""><a data-toggle="tab" href="#approveInfo">
+            <i class="green ace-icon fa fa-check bigger-120"></i> 评审信息
+        </a></li>
+
+        <li class=""><a data-toggle="tab" href="#runInfo">
+            <i class="green ace-icon fa fa-ruble bigger-120"></i> 跑批记录
+        </a></li>
+
+    </ul>
+
+    <div class="tab-content">
+        <div id="baseInfo" class="tab-pane active clearfix">
+            <div class="profile-user-info profile-user-info-striped wordbreak" >
+				<div class="profile-info-row">
+					<div class="profile-info-name">﻿模型编号</div>
+					<div class="profile-info-value">${item.id!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">模型名称</div>
+					<div class="profile-info-value">${item.name!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">业务属性</div>
+					<div class="profile-info-value">${item.propertyname!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">业务条线</div>
+					<div class="profile-info-value">${item.buzlinename!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">专题</div>
+					<div class="profile-info-value">${item.subjectname!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">风险级别</div>
+					<div class="profile-info-value">${item.risklevelname!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">状态</div>
+					<div class="profile-info-value">${item.statusname!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">数据源</div>
+					<div class="profile-info-value">${item.dbSrc!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">跑批时间</div>
+					<div class="profile-info-value">${item.runTime!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">频度</div>
+					<div class="profile-info-value">${item.interval!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">跑批方式</div>
+					<div class="profile-info-value">${item.runWay!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">结果表名</div>
+					<div class="profile-info-value">${item.tname!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">主键字段</div>
+					<div class="profile-info-value">${item.cKey!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">机构字段</div>
+					<div class="profile-info-value">${item.cOrg!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">客户号字段</div>
+					<div class="profile-info-value">${item.cCustomer!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">模型描述</div>
+					<div class="profile-info-value">${item.description!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">创建人</div>
+					<div class="profile-info-value">${item.createBy!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">创建时间</div>
+					<div class="profile-info-value">${item.createDate!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">修改人</div>
+					<div class="profile-info-value">${item.updateBy!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">修改时间</div>
+					<div class="profile-info-value">${item.updateDate!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">最后跑批时间</div>
+					<div class="profile-info-value">${item.lastRunDate!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">最后跑批记录数</div>
+					<div class="profile-info-value">${item.lastRunCount!}</div>
+				</div>
+				<div class="profile-info-row">
+					<div class="profile-info-name">最后跑批状态</div>
+					<div class="profile-info-value">${item.lastRunStatus!}</div>
+				</div>
+			</div>	
+        </div>
+
+        <div id="stepInfo" class="tab-pane  clearfix">
+            <div class="panel-group accordion-style1 accordion-style2" id="faq-list-1">
+            	@for(flow in flowlist){
+            	<div class="panel panel-default">
+					<div class="panel-heading">
+						 <a class="profile-info-value" data-toggle="collapse" data-parent="#panel-118143" href="#panel-element-${flow.id!}">流程 --> ${flow.flowName!}</a>
+					</div>
+					<div id="panel-element-${flow.id!}" class="panel-collapse collapse in">
+						<div class="profile-info-value">
+							<div class="profile-info-row">
+								<div class="profile-info-name">操作类型</div><div class="profile-info-value">${flow.actionName!}</div>
+							</div>
+							<div class="profile-info-row">
+								<div class="profile-info-name">流程名称</div><div class="profile-info-value">${flow.flowName!}</div>
+							</div>
+							<!--
+							<div class="profile-info-row">
+								<div class="profile-info-name">结果表</div><div class="profile-info-value">${flow.targetTableName!}</div>
+							</div>
+							 -->
+							<div class="profile-info-row">
+								<div class="profile-info-name">操作明细</div>
+								<div class="profile-info-value">
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">数据来源-主表</span></div><div class="profile-info-value">${flow.firstTable!}</div>
+									</div>
+									@if(flow.secondaryTable != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">数据来源-副表</span></div><div class="profile-info-value">${flow.secondaryTable!}</div>
+									</div>
+									@}
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">    提取字段</span></div><div class="profile-info-value">${flow.fieldInfo!}</div>
+									</div>
+									@if(flow.relationInfo != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">关联字段</span></div><div class="profile-info-value">${flow.relationInfo!}</div>
+									</div>
+									@}
+									@if(flow.conditionInfo != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">主表提取条件</span></div><div class="profile-info-value">${flow.conditionInfo!}</div>
+									</div>
+									@}
+									@if(flow.dataArea != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">提取范围</span></div><div class="profile-info-value">${flow.dataArea!}</div>
+									</div>
+									@}
+									@if(flow.distinctInfo != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">排重字段</span></div><div class="profile-info-value">${flow.distinctInfo!}</div>
+									</div>
+									@}
+									@if(flow.procModeName != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">模式</span></div><div class="profile-info-value">${flow.procModeName!}</div>
+									</div>
+									@}
+									@if(flow.sortInfo != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">排序字段</span></div><div class="profile-info-value">${flow.sortInfo!}</div>
+									</div>
+									@}
+									@if(flow.virtualfieldInfo != null){
+									<div class="profile-info-row">
+										<div class="profile-info-name"><span class="label label-success">虚拟字段</span></div><div class="profile-info-value">${flow.virtualfieldInfo!}</div>
+									</div>
+									@}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				@}
+            </div>
+        </div>
+
+        <div id="approveInfo" class="tab-pane  clearfix">
+        	@var prevdate = "";
+        	@var nindex = 0;
+        	@for(deal in deallist){
+        	@if(prevdate!=deal.dealDate){
+     		@if(nindex>0){		
+                </div><!-- /.timeline-items -->
+            </div>
+            @}
+            <div class="timeline-container">
+                <div class="timeline-label">
+                    <span class="label label-primary arrowed-in-right label-lg">
+                        <b>${deal.dealDate!}</b>
+                    </span>
+                </div>
+                <div class="timeline-items">
+           @     prevdate=deal.dealDate;
+           @}
+           @nindex = nindex+1;
+                    <div class="timeline-item clearfix">
+                        <div class="timeline-info">
+                            <span class="label 
+                           @if(deal.dealAction==1){ 
+                           	label-success 
+                           @}else if(deal.dealAction==2){	
+                            label-warning
+                           @}else if(deal.dealAction==3){
+                            label-primary
+                           @}else if(deal.dealAction==4){
+                            label-info
+                           @}
+                            label-sm">${deal.dealBy!}</span>
+                        </div>
+                        <div class="widget-box transparent">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                  ${deal.dealActionName!} ${deal.modelStatusName} ${deal.dealMemo}
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                                        ${deal.dealTime!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 
+                    <div class="timeline-item clearfix">
+                        <div class="timeline-info">
+                            <span class="label label-warning label-sm ">张小</span>
+                        </div>
+                        <div class="widget-box transparent">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    提交模型
+                                    <div class="pull-right">
+                                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                                        9：44
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     -->            
+            @}
+            @if(nindex>0){		
+                </div><!-- /.timeline-items -->
+            </div>
+            @}
+
+        </div>
+
+        <div id="runInfo" class="tab-pane  clearfix">
+            <div class="timeline-container timeline-style2">
+            	@prevdate = "";
+	        	@nindex = 0;
+	        	@for(runlog in runlist){
+	        	@if(prevdate!=runlog.runyearstr){
+     			@if(nindex>0){
+     			</div><!-- /.timeline-items -->
+     			@}
+                <span class="timeline-label">
+                    <b>${runlog.runyearstr!}年</b>
+                </span>
+                <div class="timeline-items">
+                @prevdate = runlog.runyearstr;
+                @}
+                @nindex = nindex+1;
+                    <div class="timeline-item clearfix">
+                        <div class="timeline-info">
+                            <span class="timeline-date">${runlog.runtimestr!}</span>
+                            <i class="timeline-indicator btn btn-info no-hover"></i>
+                        </div>
+
+                        <div class="widget-box transparent">
+                            <div class="widget-body">
+                                <div class="widget-main no-padding">
+                                @if(runlog.runStatus==1){ 
+                                    <span class="red bolder">跑批成功</span>
+                                    <br>
+                                    <span class="widget-main no-padding"> 生成数据共<span class="pink2 bolder">${runlog.runResultCount!}条</span>，消耗时间<span class="pink2 bolder">${runlog.runTime!}毫秒</span></span>
+                                    
+                                @}else if(runlog.runStatus==0){
+                                	<span class="blue bolder">跑批失败</span>
+	                           	@}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @}
+                @if(nindex>0){		
+                </div><!-- /.timeline-items -->
+            	@}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>/*
+    $.ajax({
+        url: "./data/model.json",
+        dataType: "json",
+        async: false,
+        success: function(data) {
+            $.each(data,function(i,obj){
+                if(obj.id == id){
+                    $.each(obj,function(key,value){
+                        $("#base_"+key).text(value);
+                    })
+                }
+            })
+        }
+    });
+
+    $.ajax({
+        url: "./data/model_step.json",
+        dataType: "json",
+        async: false,
+        success: function(data) {
+            var _html = "";
+            $.each(data,function(i,obj){
+              _html += '<div class="panel panel-default">'+
+                            '<div class="panel-heading">'+
+                                '<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#faq-list-1" href="#faq-1-'+obj.id+'" aria-expanded="false">'+
+                                    '<i data-icon-show="ace-icon fa fa-chevron-left" data-icon-hide="ace-icon fa fa-chevron-down" class="pull-right ace-icon fa fa-chevron-left"></i>'+
+                                   obj.name+
+                                 '</a>'+
+                            '</div>'+
+                            '<div id="faq-1-'+obj.id+'" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">'+
+                               '<div class="panel-body">'+
+                                obj.sql +
+                                '</div>'+
+                            '</div>'+
+                        '</div>';
+            })
+            $("#faq-list-1").html(_html);
+        }
+    });*/
+</script>
+

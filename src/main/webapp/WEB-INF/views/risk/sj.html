@@ -1,0 +1,388 @@
+<div class="row">
+	<div class="col-xs-3">
+		<div class="widget-box">
+			<div class="widget-header clearfix">
+				<h5 class="widget-title"></h5>
+				<div class="widget-toolbar width-30">
+					<label>
+						<input type="checkbox" id="change_tree" class="ace ace-switch ace-switch-4 btn-flat" name="">
+						<span data-lbl="机构&nbsp;&nbsp;条线" class="lbl middle"></span>
+					</label>
+				</div>
+				<div class="widget-toolbar no-border width-70" style="padding-top: 2px;">
+					<form method="post" class="form-search" target="list-page"
+						  action="">
+						<div class="input-group" style="line-height: 0px;">
+							<input type="text" class="form-control search-query"
+								   name="name" placeholder="关键词" id="search-input">
+								<span class="input-group-btn">
+									<span class="btn  btn-success btn-sm"
+										  id="search-btn">
+										 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+									</span>
+								</span>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main padding-8">
+					<ul id="ztree" class="ztree" style="min-height: 480px;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="col-xs-9">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">合规模型</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+				<div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+						  onclick="downloadFile('table','${ctxPath}/data/export')">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导出Excel</span>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div id="list-page" class="widget-main padding-8">
+					<table id="table"   data-pagination="true"  data-click-to-select="true" 
+									  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+									  data-toolbar="#toolbar"  data-page-size="10"
+									  data-smart-display="false"
+									  data-toggle="table"
+									  data-height="600" 
+									  >
+							<thead>
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="modelruntime" data-sort-name="runTime"  data-align="center" data-width="30" data-sortable="true">运行时间</th>
+							<th data-field="name"  data-sortable="true" data-toggle="tooltip" data-formatter="modelNameFormatter">模型名称</th>
+							<th data-field="buzlinename"  data-sort-name="buzLine" data-sortable="true">业务条线</th>
+							<th data-field="code" data-sortable="true">模型编码</th>
+							<th data-field="dealStatus" >处理状态</th>
+							<th data-field="id" data-align="center" data-sortable="false" data-width="75"  data-formatter="operatorBtn">操作</th>
+						</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+<div id="toolbar">
+	<form method="post" class="form-search" id="search-form" >
+		<input type="hidden" name="property" value=${property!}>
+		<div class="form-inline" role="form">
+			<div class="form-group">
+				<span>模型名称</span>
+				<input name="name" class="form-control" type="text" >
+			</div>
+			<div class="form-group">
+				<span>业务条线</span>
+				@var buzLines = dict.getDictListByType("model_buz_line");
+				<#select name="buzLine" id="buzline-chosen" width="120px" class="form-control w110">
+					<option value="">全部</option>
+					@for(item in buzLines){
+						<option value="${item.value!}">
+						${item.label!}
+						</option>
+					@}
+				</#select>
+			</div>
+			<div class="form-group">
+				<span>专项专题</span>
+				<#organtree url="model/audit/type/tree"  
+						modelId="type" id="type" nameId="typeName" level="0"
+						modelNameValue="${pOffice.name!}" class="form-group"
+						modelIdValue="${sysrole.officeId!}" rootNodeName="审计专项分类列表"
+						selectIds="${sysrole.organId!}"/>
+			</div>
+			<div class="form-group">
+				<span>运行时间</span>
+				<input name="lastRunDateStart" class=" Wdate form-control w70" type="text" 
+						id="startDate" onFocus="WdatePicker({maxDate: '#F{$dp.$D(\'endDate\')||\'2020-10-01\'}' })">
+				<input name="lastRunDateEnd" class="form-control w70" type="text" 
+						id="endDate" onFocus="WdatePicker({minDate: '#F{$dp.$D(\'startDate\')||\'%y-%M-%d\'}' })"	>
+			</div>
+			
+			
+			<div class="form-group">
+				<span>客户编号</span>
+				<input id="custNo" name="custNo" class="form-control w70" type="text" >
+			</div>
+			<div class="form-group">
+				<span>处理状态</span>
+				 @var status = dict.getDictListByType("model_deal_status");
+				<#select name="dealStatus" id="status-chosen" width="120px" class="form-control w70">
+					<option value="">全部</option>
+					@for(item in status){
+						<option value="${item.value!}">
+						${item.label!}
+						</option>
+					@}
+				</#select>
+			</div>
+			<div class="form-group">
+				<span>机构名称</span>
+				<#organtree url="office/tree"  
+						modelId="organId" id="organId" nameId="organName"
+						modelNameValue="${pOffice.name!}" 
+						modelIdValue="${sysrole.officeId!}" rootNodeName="机构列表"
+						selectIds="${sysrole.organId!}"/>
+			</div>
+			<div class="form-group">
+				<span>风险级别</span>
+				 @var risks = dict.getDictListByType("model_risk_level");
+				<#select name ="riskLevel" id="riskLevel-chosen" width="120px" class="form-control w70">
+					<option value="">全部</option>
+					@for(item in risks){
+						<option value="${item.value!}">
+						${item.label!}
+						</option>
+					@}
+				</#select>
+			</div>
+			<button id="ok" type="button" class="btn btn-primary btn-sm">查&nbsp;&nbsp;询</button>
+		</div>
+	</form>
+</div>
+
+
+
+<div id="rowBtn_edit" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" title="详细"
+		   data-mode="tableDetails" data-title="详细"
+		   data-url="${ctxPath}/data/queryHeaders"
+		   data-width="80%"
+		   data-height="100%"
+		   data-data="{id:'{row.id}'}"
+		   data-table = "table"
+		   >
+			<i class="ace-icon fa fa-list bigger-130"></i>
+		</a>
+	</div>
+</div>
+
+<style>
+	.ztree{
+		overflow: auto;
+	}
+</style>
+
+<script>
+ $("#riskLevel-select").chosen({width: "100px",disable_search_threshold:10});
+ $("#status-select").chosen({width: "100px",disable_search_threshold:10});
+
+	$(function(){
+		var $table = $('#table');
+	    $table.bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			toolbar:"#toolbar",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:'${ctxPath}/risk/detection/list1?'+$("#search-form").serialize()
+	    });
+	})
+	
+	function modelNameFormatter(value,row,index){
+			return ' <a  href="javascript:void(0);"'+
+					' data-mode="detail" data-title="'+value+'    详细"'+
+					' data-url="${ctxPath}/model/base/detail/showlayer?id='+row.id+ '"'+
+					'data-width="50%"'+
+					'data-data="{id:'+row.id+'}" >'+
+					value +
+					'</a>';
+		}
+		
+	function riskLevelCellStyle(value,row,index){
+	    if(value == "特别严重"){
+	        return {css:{background:'#ffb752'}};
+	    }
+	    return {};
+	}
+	
+	$("#ok").click(function(){
+		var params = jQuery("#search-form").serialize(); 
+		params = decodeURIComponent(params,true);
+		params = encodeURI(encodeURI(params));
+		$('#table').bootstrapTable("refresh",{url:"${ctxPath}/risk/detection/list1?"+params})
+	}); 
+
+
+	var treeObj;
+	var key = null,nodeList=[];
+	var id = null;
+	var selecttype;
+	var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		},
+
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : 'id',
+				pIdKey :'parentId'
+			},
+			key:{
+				name:"name"
+			}
+		},
+		callback: {
+			onClick: onClickNode
+		}
+	};
+
+
+	var loadWay = "buzLine";
+	$(function(){
+		loadByBuzLine();
+		//加载审计专项树
+
+		//加载审计专项树xfg
+		
+		key = $("#search-input");
+		$("#riskLevel-select").chosen({width: "120px",disable_search_threshold:10});
+		$("#dealStatus-select").chosen({width: "120px",disable_search_threshold:10});
+
+		$('#change_tree').removeAttr('checked').on('click', function(){
+			if(this.checked) {
+				loadByBuzOrg();
+				loadWay = "org";
+			}
+			else {
+				loadByBuzLine();
+				loadWay = "buzLine";
+			}
+		})
+		
+		$("#search-btn").on("click",function(e){
+			treeObj.cancelSelectedNode();
+			searchNode(e);
+		})
+
+	})
+	
+	function searchNode(e) {
+	// 取得输入的关键字的值
+	var value = $.trim(key.get(0).value);
+	// 按名字查询
+	var	keyType = "name";
+	if (key.hasClass("empty")) {
+		value = "";
+	}
+
+	// 如果要查空字串，就退出不查了。
+	if (value === "") {
+		return;
+	}
+	updateNodes(false);
+	if(loadWay == "buzLine"){
+		nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+		var type = "";
+		$.each(nodeList,function(i,obj){
+			type = (type + obj.id) + (((i + 1)== nodeList.length) ? '':','); 
+		})
+		loadData(type);
+	}
+	if(loadWay == "org"){
+		nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+		var organId = "";
+		$.each(nodeList,function(i,obj){
+			organId = (organId + obj.code) + (((i + 1)== nodeList.length) ? '':','); 
+		})
+		loadData(type);
+	}
+	updateNodes(true);
+}
+
+function updateNodes(highlight) {
+	for(var i=0, l=nodeList.length; i<l; i++) {
+		nodeList[i].highlight = highlight;
+		treeObj.updateNode(nodeList[i]);
+		treeObj.expandNode(nodeList[i].getParentNode(), true, false, false);
+	}
+}
+
+
+function onClickNode(e, treeId, treeNode){
+	if(treeNode.id == 0){
+		loadData(0);
+	}else{
+		loadData(treeNode.id);
+	}
+}
+
+function loadData(type){
+	selecttype = type;
+	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/risk/detection/list1?"+"&type="+type})
+}
+
+function loadOrgan(code){
+	//if(code == 100000 ){
+	//	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/risk/detection/list1?"+"&property=4"})
+	//}else{
+	//	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/risk/detection/list1?"+"&property=4&cOrg="+code})
+	//}
+		
+}
+
+
+
+function loadByBuzOrg(){
+	$.ajax({
+		url: "${ctxPath}/risk/detection/tree",
+		method:"post",
+		dataType: "json",
+		async: false,
+		success: function(data) {
+			var treeData = [];
+			$.each(data,function(i,obj){
+				treeData.push(obj);
+			})
+
+			$.fn.zTree.init($("#ztree"), setting, treeData);
+			treeObj = $.fn.zTree.getZTreeObj("ztree");
+
+			var nodes = treeObj.getNodesByParam("parentId", 1);
+			for(var i=0; i<nodes.length; i++) {
+				treeObj.expandNode(nodes[i].getParentNode(), true, false, false);
+			}
+		}
+	});
+}
+
+var zTreeNodes;
+function loadByBuzLine(){
+	nodeList=[]; //清除缓存
+	var treeData = ${treeList};
+		
+	var root = {id:0,name:"模型专题分类列表",open:true};
+	treeData[treeData.length] = root;
+	
+	$.fn.zTree.init($("#ztree"), setting,treeData);
+	treeObj = $.fn.zTree.getZTreeObj("ztree");
+}
+</script>

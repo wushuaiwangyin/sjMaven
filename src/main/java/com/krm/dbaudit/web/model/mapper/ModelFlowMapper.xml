@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelFlowMapper">
+	<sql id="modelFlowColumns">
+		id,model_id,flow_name,parent_flow_id,proc_script as actionmode,target_table,F_GET_TABLEALIAS(target_table) as target_table_name,source_table1,F_GET_TABLEALIAS(source_table1) as sourceTableName1,source_table2,F_GET_TABLEALIAS(source_table2) as sourceTableName2,proc_mode 
+	</sql>
+	
+	<select id="findFlowById" resultType="com.krm.dbaudit.web.model.model.ModelFlow">
+		select  a.id,c.model_id,flow_name,parent_flow_id,proc_script as action_mode,b.label as action_name,target_table,F_GET_TABLEALIAS(target_table) as target_table_name,source_table1,F_GET_TABLEALIAS(source_table1) as source_table_name1,source_table2,F_GET_TABLEALIAS(source_table2) as source_table_name2,proc_mode,F_GET_ProcMode_Dict(proc_script,proc_mode) as proc_mode_name     
+			 from MODEL_DEF_FLOW a,SYS_DICT b,MODEL_FLOW c
+		<where>
+			c.model_id = #{modelid} and c.flow_id=a.id and b.type='proc_flow_action' and a.proc_script = b.value
+		</where>
+		 order by a.id
+	</select>
+	
+	<select id="findFlowByFlowId" resultType="com.krm.dbaudit.web.model.model.ModelFlow">
+		select id,model_id,flow_name,parent_flow_id,proc_script as action_mode,target_table,source_table1,source_table2,proc_mode,F_GET_ProcMode_Dict(proc_script,proc_mode) as proc_mode_name from MODEL_DEF_FLOW
+		<where>
+			id=#{flowid}
+		</where>
+	</select>
+	
+	<!-- 获取叠加操作所有关联表-->
+	<select id="selectOverlayTableList" resultType="java.lang.String">
+		select src_table from MODEL_DEF_FLOW_OVERLAY where flow_id=#{flowid}
+	</select>
+	
+	<!-- 获取建表语句 -->
+	<!-- 
+	<select id="getCreateTable" resultType="java.lang.String">
+		select F_FORMAL_CREATETABLESQL(#{targettable},#{serial}) as runsql from dual
+	</select>
+	 -->
+	
+	<!-- 获取提取操作sql -->
+	<!-- 
+	<select id="getFormalGetDataSql" resultType="java.lang.String">
+		select F_FORMAL_GETDATASQL(#{flowid},#{targettable},#{srctable},#{serial}) as runsql from dual
+	</select>
+	 -->
+	
+	<!-- 获取汇总操作sql -->
+	<select id="getFormalGroupDataSql" resultType="java.lang.String">
+		select F_FORMAL_GROUPDATASQL(#{flowid},#{targettable},#{srctable},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取去重操作sql -->
+	<select id="getFormalDistinctDataSql" resultType="java.lang.String">
+		select F_FORMAL_DISTINCTDATASQL(#{flowid},#{targettable},#{srctable},#{mode},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取排序操作sql -->
+	<select id="getFormalSortDataSql" resultType="java.lang.String">
+		select F_FORMAL_GETDATASQL(#{flowid},#{targettable},#{srctable},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取叠加操作sql -->
+	<!-- 
+	<select id="getFormalOverlayDataSql" resultType="java.lang.String">
+		select F_FORMAL_OVERLAYDATASQL(#{flowid},#{targettable},#{srctable},#{curtable},#{serial}) as runsql from dual
+	</select>
+	 -->
+	
+	<!-- 获取关联操作sql1 -->
+	<select id="getFormalMergeDataSql1" resultType="java.lang.String">
+		select F_FORMAL_MERGEDATASQL_MODE1(#{flowid},#{targettable},#{srctable1},#{srctable2},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 获取关联操作sql2 -->
+	<!--
+	<select id="getFormalMergeDataSql2" resultType="java.lang.String">
+		select F_FORMAL_MERGEDATASQL_MODE2(#{flowid},#{targettable},#{srctable1},#{srctable2},#{serial}) as runsql from dual
+	</select>
+	 -->
+	
+	<!-- 获取关联操作sql3 -->
+	<!-- 
+	<select id="getFormalMergeDataSql3" resultType="java.lang.String">
+		select F_FORMAL_MERGEDATASQL_MODE3(#{flowid},#{targettable},#{srctable1},#{srctable2},#{serial}) as runsql from dual
+	</select>
+	 -->
+	
+	<!-- 获取关联操作sql4 -->
+	<select id="getFormalMergeDataSql4" resultType="java.lang.String">
+		select F_FORMAL_MERGEDATASQL_MODE4(#{flowid},#{targettable},#{srctable1},#{srctable2},#{serial}) as runsql from dual
+	</select>
+	
+	<!-- 数据传输提取表关联字段 -->
+	<select id="getFieldRelation"  resultType="com.krm.dbaudit.web.model.model.ModelFieldRelation">
+		select a.field_column,a.field_type,b.table_name,b.field_name from MODEL_DEF_FIELD a,MODEL_DEF_TABLEFIELD b where a.model_id=#{modelid} and a.src_field_id=b.id order by a.field_order
+	</select>
+	
+	<!-- 批量insert -->
+	<insert id="insertbatch" parameterType="java.util.List">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select MODEL_DATA_SEQ.nextval from dual
+        </selectKey>
+        
+		insert into MODEL_DATA(PKID,DATA_DATE,NOTICE_STATUS,DEAL_STATUS,MODEL_ID,ORGAN_ID) 
+		<foreach collection="list" item="item" index="index" separator=" union all">
+			select #{id}, sysdate,#{item.noticestatus},#{item.dealstatus},#{item.modelid},#{item.organid} from dual 
+		</foreach>
+	</insert>
+	<!-- 数据转移到关系型数据库语句 -->
+	<select id="getTransDataSql" resultType="java.lang.String">
+		select F_FORMAL_TRANSDATASQL(#{modelid},#{serial}) from dual
+	</select>
+	
+	<!-- 显示流程信息使用 -->
+	<!-- 流程信息显示使用,获取源表字段信息 -->
+	<select id="getSrcTableFieldInfo" resultType="com.krm.dbaudit.web.modeltool.model.ToolTableField">
+		select b.id,b.field_name,b.field_alias,b.field_entity_type,b.field_type,b.field_length,a.field_script from MODEL_DEF_TABLEFIELD a,MODEL_DEF_TABLEFIELD b where a.table_name=#{targettable} and b.table_name=#{srctable} and A.FROM_FIELDID=b.id order by a.field_order
+	</select>
+	<!-- 流程信息显示使用,提取叠加表信息 -->
+	<select id="getOverlayTableInfo" resultType="java.util.Map">
+		select a.src_table,b.table_alias from MODEL_DEF_FLOW_OVERLAY a,MODEL_DEF_TABLE b where a.src_table=b.table_name and a.flow_id=#{flowid} order by id
+	</select>
+	<!-- 流程信息显示使用,提取叠加表字段信息 -->
+	<select id="getOverlayTableFieldInfo" resultType="com.krm.dbaudit.web.modeltool.model.ToolTableField">
+		select id,field_name,field_alias,field_entity_type,field_type,field_length,field_script from MODEL_DEF_TABLEFIELD where table_name=#{srctable} order by field_order
+	</select>
+	<!-- 流程信息显示使用，提取数据范围 -->
+	<select id="getRangeInfo" resultType="java.util.Map">
+		select begin_line,end_line from TOOL_FLOW_RANGE where flow_id=#{flowid}
+	</select>
+	<!-- 流程信息显示使用，提取条件信息 -->
+	<select id="getConditionInfo" resultType="java.lang.String">
+		select str_condition from MODEL_DEF_FLOW_CONDITION where flow_id=#{flowid}
+	</select>
+	<!-- 流程信息显示使用，提取排重字段 -->
+	<select id="getDistinctFieldInfo" resultType="java.util.Map">
+		select a.field_id,b.field_alias from MODEL_DEF_FLOW_DISTINCT a,MODEL_DEF_TABLEFIELD b where a.field_id=b.id and a.flow_id=#{flowid} order by a.id
+	</select>
+	<!-- 流程信息显示使用，提取排重字段 -->
+	<select id="getSortFieldInfo" resultType="java.util.Map">
+		select a.sort_field_id,b.field_alias,a.sort_type from MODEL_DEF_FLOW_SORT a,MODEL_DEF_TABLEFIELD b where a.sort_field_id=b.id and a.flow_id=#{flowid} order by a.id
+	</select>
+	<!-- 流程信息显示使用，提取关联合并字段 -->
+	<select id="getMergeFieldInfo" resultType="java.util.Map">
+		select a.check_field_id1,b.field_alias as field_alias1,a.check_field_id2,c.field_alias as field_alias2 from MODEL_DEF_FLOW_MERGE a,MODEL_DEF_TABLEFIELD b,MODEL_DEF_TABLEFIELD c where a.check_field_id1=b.id and a.check_field_id2=c.id and a.flow_id=#{flowid} order by a.id
+	</select>
+	<!-- 流程信息显示使用，提取汇总字段信息 -->
+	<select id="getSrcTableFieldGroupInfo" resultType="com.krm.dbaudit.web.modeltool.model.ToolTableField">
+		select b.id,b.field_name,b.field_alias,b.field_entity_type,b.field_type,b.field_length,a.field_script,case when a.field_script is not null then F_CHANGE_TO_DICT('group_action_type',a.field_script) else '' end field_script_name from MODEL_DEF_TABLEFIELD a,MODEL_DEF_TABLEFIELD b where a.table_name=#{targettable} and b.table_name=#{srctable} and A.FROM_FIELDID=b.id and a.field_entity_type=1 order by a.field_order
+	</select>
+	<!-- 流程信息显示使用，提取虚拟字段信息 -->
+	<select id="getVirtualGroupInfo" resultType="java.util.Map">
+		select id,field_alias,field_script from MODEL_DEF_TABLEFIELD where table_name=#{targettable} and field_entity_type=0
+	</select>
+	<!-- 获取流程表字段信息 -->
+	<select id="getTableFieldByFlowID" resultType="java.util.Map">
+		select field_name,field_alias from MODEL_DEF_TABLEFIELD a,MODEL_DEF_FLOW b where a.table_name=b.target_table and b.id=#{flowid} order by a.field_order
+	</select>
+	<!-- 获取流程对应的目标表名-->
+	<select id="selectTableNameByFlowID" resultType="java.lang.String">
+		select target_table from MODEL_DEF_FLOW where id=#{flowid}
+	</select>
+</mapper>

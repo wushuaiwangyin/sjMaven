@@ -1,0 +1,209 @@
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	var index = layer.index;
+            //隐藏模板tr
+            $("#tb tr").eq(1).hide();
+            var i = 0;
+            $("#BtAdd").click(function() {
+　　　　　		//复制一行
+                var tr = $("#tb tr").eq(1).clone();
+　　　　　			var seq = ++i;
+                tr.find("td").get(0).innerHTML = seq;
+                
+                tr.show();
+                tr.appendTo("#tb");
+            });
+            $("#BtDel").click(function() {
+                $("#tb tr:gt(1)").each(function() {
+                    if ($(this).find("#CK").get(0).checked == true) {
+                        $(this).remove();
+                    }
+                });
+                i = 0;
+                $("#tb tr:gt(1)").each(function() {
+                    $(this).find("td").get(0).innerHTML = ++i;
+                });
+                $("#CKA").attr("checked", false);
+            });
+            $("#CKA").click(function() {
+                $("#tb tr:gt(1)").each(function() {
+                    $(this).find("#CK").get(0).checked = $("#CKA").get(0).checked;
+                });
+            });
+            
+            
+            var validId = $("#saveform").Validform({
+            	tiptype : 4,
+                ajaxPost : true,
+                tiptype : function(msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type != 2) {
+                            tip.errorTip(msg,o.obj);
+                        }
+                    }
+                },
+                tipSweep : true
+            });
+
+            $("#submitForm").click(function() {
+            	
+                validId.submitForm(false);
+                
+                var fieldstr = "";
+                
+                var tablename = $("#tablename").val();
+                var tablealias = $("#tablealias").val();
+                var parentId = $("#parentclass").val();
+                
+                var columnarr = new Array();
+                var columnaliasarr = new Array();
+                var columntypearr = new Array();
+                var lenarr = new Array();
+                
+                $("#tb tr").find("input").each(function(index,obj) {
+                	//第一行抛弃
+                	if(index>4){
+	                	if(obj.name=="column"){
+	                		columnarr.push(obj.value);
+	                	}else if(obj.name=="columnalias"){
+	                		columnaliasarr.push(obj.value);
+	                	}else if(obj.name=="len"){
+	                		lenarr.push(obj.value);
+	                	}
+                	}
+                });
+            
+                $("#tb tr").find("select").each(function(index,obj) {
+                   //第一行抛弃
+                   if(index>0){
+                	   columntypearr.push(obj.value);
+                   }
+                });
+                
+                
+                for(var i=0;i<columnarr.length;i++){
+                	fieldstr = fieldstr + "{\"fieldname\":\""+columnarr[i]+"\",\"fieldalias\":\""+columnaliasarr[i]+"\",\"fieldtype\":\""+columntypearr[i]+"\",\"fieldlength\":\""+lenarr[i]+"\"},";
+                }
+                
+                if(fieldstr!=""){
+                	fieldstr = fieldstr.substring(0,fieldstr.length-1);
+                }
+                
+                fieldstr = "[" +fieldstr+"]";
+                
+                var action_data = "[{\"tablename\":\""+tablename+"\",\"tablealias\":\""+tablealias+"\",\"tabletype\":\""+parentId+"\",\"field\":"+fieldstr+"}]";
+       		 	var submitJson = "[{\"action_id\":\"add_srctable\",\"action_data\":"+action_data+"}]";
+
+	       		 $.ajax({
+				        url : ""+"${ctxPath!}/srcdata/savenewtable",  
+				        type : 'POST',  
+				        data : {jsonmemo:submitJson.toString()},
+				        dataType: 'json',
+				        cache: false,
+				        success:function(data){
+				        	var json = eval(data);
+				        	$.each(json,function(infoIndex,info){
+				        		var return_flag = eval(info["return_flag"]);
+				        		if(return_flag=='0'){
+				        			layer.msg("创建成功",1,1);
+				        			layer.close(index);
+				        			var ret_data = eval(info["return_data"]);
+					        			$.each(ret_data,function(infoIndex,info){
+						        			temptablename = info["tablename"];
+							        		$('#tabletree').tree({
+							        	        url: "${ctxPath!}/model/tool/gettabletree",
+							        	        loadFilter: function(data){
+							        	            return data;
+							        	        }
+							        	    }); 
+							        	});
+				        		}else{
+				        			var return_msg = info["return_msg"];
+				        			layer.msg(return_msg, 3, 1);
+				        		}
+				        		
+				        	});
+						},
+						beforeSend:function(){
+						},
+						error:function(){
+						}
+				        
+				 });
+            });
+        })
+        
+    </script>
+        <style type="text/css">
+        #tb .td{
+            text-align: center;
+            font-weight: bold;
+            background-color: #6699FF;
+            color: #FFFFFF;
+            border:1px solid #000;
+        }
+    </style>
+<form class="saveform" id="saveform">
+<div class="layer">
+<table class="EditTable" width="100%">
+	<tbody>
+		<tr class="FormData">
+					<td class="CaptionTD">表名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="tablename" id="tablename" datatype="*"  nullmsg="请输入表名称！"
+						value=""></td>
+		</tr>
+		<tr class="FormData">
+					<td class="CaptionTD">中文表名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="tablealias" id="tablealias" datatype="*"  nullmsg="请输入中文表名称！"
+						value=""></td>
+		</tr>
+		<tr class="FormData">
+					<td class="CaptionTD">上级分类</td>
+					<td class="DataTD">
+					<#treeselect url="srcdata/tree" id="parentclass" rootNodeName="源数据分类列表" isCheck="请选择上级分类" />
+					</td>
+		</tr>
+		<tr align="center">
+			<td colspan="2">
+			<button type="button" id="BtAdd" class="btn btn-primary btn-sm" >添加</button>&nbsp;
+            <button type="submit" id="submitForm" class="btn btn-primary btn-sm">保存</button>&nbsp;
+            <button type="button" id="BtDel" class="btn btn-primary btn-sm">删除</button>
+            </td>
+		</tr>
+	</tbody>
+</table>
+
+<table id="tb"  class="table table-bordered " width="100%">
+            <tr align="center">
+                <td style="width:5%;">序号</td>
+                <td style="width:5%;">
+                    <input id="CKA" name="CKA" type="checkbox"/>
+                </td>
+                <td style="width:20%;">英文字段名</td>
+                <td style="width:20%;">中文字段名称</td>
+                <td style="width:15%;">数据类型</td>
+                <td style="width:10%;">长度</td>
+            </tr>
+            <tr>
+                <td style="text-align: center"></td>
+                <td style="text-align: center">
+                    <input id="CK" type="checkbox" name="CK"/></td>
+                <td style="text-align: center">
+                    <input  type="text" name="column"/></td>
+                <td style="text-align: center">
+                    <input  type="text" name="columnalias"/></td>
+                <td style="text-align: center">
+                    <select  name="columntype" style=" width:100px;">
+                        <option value="1" selected="selected">字符</option>
+                        <option value="3">数据</option>
+                    </select>
+                </td>
+                <td style="text-align: center">
+                    <input  type="number" size="10" name="len" value="20"/>
+                </td>
+            </tr>
+</table>
+</div>
+</form>

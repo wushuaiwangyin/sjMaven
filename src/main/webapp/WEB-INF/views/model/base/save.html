@@ -1,0 +1,254 @@
+<div class="layer">
+	<form name="FormPost" id="model-save-form" class="FormGrid"  method="post"
+		action="${ctxPath}/model/base/submitsave">
+		
+		<input type="hidden" value="${model.id!}" name="id"/>
+		<input type="hidden" value="${ids!}" name="ids"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">模型编码</td>
+					<td class="DataTD width-100">
+					<input type="text" name="code" datatype="*"  nullmsg="请输入模型编码" value="${model.code!}">
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">模型名称</td>
+					<td class="DataTD width-100">
+					<input type="text" name="name" datatype="*"  nullmsg="请输入模型名称" value="${model.name!}">
+					<!-- 
+						<#select name="models" id="model-chosen-save">
+							@for(item in models){
+								<option value="${item.id!}">
+								${item.name!}
+								</option>
+							@}
+						</#select>
+					 -->
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">业务属性</td>
+					<td class="DataTD width-100">
+						<#select name="property" id="property-chosen-save">
+							@for(item in ps){
+								<option value="${item.id!}" ${decode(item.id,model.property!,"selected","")}>
+								${item.name!}
+								</option>
+							@}
+						</#select>
+					</td>
+				</tr>
+				<tr class="FormData" id="haveLine">
+					<td class="CaptionTD">业务条线</td>
+					<td class="DataTD width-100">
+						@var lines = dict.getDictListByType("model_buz_line");
+						<#select name="buzLine" id="buzLine-chosen-save">
+							@for(item in lines){
+								<option value="${item.value!}" ${decode(item.value,model.buzLine!,"selected","")}>
+								${item.label!}
+								</option>
+							@}
+						</#select>
+					</td>
+				</tr>
+				<tr class="FormData" id="haveSubject">
+					<td class="CaptionTD">专题</td>
+					<td class="DataTD width-100">
+						<div style="" class="clearfix width-100  input-group">
+							<input type="text" value="${model.subjectname!}" name="" id="treeselectname" readonly="" class="form-control search-query">
+							<span class="input-group-btn">
+								<span type="button" onclick="selectSubject()" class="btn btn-purple btn-sm">
+									<i class="ace-icon fa fa-search bigger-110"></i>查找
+								</span>
+							</span>
+							<input type="hidden" value="${model.subject!}" id="treeselectid" name="subject">
+						</div>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">风险级别</td>
+					<td class="DataTD width-100">
+					@var risks = dict.getDictListByType("model_risk_level");
+					<#select name="riskLevel" id="riskLevel-chosen-save">
+						@for(item in risks){
+							<option value="${item.value!}" ${decode(item.value,model.riskLevel!,"selected","")}>
+							${item.label!}
+							</option>
+						@}
+					</#select>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">机构号字段</td>
+					<td class="DataTD width-100">
+					<select name="cOrg" id="org-chosen-save" class="chosen-select" datatype="*"  nullmsg="请选择机构！">
+							<option value="">无</option>
+							@for(item in fieldlist){
+								<option value="${item.id!}" ${decode(""+item.id,model.cOrg!,"selected","")}>
+								${item.fieldAlias!}
+								</option>
+							@}
+						</select>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">客户号字段</td>
+					<td class="DataTD width-100">
+					<#select name="cCustomer" id="customer-chosen-save">
+							<option value="">无</option>
+							@for(item in fieldlist){
+								<option value="${item.id!}" ${decode(""+item.id,model.cCustomer!,"selected","")}>
+								${item.fieldAlias!}
+								</option>
+							@}
+						</#select>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">描述</td>
+					<td class="DataTD">
+						<textarea name="description" class="autosize-transition form-control "
+						style="resize: none;">${model.description!}</textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 确定
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="user-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+<!-- 
+<#save formId="model-save-form" callBack="query()"/>
+ -->
+
+<script type="text/javascript">
+
+	var properties = ${ps};//业务属性
+	var propertId = null;
+	var lineId = null;
+	
+	$("#submitForm").click(function () {
+		validId.submitForm(false);
+		return false;
+	});
+	
+	$("#user-save-cancel").click(function () {
+		layer.closeAll();
+		return false;
+	});
+	
+	var validId = $("#model-save-form").Validform({
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#model-save-form").data('loadi',loadi);
+		},
+		callback:function(data){
+			layer.close($("model-save-form").data('loadi'));
+			if(data>0) {
+				layer.msg('操作成功', 1, 1,function(){
+
+					query();
+
+					layer.closeAll();
+				});
+			}else{
+				if(data==-1)
+					layer.msg('操作失败,模型编号重复', 3, 1);
+				else if(data==-2)
+					layer.msg('操作失败,模型名称重复', 3, 1);
+				else
+					layer.msg('操作失败', 3, 1);
+				return false;
+			}
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true
+	});
+	
+	
+	$("#property-chosen-save").bind("change",function(){
+		propertId = $(this).val();
+		onChanageProperty();
+	})
+	
+	$("#buzLine-chosen-save").bind("change",function(){
+		onChanageLine();
+	})
+	
+	propertId = $("#property-chosen-save option:selected").val();
+	onChanageProperty();
+	
+	
+	function onChanageProperty(){
+		var p = null;
+		$.each(properties,function(i,obj){
+			if(obj.id == propertId){
+				p = obj;
+			}
+		})
+		if(p == undefined)
+		return;
+
+		if(p.haveLine == 0){//如果无业务属性
+			$("#haveLine").hide();
+			lineId = '';
+		}else{//有业务属性
+			$("#haveLine").show();
+			//if(p.haveSubject == 1){//有主题
+				onChanageLine();
+			//}
+		}
+
+		if(p.haveSubject == 0){
+			$("#haveSubject").hide();
+		}else{
+			$("#haveSubject").show();
+		}
+	}
+	
+	
+	function onChanageLine(){
+		lineId = $("#buzLine-chosen-save option:selected").val()
+	}
+	
+	
+
+	function selectSubject(){
+		$.cuslayer({
+			mode:'page',
+			height:'400px',
+			width:'350px',
+			title:'请选择',
+			url:'${ctxPath}/tag/treeselect',
+			style:'34px',
+			data:{
+				id:'treeselectid',
+	            nameId:'treeselectname',
+	            pIdKey:'parentId',
+	            selectIds:'',
+	            curId:'${model.subject!}',
+	            url:"${ctxPath}/model/subject/tree?property="+propertId+"&line="+lineId,
+	            checked:'false',
+	            rootNodeName:'分类列表',
+	            isLayer:'true'
+			}
+		})
+	}
+	
+	$("#org-chosen-save").chosen({width: "100%",search_contains: true,disable_search_threshold:10}); 
+</script>

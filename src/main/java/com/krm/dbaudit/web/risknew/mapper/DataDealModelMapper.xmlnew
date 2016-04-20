@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.risknew.mapper.DataDealModelMapper">
+
+	<sql id="dataDealColumns">
+		id, data_id, model_id, doc_id, data_status, organ_id, organ_name, tran_date, data_seq, reason, deal_escription, 
+		deal_type, deal_detail, relative, phone_or_mail, deal_time, deal_user, tran_type, cust_no
+	</sql>
+	
+	<sql id="aliasDataDealColumns">
+		m.id, m.data_id, m.model_id, m.doc_id, m.data_status, m.organ_id, m.organ_name, m.tran_date, m.data_seq, m.reason, m.deal_escription, 
+		m.deal_type, m.deal_detail, m.relative, m.phone_or_mail, m.deal_time, m.deal_user, m.tran_type, m.cust_no
+	</sql>
+	
+
+	<insert id="fastDeal" useGeneratedKeys="false">
+		insert into model_data_deal (<include refid="dataDealColumns" />)
+		values (
+		#{id,jdbcType=INTEGER},				#{dataId,jdbcType=INTEGER},
+		#{modelId,jdbcType=INTEGER},		#{docId,jdbcType=INTEGER},
+		#{dataStatus,jdbcType=INTEGER},		#{organId,jdbcType=VARCHAR},
+		#{organName,jdbcType=VARCHAR},		#{tranDate,jdbcType=VARCHAR},
+		#{dataSeq,jdbcType=VARCHAR},		#{reason,jdbcType=VARCHAR},
+		#{dealEscription,jdbcType=VARCHAR},	#{dealType,jdbcType=VARCHAR},
+		#{dealDetail,jdbcType=VARCHAR},		#{relative,jdbcType=VARCHAR},
+		#{phoneOrMail,jdbcType=VARCHAR},	#{dealTime,jdbcType=VARCHAR},
+		#{dealUser,jdbcType=VARCHAR},		#{tranType,jdbcType=VARCHAR},
+		#{custNo,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="findBydataId" resultType="com.krm.dbaudit.web.risknew.model.DataDealModel">
+		select <include refid="aliasDataDealColumns" />, sd.label as dealType, mb.NAME as modelName
+		from model_data_deal m
+		left join sys_dict sd on sd.value = m.deal_type and sd.type = 'model_deal_way'
+		left join MODEL_BASE mb on m.MODEL_ID = mb.ID
+		<where>
+			m.data_id = #{dataId} 
+		</where>
+	</select>
+	
+	
+	<select id="findById" resultType="com.krm.dbaudit.web.risknew.model.DataDealModel">
+		select <include refid="aliasDataDealColumns" />
+		from model_data_deal m
+		<where>
+			m.id = #{id} 
+		</where>
+	</select>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.risknew.model.DataDealModel">
+		select <include refid="aliasDataDealColumns" />, sd.label as dealType, mb.NAME as modelName
+		from model_data_deal m
+		left join sys_dict sd on sd.value = m.deal_type and sd.type = 'model_deal_way'
+		left join MODEL_BASE mb on m.MODEL_ID = mb.ID
+		<where>
+		1=1
+			and m.organ_id = #{organId}
+			and m.model_id = #{modelId}
+			and m.deal_type = #{dealType}
+		</where>
+	</select>
+	
+	<select id="checkIsDealed" resultType="com.krm.dbaudit.web.risknew.model.DataDealModel">
+		select <include refid="aliasDataDealColumns" />
+		from model_data m
+		<where>
+			m.pkid = #{dataId} 
+		</where>
+	</select>
+	
+	<select id="generateId" resultType="java.lang.Long">
+		select model_data_deal_seq.nextval as id from dual
+	</select>
+</mapper>

@@ -1,0 +1,16 @@
+<option value="a">客户号</option>
+<option value="b">开户网点</option>
+<option value="c">客户名称2</option>
+<option value="d">客户类别</option>
+<option value="e">客户状态</option>
+<option value="f">证件类别</option>
+<option value="g">证件号码</option>
+<option value="h">开户日期</option>
+<option value="i">开户用户</option>
+<option value="j">销户日期</option>
+<option value="k">销户用户</option>
+<option value="l">信贷许可</option>
+<option value="m">是否股东</option>
+<option value="n">CUSTTG</option>
+<option value="o">TIMESTAMP</option>
+<option value="p">证件1</option>

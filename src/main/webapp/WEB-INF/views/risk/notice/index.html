@@ -1,0 +1,224 @@
+<div class="row">
+
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">${title!}</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div id="list-page" class="widget-main padding-8">
+					<table id="table"    data-pagination="true"   data-click-to-select="true"
+									  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+									  data-toolbar="#toolbar"  data-page-size="10" data-click-to-select="false" 
+									  data-smart-display="true" 
+									  data-toggle="table" 
+									  >
+							<thead>
+						<tr>
+							<th data-field="dataId"  data-formatter="detailInfo">编号</th>
+							<th data-field="modelname"  data-sortable="false">模型名称</th>
+							<th data-field="noticeOrganName"   data-sortable="false">通知机构</th>
+							<th data-field="noticeOrganName2"  data-visible="false" data-sortable="false">被通知机构</th>
+							<th data-field="bnoticeOrganName"   data-sortable="false">交易机构</th>
+							<th data-field="noticeStartTime" data-visible="false"  data-sortable="false">通知时间</th>
+							<th data-field="noticeDealRequire"  data-visible="false" data-sortable="false">通知书内容</th>
+							<th data-field="noticeEndTime"   data-sortable="false">处理时间</th>
+							<th data-field="noticeSender"  data-visible="true" data-sortable="false">发送通知人</th>
+							<th data-field="noticeDealer"   data-sortable="false">处理人</th>
+							<th data-field="noticestatus" data-formatter="status" data-width="75" data-sortable="false">状态</th>
+							<th data-field="id" data-align="center"  data-sortable="false" data-width="75"  data-formatter="operation">操作</th>
+						</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+<div id="toolbar">
+	<form method="post" class="form-search" id="search-form" >
+		<input type="hidden" name="property" value=${property!}>
+		<div class="form-inline" role="form">
+			<div class="form-group">
+				<span>模型名称</span>
+				<input name="organName" class="form-control" type="text" >
+			</div>
+			
+			
+			<div class="form-group">
+				<span>交易机构</span>
+				<#organtree url="office/tree"  
+						modelId="bnoticeOrganId" id="bnoticeOrganId" nameId="organName"
+						modelNameValue="${pOffice.name!}" class="form-group"
+						modelIdValue="${sysrole.officeId!}"
+						selectIds="${sysrole.organId!}"/>
+			</div>
+			<button id="ok" type="button" class="btn btn-primary btn-sm">查&nbsp;&nbsp;询</button>
+		</div>
+	</form>
+</div>
+
+<div id="rowBtn_edit" style="display: none;">
+   <div class="hidden-sm hidden-xs action-buttons">
+       <a class="green" href="javascript:void(0);" title="数据信息详细"
+		   data-mode="page" data-title="数据信息详细"
+		   data-url="${ctxPath}/data/queryDetailsHeaders"
+		   data-width="50%"
+		   data-data="{dataid:'{row.dataId}',modelid:'{row.modelId}'}"
+		   data-table = "table"
+				>
+			<i class="ace-icon fa fa-list bigger-130"></i>
+		</a>
+       <div class="inline dropdown-hover">
+           <a class="green" title="处理" >
+				<i class="ace-icon fa fa-cogs bigger-120"></i>
+			</a>
+           </button>
+           <ul class="dropdown-menu dropdown-menu-right dropdown-100 dropdown-lighter dropdown-close dropdown-caret">
+               @if(orgLevel != '33003'){
+               <li>
+                   <a class="blue" href="javascript:void(0);" title="下发通知"
+                      data-url="${ctxPath}/data/prenotice"
+                      data-mode="page" data-title="下发通知"
+                      data-width="50%"
+                      data-table="table-detail_info"
+                      data-data="{id:'{row.id}'}"
+                      data-callback="query()"
+                           >
+                       <i class="ace-icon fa fa-caret-right bigger-110"></i>下发通知
+                   </a>
+               </li>
+               <li>
+                   <a class="blue" href="javascript:void(0);" title="非现场核实"
+                      data-mode="page" data-title="非现场核实"
+                      data-url="${ctxPath}/data/deal1"
+                      data-width="50%"
+                      data-data="{id:'{row.id}'}"
+                      data-table="table-detail_info" 
+                           >
+                       <i class="ace-icon fa fa-caret-right bigger-110"></i>非现场核实
+                   </a>
+               </li>
+               <li>
+                   <a class="blue" href="javascript:void(0);" title="非现场核实"
+                      data-mode="page" data-title="非现场核实"
+                      data-url="${ctxPath}/data/deal2"
+                      data-width="50%"
+                      data-data="{id:'{row.id}'}"
+                      data-table="table-detail_info" 
+                      data-callback="query()"
+                           >
+                       <i class="ace-icon fa fa-caret-right bigger-110"></i>现场核实
+                   </a>
+               </li>
+               @}
+               
+               @if(orgLevel == '33003'){
+               <li>
+                   <a class="blue" href="javascript:void(0);" title="非现场核实"
+                      data-mode="page" data-title="非现场核实"
+                      data-url="${ctxPath}/data/deal1"
+                      data-width="50%"
+                      data-data="{id:'{row.id}'}"
+                      data-table="table-detail_info" 
+                           >
+                       <i class="ace-icon fa fa-caret-right bigger-110"></i>非现场核实
+                   </a>
+               </li>
+               <li>
+                   <a class="blue" href="javascript:void(0);" title="非现场核实"
+                      data-mode="page" data-title="非现场核实"
+                      data-url="${ctxPath}/data/deal2"
+                      data-width="50%"
+                      data-data="{id:'{row.id}'}"
+                      data-table="table-detail_info" 
+                           >
+                       <i class="ace-icon fa fa-caret-right bigger-110"></i>现场核实
+                   </a>
+               </li>
+               @}
+               
+           </ul>
+       </div>
+    </div>
+</div>
+
+<script>
+	$(function(){
+		var $table = $('#table');
+	    $table.bootstrapTable({
+	    	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			toolbar:"#toolbar",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:'${ctxPath}/data/noticereceive/list?status=${status}'
+	    });
+	})
+
+	function detailInfo(value,row,index){
+	return ' <a  href="javascript:void(0);"'+
+			' data-mode="detail" data-title="通知信息详细"'+
+			' data-url="${ctxPath}/data/detail/showlayer" '+
+			'data-width="50%"'+
+			'data-data="{id:'+row.id+'}" >'+
+			value +
+			'</a>';
+}
+	function query(){
+		$('#table').bootstrapTable("refresh",{url:"${ctxPath}/data/noticereceive/list?"+$("#search-form").serialize()+"&status=${status}"})
+	}
+	
+	$("#ok").click(function(){
+		var params = jQuery("#search-form").serialize(); 
+		params = decodeURIComponent(params,true);
+		params = encodeURI(encodeURI(params));
+		$('#table').bootstrapTable("refresh",{url:"${ctxPath}/data/noticereceive/list?"+params+"&status=${status}"})
+	}); 
+	
+	function status(value,row,index){
+		if(row.noticeStatus == 4){
+			return ' <a  href="javascript:void(0);"'+
+					' data-mode="detail" data-title="处理信息详细"'+
+					' data-url="${ctxPath}/data/dealDetails/showlayer" '+
+					'data-width="50%"'+
+					'data-data="{id:'+row.dataId+'}" >'+
+					value +
+					'</a>';
+		}else{
+			return value;
+		}
+	}
+	
+	
+	function operation(value, row) {
+		if(row.noticeStatus == 3){
+			return $("#rowBtn_edit").html()
+			.replace(new RegExp("{row.id}", "g"), row.id)
+			.replace(new RegExp("{row.modelId}", "g"), row.modelId)
+			.replace(new RegExp("{row.dataId}", "g"), row.dataId);
+		}else{
+			return ' <a  class="green" href="javascript:void(0);"'+
+			' data-mode="detail" title="数据信息详细" data-title="数据信息详细"'+
+			' data-url="${ctxPath}/data/queryDetailsHeaders" '+
+			'data-width="50%"'+
+			'data-data="{dataid:'+row.dataId+',modelid:'+row.modelId+'}" >'+
+			'<i class="ace-icon fa fa-list bigger-130"></i> '+
+			'</a>' +
+			'&nbsp;&nbsp;'+
+			'<i class="ace-icon fa fa-ban bigger-130"></i>';
+		}
+	}
+</script>

@@ -1,0 +1,6 @@
+[
+    {"id":1,"name":"贷款流程","pid":"0","type":"type"},
+    {"id":2,"name":"担保流程","pid":"0","type":"type"},
+    {"id":3,"name":"贷款流程1","pid":"1","type":"flow"},
+    {"id":4,"name":"贷款流程2","pid":"1","type":"flow"}
+]

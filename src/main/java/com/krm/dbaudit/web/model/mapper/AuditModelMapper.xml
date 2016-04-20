@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.model.mapper.AuditModelMapper">
+
+	<sql id="auditModelColumns">
+		id,type,model,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasAuditModelColumns">
+		b.id,b.type,b.model,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.model.model.AuditModel">
+		select  <include refid="aliasAuditModelColumns" />  
+			from audit_model  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(type)">
+			    and b.type =  #{type}
+			 </if>
+			 <if test="@Ognl@isNotBlank(model)">
+			    and b.model =  #{model}
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+	
+	<select id="findAuditModel" resultType="com.krm.dbaudit.web.model.model.AuditModel">
+		select  <include refid="aliasAuditModelColumns" />,a.name
+			from audit_model  b,model_base a 
+		<where>
+			b.del_flag = 0
+			and b.model = a.id
+			 <if test="@Ognl@isNotBlank(type)">
+			    and b.type =  #{type}
+			 </if>
+			 <if test="@Ognl@isNotBlank(model)">
+			    and b.model =  #{model}
+			 </if>
+		</where>
+	</select>
+</mapper>

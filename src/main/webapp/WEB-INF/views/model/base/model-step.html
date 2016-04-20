@@ -1,0 +1,68 @@
+<div class="layer">
+
+    <table id="table-step" data-url="./data/model_step.json" data-height="250"   data-pagination="false"
+           data-search="false"  data-striped="true">
+        <thead>
+        <tr>
+            <th data-field="index" data-align="center" data-width="40" data-sortable="true">序号</th>
+            <th data-field="name"  data-sortable="true">步骤名称</th>
+            <th data-field="id" data-align="center" data-sortable="false" data-width="125"  data-formatter="operatorBtn1">操作</th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+    <a class="btn btn-primary btn-sm bigger-110 width-50  pull-left" href="javascript:void(0);"
+       data-mode="page" data-title="添加步骤"
+       data-url="view/model/manager/model-step-save.html"
+       data-width="50%"
+       data-data="{id:'{row.id}'}"
+            >
+        <i class="ace-icon fa fa-plus align-top bigger-125"></i>添加步骤
+    </a>
+
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="step-list-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+
+<div id="rowBtn_edit1" style="display: none;">
+    <div class="hidden-sm hidden-xs action-buttons">
+        <a class="green" href="javascript:void(0);"
+           data-mode="page" data-title="编辑"
+           data-url="view/model/manager/model-step-save.html"
+           data-width="50%"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-pencil bigger-130"></i>
+        </a>
+
+        <a class="red" href="javascript:void(0);"
+           data-mode="del" data-title="删除操作"
+           data-msg="你确定删除此数据吗?"
+           data-url="delete"
+           data-data="{id:'{row.id}'}"
+                >
+            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function operatorBtn1(value, row){
+        return $("#rowBtn_edit1").html()
+                .replace(new RegExp("{row.id}","g"),row.id);
+    }
+    $('#table-step').bootstrapTable({
+        iconSize:'sm'
+    });
+
+    $("#step-list-cancel").click(function () {
+        layer.closeAll();
+        return false;
+    });
+
+
+</script>

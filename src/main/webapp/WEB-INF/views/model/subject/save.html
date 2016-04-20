@@ -1,0 +1,115 @@
+
+<div class="layer">
+	<form name="FormPost" id="model-subject-save" class="FormGrid"  method="post" 
+	    action="${ctxPath}/model/subject/save">
+		<input type="hidden" value="${subject.id!}" name="id"/>
+		<input type="hidden" value="${property.id}" name="property"/>
+		<input type="hidden" value="${subject.parentIds!}" name="parentIds"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr style="display: none;">
+					<td class="ui-state-error" id="FormError"></td>
+				</tr>
+				@if(property.haveLine == 1){
+				<tr class="FormData">
+					<td class="CaptionTD">业务条线</td>
+					<td class="DataTD width-100">
+					@var areaList = dict.getDictListByType("model_buz_line");
+					<#select name="buzLine">
+						@for(item in areaList){
+							<option value="${item.value!}" ${decode(item.value,buzLine!,"selected","")}>
+							${item.label!}
+							</option>
+						@}
+					</#select>
+					</td>
+				</tr>
+				@}
+				<tr class="FormData">
+					<td class="CaptionTD">上一级分类</td>
+					<td class="DataTD">
+						<div style="" class="clearfix width-100  input-group">
+							<input type="text" value="${pSubject.name!}" name="" id="treeselectname" readonly="" class="form-control search-query">
+							<span class="input-group-btn">
+								<span type="button" onclick="selectParent()" class="btn btn-purple btn-sm">
+									<i class="ace-icon fa fa-search bigger-110"></i>查找
+								</span>
+							</span>
+							<input type="hidden" value="${pSubject.id!0}" id="treeselectid" name="parentId">
+						</div>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">名称</td>
+					<td class="DataTD width-100"><input type="text"
+						name="name" datatype="*"  nullmsg="请输入名称！"
+						value="${subject.name!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">序号</td>
+					<td class="DataTD width-100">
+						<input type="text" value="${subject.sort!}" datatype="n1-10" ignore="ignore" name="sort"/>
+					</td>
+				</tr>
+
+				<tr class="FormData">
+					<td class="CaptionTD">描述</td>
+					<td class="DataTD">
+						<textarea name="description" class="autosize-transition form-control "
+						style="resize: none;">${subject.description!}</textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 保存
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="top-type-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+<#save formId="model-subject-save" callBack="reloadTree()"/>
+
+<script type="text/javascript">
+//描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+@if(isEmpty(buzLine)){
+	var lineId = '';
+@}else{
+	var lineId = ${buzLine!};
+@}
+
+$(".chosen-select ").on("change",function(){
+	lineId = $(this).val();
+	$("#treeselectid").val("");
+	$("#treeselectname").val("");
+});
+
+function selectParent(){
+	$.cuslayer({
+		mode:'page',
+		height:'400px',
+		width:'350px',
+		title:'请选择',
+		url:'${ctxPath}/tag/treeselect',
+		style:'34px',
+		data:{
+			id:'treeselectid',
+            nameId:'treeselectname',
+            pIdKey:'parentId',
+            selectIds:'',
+            curId:'${subject.id!}',
+            url:'${ctxPath}/model/subject/tree?property=${property.id}&line='+lineId,
+            checked:'false',
+            rootNodeName:'分类列表',
+            isLayer:'true'
+		}
+	})
+}
+
+
+</script>

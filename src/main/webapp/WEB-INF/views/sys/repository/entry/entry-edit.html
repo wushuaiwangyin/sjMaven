@@ -1,0 +1,117 @@
+
+<div class="layer">
+<div class="alert-success">提示信息：红色星号为必填选项</div>
+    <form name="FormPost" id="dic-save" class="FormGrid"  method="post"
+          action="">
+        <input type="hidden" name="stdCode" value="${kbStdEntry.stdCode!}">
+        <input type="hidden" name="entryId" value="${kbStdEntry.entryId!}">
+        <table class="EditTable" width="100%">
+            <tbody>
+                <tr class="FormData">
+                    <td class="CaptionTD">审计依据条目编码</td>
+                    <td class="DataTD width-100">
+                        <input type="text" name="entryCode" readonly value="${kbStdEntry.entryCode!}"/>
+                    </td>
+                     <td><font color="red" size="+1">*</font></td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">关键字</td>
+                    <td class="DataTD">
+                            <textarea name="keyword" class="autosize-transition form-control "
+                                      style="resize: none;">${kbStdEntry.keyword!}</textarea>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td class="CaptionTD">条目内容</td>
+                    <td class="DataTD">
+                            <textarea name="content" class="autosize-transition form-control "
+                                      style="resize: none;">${kbStdEntry.content!}</textarea>
+                    </td>
+                </tr>
+                <tr class="FormData">
+                    <td >
+                    <div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+                        <button class="btn btn-primary btn-sm bigger-110 width-50  pull-left" id="submitForm" onclick="savedata()" >保存</button>
+                        <span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="dic-save-cancel">
+							<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+						</span>
+                    </div>    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+    //描述框自动扩张高度
+    $('textarea[class*=autosize]').autosize({append: "\n"});
+    
+$(function(){
+    	
+    	var index = layer.index;
+    	var re = /^[1-9]+[0-9]*]*$/ ; 
+        //提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交
+        var ajaxS = $("#dic-save input[ajaxurl]");
+        $.each(ajaxS,function(i,obj){
+            $(obj).focus();
+        })
+
+        var validId = $("#dic-save").Validform({
+        	tiptype : 4,
+            ajaxPost : true,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#dic-save").data('loadi',loadi);
+                curform.ajaxSubmit({
+                	type:'post',
+                	url:'${ctxPath}/kbStdEntry/saveKbstdEntry',
+                	success:function(data){
+                        layer.close($("#dic-save").data('loadi'));
+                        if(data !=null && re.test(data)) {
+                            layer.msg('保存成功', 1, 1,function(){
+                                layer.close(index);
+                                $('#table-detail_info').bootstrapTable("refresh",{url:"${ctxPath}/kbStdEntry/entryList?stdCode=${stdCode!}"})
+                            });
+                        }else{
+                            layer.msg('保存失败', 3, 1);
+                        }
+                    }
+                	
+                });
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+
+        $("#submitForm").click(function() {
+            validId.submitForm(false);
+            return false;
+        });
+
+        $("#dic-save-cancel").click(function(){
+            layer.close(layer.index);
+        });
+
+        $("#dic-save input,#dic-save textarea").blur(function(){
+            layer.closeTips();
+            return false;
+        })
+
+    });
+
+	var index = layer.index;
+	$("#dic-save-cancel").click(function(){
+	    layer.close(index);
+	});
+</script>

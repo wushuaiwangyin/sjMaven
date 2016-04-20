@@ -1,0 +1,138 @@
+<div class="widget-box widget-color-green2">
+	<div class="widget-header widget-header-small clearfix">
+		<h5 class="widget-title">审计专项分类管理</h5>
+		<div class="widget-toolbar">
+			<a href="#" data-action="fullscreen" class="orange2"> <i
+				class="ace-icon fa fa-expand"></i>
+			</a>
+		</div>
+		<div class="widget-toolbar no-border width-40" style="padding-top: 2px;">
+			<form method="post" class="form-search" id="search-form" target="list-page"
+				action="dic-list.html">
+				<div class="input-group" style="line-height: 0px;">
+					<span class="input-group-btn">
+						<span  class=" btn  btn-success btn-minier"
+							id="search-all-btn">
+							 显示全部 
+						</span> 
+					</span>
+					<input type="text" class="form-control search-query input-minier"
+						name="name" placeholder="审计专项分类名称" id="search-input">
+						<span class="input-group-btn">
+						<span class="btn  btn-success btn-minier"
+							id="search-btn">
+							搜索 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+						</span>
+					</span>
+				</div>
+				<input type="hidden" name="id" />
+			</form>
+		</div>
+	</div>
+
+	<div class="widget-body">
+		<div class="widget-main padding-2">
+			<div class="row">
+				<div class="col-sm-3">
+					<div id="tree-menu-div" style="overflow: auto;">
+						<ul id="treeMenu" class="ztree"></ul>
+					</div>
+				</div>
+				<div class="col-sm-9" id="list-page">
+					<table id="table" data-url="${ctxPath}/model/audit/type/list" data-height="500"   data-pagination="true"
+						   data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-smart-display="true">
+						<thead>
+						<tr>
+							<th data-field="id" data-align="center" data-sortable="true" data-width="50">编号</th>
+							<th data-field="name" data-formatter="nameFormatter" data-align="left" data-sortable="true">分类名称</th>
+							<th data-field="sort" data-sortable="true" data-sorter="priceSorter">序号</th>
+							<th data-field="parentname"  data-sortable="true" data-sort-name="parentId">上一级分类</th>
+							<th data-field="cn"  data-sortable="false" >模型数</th>
+							<th data-field="id" data-align="center" data-sortable="false" data-width="280"  data-formatter="operatorBtn">操作</th>
+						</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="rowBtn_edit" style="display: none;">
+		<div class="hidden-sm hidden-xs action-buttons">
+			<a class="pink" href="javascript:void(0);"
+			   data-mode="page" data-title="关联模型"
+			   data-url="${ctxPath}/model/audit/type/relationship"
+			   data-data="{id:'{row.id}'}"
+			   data-height="600px" data-width="1000px"
+					>
+				<i class="ace-icon fa fa-users bigger-130"></i> 关联模型
+			</a>
+			<a class="green" href="javascript:void(0);"
+			   data-mode="page" data-title="编辑"
+			   data-url="${ctxPath}/model/audit/type/edit/showlayer"
+			   data-width="50%"
+			   data-data="{id:'{row.id}'}"
+					>
+				<i class="ace-icon fa fa-pencil bigger-130"></i>编辑
+			</a>
+
+			<a class="red" href="javascript:void(0);"
+			   data-mode="del" data-title="删除操作"
+			   data-msg="你确定删除此数据吗?"
+			   data-url="${ctxPath}/model/audit/type/delete/showlayer"
+			   data-data="{id:'{row.id}'}"
+					>
+				<i class="ace-icon fa fa-trash-o bigger-130"></i>删除
+			</a>
+		</div>
+	</div>
+</div>
+<#comtree editUrl="model/audit/type/edit/showlayer" delUrl="model/audit/type/delete" 
+	addUrl="model/audit/type/add/showlayer" treeUrl="model/audit/type/tree" treeData="${treeList}" rootNodeName="审计专项分类列表" addTitle="添加审计专项分类"/>
+	
+<script style="text/javascript">
+	$(function(){
+		var $table = $('#table');
+        $table.bootstrapTable({
+        	iconSize:'sm',
+			pagination:true,
+			method:"post",
+			pageSize:10,
+			queryParamsType:'limit',
+			striped:true,
+			pageNumber:1,
+			sidePagination:'server',
+			url:'${ctxPath}/model/audit/type/list?'+$("#search-form").serialize()
+        });
+	})
+	
+	function query(){
+    	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/model/audit/type/list?"+$("#search-form").serialize()})
+    }
+    
+    
+    function queryAll(){
+    	$('#table').bootstrapTable("refresh",{url:"${ctxPath}/model/audit/type/list"})
+    }
+    
+    
+    function nameFormatter(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+				' data-mode="detail" data-title="'+value+'    详细"'+
+				' data-url="${ctxPath}/model/audit/type/detail/showlayer"'+
+				'data-data="{id:'+row.id+'}" >'+ value + '</a>';
+
+	}
+    resetWindow();
+	window.onresize=function(){  
+		resetWindow();
+    }
+
+	function resetWindow(){
+	   var h = getCenterHeight() -50;
+	   $("#tree-menu-div").height(h);
+		 
+	}
+</script>
+

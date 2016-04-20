@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 数据源druid的配置 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<!-- 基本属性 url、user、password -->
+		<property name="url" value="${connection.url}" />
+		<property name="username" value="${connection.username}" />
+		<property name="password" value="${connection.password}" />
+		<property name="driverClassName" value="${connection.driverClassName}"/>
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="${druid.initialSize}" />
+		<property name="minIdle" value="${druid.minIdle}" />
+		<property name="maxActive" value="${druid.maxActive}" />
+
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${druid.maxWait}" />
+
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+
+		<property name="validationQuery" value="${druid.validationQuery}" />
+		<property name="testWhileIdle" value="${druid.testWhileIdle}" />
+		<property name="testOnBorrow" value="${druid.testOnBorrow}" />
+		<property name="testOnReturn" value="${druid.testOnReturn}" />
+
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小  如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。-->
+		<property name="poolPreparedStatements" value="${druid.poolPreparedStatements}" />
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}" />
+
+		<!-- 配置监控统计拦截的filters -->
+		<property name="filters" value="${druid.filters}" />
+	</bean>
+	
+	<!-- 数据源druid的配置 -->
+
+	<bean id="externaldataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${externaldata.url}" />
+		<property name="username" value="${externaldata.username}" />
+		<property name="password" value="${externaldata.password}" />
+		<property name="driverClassName" value="${externaldata.driverClassName}"/>
+		<property name="initialSize" value="${externaldata.initialSize}" />
+		<property name="minIdle" value="${externaldata.minIdle}" />
+		<property name="maxActive" value="${externaldata.maxActive}" />
+		<property name="maxWait" value="${externaldata.maxWait}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${externaldata.timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${externaldata.minEvictableIdleTimeMillis}" />
+		<property name="validationQuery" value="${externaldata.validationQuery}" />
+		<property name="testWhileIdle" value="${externaldata.testWhileIdle}" />
+		<property name="testOnBorrow" value="${externaldata.testOnBorrow}" />
+		<property name="testOnReturn" value="${externaldata.testOnReturn}" />
+		<property name="poolPreparedStatements" value="${externaldata.poolPreparedStatements}" />
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="${externaldata.maxPoolPreparedStatementPerConnectionSize}" />
+		<property name="filters" value="${externaldata.filters}" />
+	</bean>
+
+	
+	
+<!--	
+	<bean id="externaldataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${externaldata.driverClass}"></property>
+		<property name="jdbcUrl" value="${externaldata.jdbcUrl}"></property>
+		<property name="user" value="${externaldata.user}"></property>
+		<property name="password" value="${externaldata.password}"></property>
+		<property name="minPoolSize" value="${externaldata.minPoolSize}" />
+		<property name="maxPoolSize" value="${externaldata.maxPoolSize}" />
+		<property name="initialPoolSize" value="${externaldata.initialPoolSize}" />
+		<property name="maxIdleTime" value="${externaldata.maxIdleTime}" />
+		<property name="acquireIncrement" value="${externaldata.acquireIncrement}" />
+		<property name="acquireRetryAttempts" value="${externaldata.acquireRetryAttempts}" />
+		<property name="acquireRetryDelay" value="${externaldata.acquireRetryDelay}" />
+		<property name="idleConnectionTestPeriod" value="${externaldata.idleConnectionTestPeriod}" />
+		<property name="checkoutTimeout" value="${externaldata.checkoutTimeout}" />
+	</bean>
+-->	
+
+</beans>

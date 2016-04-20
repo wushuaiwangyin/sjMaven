@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+	<script src="./jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="./echarts-2.1.10/build/dist/echarts.js"></script>
+</head>
+<body>
+		<div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="picBody" style="height: 400px;"></div>
+			</div>
+		</div>
+</body>
+</html>
+
+<script type="text/javascript">
+$(function(){
+	// 路径配置
+    require.config({
+        paths: {
+            echarts : './echarts-2.1.10/build/dist'
+        }
+    });
+	countByScatter();
+})
+
+function countByScatter(){
+		var option = {
+			    title : {
+			        text: '担保客户群与行内其他人关联',
+			        subtext: ''
+			    },
+			    tooltip : {
+			        trigger: 'axis',
+			        showDelay : 0,
+			        formatter : function (params) {
+			            if (params.value.length > 1) {
+			                return params.seriesName + ' :<br/>'
+			                   + params.value[0] + 'cm ' 
+			                   + params.value[1] + 'kg ';
+			            }
+			            else {
+			                return params.seriesName + ' :<br/>'
+			                   + params.name + ' : '
+			                   + params.value + 'kg ';
+			            }
+			        },  
+			        axisPointer:{
+			            show: true,
+			            type : 'cross',
+			            lineStyle: {
+			                type : 'dashed',
+			                width : 1
+			            }
+			        }
+			    },
+			    legend: {
+			        data:['担保客户群','行内其他人关联']
+			    },
+			    toolbox: {
+			        show : true,
+			        feature : {
+			            mark : {show: true},
+			            dataZoom : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			    xAxis : [
+			        {
+			            type : 'value',
+			            scale:true,
+			            axisLabel : {
+			                formatter: '{value}'
+			            }
+			        }
+			    ],
+			    yAxis : [
+			        {
+			            type : 'value',
+			            scale:true,
+			            axisLabel : {
+			                formatter: '{value}'
+			            }
+			        }
+			    ],
+			    series : [
+			        {
+			            name:'担保客户群',
+			            type:'scatter',
+			            data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6],
+			                [170.0, 59.0], [159.1, 47.6], [166.0, 69.8], [176.2, 66.8], [160.2, 75.2],
+			                [172.5, 55.2], [170.9, 54.2], [172.9, 62.5], [153.4, 42.0], [160.0, 50.0],
+			                
+			            ],
+			            markPoint : {
+			                data : [
+			                    {type : 'max', name: '最大值'},
+			                    {type : 'min', name: '最小值'}
+			                ]
+			            },
+			            markLine : {
+			                data : [
+			                    {type : 'average', name: '平均值'}
+			                ]
+			            }
+			        },
+			        {
+			            name:'行内其他人关联',
+			            type:'scatter',
+			            data: [[174.0, 65.6], [175.3, 71.8], [193.5, 80.7], [186.5, 72.6], [187.2, 78.8],
+			                [181.5, 74.8], [184.0, 86.4], [184.5, 78.4], [175.0, 62.0], [184.0, 81.6],
+			                [180.0, 76.6], [177.8, 83.6], [192.0, 90.0], [176.0, 74.6], [174.0, 71.0],
+			                
+			            ],
+			            markPoint : {
+			                data : [
+			                    {type : 'max', name: '最大值'},
+			                    {type : 'min', name: '最小值'}
+			                ]
+			            },
+			            markLine : {
+			                data : [
+			                    {type : 'average', name: '平均值'}
+			                ]
+			            }
+			        }
+			    ]
+			};
+			                    
+
+		require(
+				[
+					'echarts',
+					'echarts/chart/line',
+					'echarts/chart/bar',
+					'echarts/chart/scatter'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+</script>

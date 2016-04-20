@@ -1,0 +1,30 @@
+<div class="layer">
+<form action="${ctxPath}/upload/upload" id="model-save-form" class="FormGrid" enctype="multipart/form-data" method="post">
+	         <div class="modal-body">
+	            <input type="file" name="file" id="inputfile" class="input-sm" >
+	         </div>
+	         <div class="modal-footer ">
+	            <button type="button" id="import-submit" onclick="savedata()" class="btn btn-primary">导入</button>
+	         </div>
+</form>
+</div>
+<script type="text/javascript">
+function savedata(){
+	if($("#inputfile").val()==''){
+		layer.msg('请选择要上传的文件！', 1, 1,function(){});
+		return;
+	}
+    $("#model-save-form").ajaxSubmit(function(data) {
+    	if(data==1){
+    		layer.msg('操作成功', 1, 1,function(){
+    			query();
+				layer.closeAll();
+			});
+    	}else{
+    		layer.msg('操作失败', 1, 1,function(){
+				layer.closeAll();
+			});
+    	}
+     });
+}  
+</script>

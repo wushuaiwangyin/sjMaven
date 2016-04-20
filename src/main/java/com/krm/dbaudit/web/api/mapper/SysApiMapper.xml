@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.api.mapper.SysApiMapper">
+
+	<sql id="sysApiColumns">
+		id,name,url,fn_des,in_des,out_format,out_des,exapmle,run_count,type,way
+	</sql>
+
+	<sql id="aliasSysApiColumns">
+		b.id,b.name,b.url,b.fn_des,b.in_des,b.out_format,b.out_des,b.exapmle,b.run_count,b.type,b.way
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.api.model.SysApi">
+		select  <include refid="aliasSysApiColumns" />  
+			from sys_api  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(url)">
+			    and b.url like '%' || #{url} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(fnDes)">
+			    and b.fn_des like '%' || #{fnDes} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(inDes)">
+			    and b.in_des like '%' || #{inDes} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(outFormat)">
+			    and b.out_format like '%' || #{outFormat} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(outDes)">
+			    and b.out_des like '%' || #{outDes} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(exapmle)">
+			    and b.exapmle like '%' || #{exapmle} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(runCount)">
+			    and b.run_count =  #{runCount}
+			 </if>
+			 <if test="@Ognl@isNotBlank(type)">
+			    and b.type like '%' || #{type} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(way)">
+			    and b.way =  #{way}
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+</mapper>

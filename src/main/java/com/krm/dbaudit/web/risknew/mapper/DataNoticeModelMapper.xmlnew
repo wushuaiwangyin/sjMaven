@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.risknew.mapper.DataNoticeModelMapper">
+
+	<sql id="dataNoticeColumns">
+		id, data_id, model_id, doc_id, notice_status,deal_status,notice_organ_id, notice_organ_name, 
+		bnotice_organ_id, bnotice_organ_name, notice_start_time, notice_colse_time, 
+		notice_end_time, notice_deal_require, notice_deal_require2, tran_date, 
+		notice_sender, notice_dealer, notice_sender2, notice_dealer2, 
+		notice_organ_id2, notice_organ_name2, cust_no 
+	</sql>
+	
+	<sql id="aliasDataNoticeColumns">
+		a.id, a.data_id, a.model_id, a.doc_id, a.notice_status, a.deal_status,
+		a.notice_organ_id, a.notice_organ_name, 
+		a.bnotice_organ_id, a.bnotice_organ_name, a.notice_start_time, a.notice_colse_time, 
+		a.notice_end_time, a.notice_deal_require, a.notice_deal_require2, a.tran_date, 
+		a.notice_sender, a.notice_dealer, a.notice_sender2, a.notice_dealer2, 
+		a.notice_organ_id2, a.notice_organ_name2, a.cust_no
+	</sql>
+	
+	
+	<!-- 查询详细信息 -->
+	<select id="findByPkId" resultType="com.krm.dbaudit.web.risknew.model.DataNoticeModel">
+		select <include refid="aliasDataNoticeColumns" />, m.NAME as modelName,sd.label as noticeStatus
+		from model_data_notice a 
+		left join MODEL_BASE m on a.MODEL_ID = m.ID
+		left join sys_dict sd on sd.value = a.notice_status and sd.type = 'data_status'
+		<where>
+			a.id = #{id} 
+		</where>
+	</select>
+	
+	<!-- 接收通知列表 -->
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.risknew.model.DataNoticeModel">
+		select <include refid="aliasDataNoticeColumns" />, m.NAME as modelName,sd.label as noticeStatus
+		from model_data_notice a 
+		left join MODEL_BASE m on a.MODEL_ID = m.ID
+		left join sys_dict sd on sd.value = a.notice_status and sd.type = 'data_status'
+    		<where>
+    			1=1  
+    			<if test="@Ognl@isNotBlank(status)">
+			    	and a.deal_status =  #{status}
+				</if>
+				<if test="@Ognl@isNotBlank(organId)">
+					and a.notice_organ_id2 = #{organId}
+				</if>
+				<if test="@Ognl@isNotBlank(bnoticeOrganId)">
+					and a.bnotice_organ_id in ( ${bnoticeOrganId} )
+				</if>
+				<if test="@Ognl@isNotBlank(organName)">
+					and m.NAME like '%' || #{organName} ||'%' 
+				</if>
+    		</where>
+			ORDER BY a.DEAL_STATUS desc,a.notice_end_time desc
+		
+	</select>
+	
+	<!-- 根据请求的行数查询接收通知列表 -->
+	<select id="findNoticeByNumber" resultType="com.krm.dbaudit.web.risknew.model.DataNoticeModel">
+		select <include refid="aliasDataNoticeColumns" />, m.NAME as modelName,sd.label as noticeStatus
+		from model_data_notice a 
+		left join MODEL_BASE m on a.MODEL_ID = m.ID
+		left join sys_dict sd on sd.value = a.notice_status and sd.type = 'data_status'
+    		<where>
+    			1=1  
+    			<if test="@Ognl@isNotBlank(status)">
+			    	and a.deal_status =  #{status}
+				</if>
+				<if test="@Ognl@isNotBlank(organId)">
+					and a.notice_organ_id2 = #{organId}
+				</if>
+				<if test="@Ognl@isNotBlank(bnoticeOrganId)">
+					and a.bnotice_organ_id in ( ${bnoticeOrganId} )
+				</if>
+				<if test="@Ognl@isNotBlank(organName)">
+					and m.NAME like '%' || #{organName} ||'%' 
+				</if>
+				<if test="@Ognl@isNotBlank(rows)">
+					and rownum &lt;= #{rows}
+				</if>
+    		</where>
+			ORDER BY a.DEAL_STATUS desc,a.notice_end_time desc
+		
+	</select>
+	
+	<!-- 处理完后终止通知状态，更改所有的数据处理状态 -->
+	<update id="endNoticeStatus">
+		update model_data_notice set 
+		notice_status=#{noticeStatus},
+		deal_status = #{dealStatus},
+		notice_end_time=#{noticeEndtime},
+		notice_dealer=#{noticeDealer}
+		where data_id=#{dataId}
+	</update>
+	
+	<!-- 下发后更改通知状态 -->
+	<update id="updateNoticeStatus">
+		update model_data_notice set 
+		notice_status=#{noticeStatus}
+		<where>
+			data_id =  #{dataId}
+   			and notice_organ_id = #{organId}
+		</where>
+	</update>
+	
+	
+	<!-- 发送通知列表 -->
+	<select id="findSendNoticePageInfo" resultType="com.krm.dbaudit.web.risknew.model.DataNoticeModel">
+		select <include refid="aliasDataNoticeColumns" />, m.NAME as modelName,sd.label as noticeStatus
+		from model_data_notice a 
+		left join MODEL_BASE m on a.MODEL_ID = m.ID
+		left join sys_dict sd on sd.value = a.notice_status and sd.type = 'data_status'
+    		<where>
+    			1=1  
+    			<if test="@Ognl@isNotBlank(status)">
+			    	and a.deal_status =  #{status}
+				</if>
+				<if test="@Ognl@isNotBlank(organId)">
+					and a.notice_organ_id = #{organId}
+				</if>
+				<if test="@Ognl@isNotBlank(organName)">
+					and m.NAME like '%' || #{organName} ||'%' 
+				</if>
+				<if test="@Ognl@isNotBlank(bnoticeOrganId)">
+					and a.bnotice_organ_id in ( ${bnoticeOrganId} )
+				</if>
+    		</where>
+		 ORDER BY a.DEAL_STATUS desc,a.notice_end_time desc
+	</select>
+	
+	
+	<!-- 检测是否重复下发 -->
+	<select id="checkIsReapted" resultType="com.krm.dbaudit.web.risknew.model.DataNoticeModel">
+		select <include refid="dataNoticeColumns" />
+		from model_data_notice
+		<where>
+   			data_id =  #{dataId}
+   			and notice_organ_id = #{organId}
+		</where>
+	</select>
+</mapper>

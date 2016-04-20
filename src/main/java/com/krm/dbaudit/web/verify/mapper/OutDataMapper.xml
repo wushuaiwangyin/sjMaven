@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.OutDataMapper">
+
+	<sql id="outDataColumns">
+		event_desc, event_user, event_date, source, bus_type, province, id_num, import_date 
+	</sql>
+
+	<sql id="aliasOutDataColumns">
+		b.event_desc, b.event_user, b.event_date, b.source, b.bus_type, b.province, b.id_num, b.import_date 
+	</sql>
+
+
+	<select id="listOutData" resultType="com.krm.dbaudit.web.verify.model.OutData">
+		select  <include refid="aliasOutDataColumns" />
+			from VERIFY_OUT_DATA  b 
+		<where>
+			1=1 
+			<if test="@Ognl@isNotBlank(columnValue)">
+				<if test="operator == 1 ">
+					and ${column} = #{columnValue}
+				</if>
+				<if test="operator == 2 ">
+					and ${column} &gt; #{columnValue}
+				</if>
+				<if test="operator == 3 ">
+					and ${column} &lt; #{columnValue}
+				</if>
+				<if test="operator == 4 ">
+					and ${column} &gt;= #{columnValue}
+				</if>
+				<if test="operator == 5 ">
+					and ${column} &lt;= #{columnValue}
+				</if>
+				<if test="operator == 6 ">
+					and ${column} &gt;= #{columnValue} 
+					and ${column} &lt;= #{columnValue2}
+				</if>
+				<if test="operator == 7 ">
+					and ${column} like '%' || #{columnValue} ||'%'   
+				</if>
+				<if test="operator == 8 ">
+					and ${column} not like '%' || #{columnValue} ||'%' 
+				</if>
+				
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+		<if test="@Ognl@isBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.import_date desc
+		</if>
+	</select>
+	
+	
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+	    insert into VERIFY_OUT_DATA(event_desc, event_user, event_date, source, bus_type, province, id_num,import_date)
+	    <foreach collection="list" item="item" index="index"  separator="union">
+	        select 
+	        #{item.eventDesc,jdbcType=VARCHAR},#{item.eventUser,jdbcType=VARCHAR},
+	        #{item.eventDate,jdbcType=VARCHAR},#{item.source,jdbcType=VARCHAR},
+	        #{item.busType,jdbcType=VARCHAR},#{item.province,jdbcType=VARCHAR},
+	        #{item.idNum,jdbcType=VARCHAR},#{item.importDate,jdbcType=VARCHAR} 
+	         from dual
+	    </foreach>
+	</insert>
+	
+	<insert id="insertOutData">
+		insert into VERIFY_OUT_DATA(event_desc, event_user, event_date, source, bus_type, province, id_num,import_date)
+		values
+		(#{eventDesc},#{eventUser},#{eventDate},#{source},#{busType},#{province},#{idNum},#{importDate})
+	</insert>
+	
+</mapper>

@@ -1,0 +1,417 @@
+<div class="row">
+	<div class="col-xs-3">
+		<div class="widget-box">
+			<div class="widget-header clearfix">
+				<h5 class="widget-title"></h5>
+				<div class="widget-toolbar no-border width-100" style="padding-top: 2px;">
+					<form method="post" class="form-search" id="search-form" target="list-page"
+						  action="dic-list.html">
+						<div class="input-group" style="line-height: 0px;">
+							<input type="text" class="form-control search-query"
+								   name="name" placeholder="关键词" id="search-input">
+								<span class="input-group-btn">
+									<span class="btn  btn-success btn-sm"
+										  id="search-btn">
+										 <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+									</span>
+								</span>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main padding-8">
+					<ul id="ztree" class="ztree" style="min-height: 480px;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="col-xs-9">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title" id="grid_title">查询结果</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+				<div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+						  onclick="Angel.downloadFile('search-form','${ctxPath}/area/export')">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导出Excel</span>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div class="widget-main padding-8" id="table1_box" style="display: none;">
+					<table id="table" data-url="./data/model_run_result.json" data-height="500"   data-pagination="true"
+						   data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-page-size="50" data-striped="true"
+						   data-toolbar="#toolbar"
+						   data-smart-display="true">
+						<thead>
+						<tr>
+							<th data-field="state" data-checkbox="true"></th>
+							<th data-field="calcDate" data-sortable="true">会计日期</th>
+							<th data-field="lendNo" data-sortable="true">借据编号</th>
+							<th data-field="contractNo" data-sortable="true">合同编号</th>
+							<th data-field="orgNo" data-sortable="true">机构代号</th>
+							<th data-field="cardType" data-sortable="true">客户证件类型</th>
+							<th data-field="card" data-sortable="true">客户证件号码</th>
+							<th data-field="cname" data-sortable="true" data-width="200">客户名称</th>
+							<th data-field="lendDate" data-sortable="true">借款日期</th>
+							<th data-field="endDate" data-sortable="true">到期日期</th>
+							<th data-field="lendMoney" data-sortable="true">借款金额</th>
+							<th data-field="accountMonney" data-sortable="true">帐户余额</th>
+							<th data-field="rate" data-sortable="true">利率</th>
+							<th data-field="fRate" data-sortable="true">罚息利率</th>
+							<th data-field="lastDate" data-sortable="true">最后抵帐日期</th>
+							<th data-field="typeCons" data-sortable="true">四级分类结构</th>
+							<th data-field="subject" data-sortable="true">会计科目</th>
+							<th data-field="remark" data-sortable="true">备注</th>
+							<th data-field="riqi" data-sortable="true">RIQI</th>
+							<th data-field="orgName" data-sortable="true">机构全称</th>
+						</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+
+
+<div id="toolbar">
+	<div class="form-inline" role="form">
+		<div class="form-group">
+			<span>字段</span>
+			<select name="property"  class="chosen-select form-control w70" id="column-select" >
+				<option value="calcDate">会计日期</option>
+				<option value="lendNo">借据编号</option>
+				<option value="contractNo">合同编号</option>
+				<option value="orgNo">机构代号</option>
+				<option value="cardType">客户证件类型</option>
+				<option value="card">客户证件号码</option>
+				<option value="cname">客户名称</option>
+				<option value="lendDate">借款日期</option>
+				<option value="endDate">到期日期</option>
+				<option value="lendMoney">借款金额</option>
+				<option value="accountMonney">帐户余额</option>
+				<option value="rate">利率</option>
+				<option value="fRate">罚息利率</option>
+				<option value="lastDate">最后抵帐日期</option>
+				<option value="typeCons">四级分类结构</option>
+				<option value="subject">会计科目</option>
+				<option value="remark">备注</option>
+				<option value="riqi">RIQI</option>
+				<option value="orgName">机构全称</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<select name="property"  class="chosen-select form-control w70" id="operator-select" >
+				<option value="等于" selected="">等于</option>
+				<option value="大于">大于</option>
+				<option value="小于">小于</option>
+				<option value="大于等于">大于等于</option>
+				<option value="小于登记">小于登记</option>
+				<option value="区间">区间</option>
+				<option value="包含">包含</option>
+				<option value="不包含">不包含</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<input name="property" class="form-control w70" type="text" >
+		</div>
+		<button id="ok1" type="submit" class="btn btn-primary btn-sm">查询</button>
+		<div class="form-group">
+			<div class="hidden-sm hidden-xs action-buttons">
+				<div class="inline dropdown-hover">
+					<button class="btn btn-success btn-sm" title="处理" >
+						处理
+					</button>
+					<ul class="dropdown-menu dropdown-menu-left dropdown-145 dropdown-lighter dropdown-close dropdown-caret">
+						<li>
+							<a class="blue" href="javascript:void(0);" title="下发通知"
+							   data-mode="page" data-title="下发通知"
+							   data-url="${ctxPath}/risk/deal"
+							   data-width="50%"
+							   data-data="{id:'{row.id}'}"
+									>
+								<i class="ace-icon fa fa-caret-right bigger-110"></i>下发通知
+							</a>
+						</li>
+						<li>
+							<a class="blue" href="javascript:void(0);" title="非现场核实"
+							   data-mode="page" data-title="非现场核实"
+							   data-url="${ctxPath}/risk/deal1"
+							   data-width="50%"
+							   data-data="{id:'{row.id}'}"
+									>
+								<i class="ace-icon fa fa-caret-right bigger-110"></i>非现场核实
+							</a>
+						</li>
+						<li>
+							<a class="blue" href="javascript:void(0);" title="现场核实"
+							   data-mode="page" data-title="非现场核实"
+							   data-url="${ctxPath}/risk/deal1"
+							   data-width="50%"
+							   data-data="{id:'{row.id}'}"
+									>
+								<i class="ace-icon fa fa-caret-right bigger-110"></i>现场核实
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="rowBtn_edit" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" title="详细"
+		   data-mode="page" data-title="详细"
+		   data-url="${ctxPath}/risk/detail"
+		   data-width="80%"
+		   data-data="{id:'{row.id}'}"
+				>
+			<i class="ace-icon fa fa-list bigger-130"></i>
+		</a>
+		<div class="inline dropdown-hover">
+			<a class="green" title="处理" >
+				<i class="ace-icon fa fa-cogs bigger-130"></i>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
+				<li>
+					<a class="blue" href="javascript:void(0);" title="下发通知"
+					   data-mode="page" data-title="下发通知"
+					   data-url="${ctxPath}/risk/deal"
+					   data-width="50%"
+					   data-data="{id:'{row.id}'}"
+							>
+						<i class="ace-icon fa fa-caret-right bigger-110"></i>下发通知
+					</a>
+				</li>
+				<li>
+					<a class="blue" href="javascript:void(0);" title="非现场核实"
+					   data-mode="page" data-title="非现场核实"
+					   data-url="${ctxPath}/risk/deal1"
+					   data-width="50%"
+					   data-data="{id:'{row.id}'}"
+							>
+						<i class="ace-icon fa fa-caret-right bigger-110"></i>非现场核实
+					</a>
+				</li>
+				<li>
+					<a class="blue" href="javascript:void(0);" title="现场核实"
+					   data-mode="page" data-title="非现场核实"
+					   data-url="${ctxPath}/risk/deal1"
+					   data-width="50%"
+					   data-data="{id:'{row.id}'}"
+							>
+						<i class="ace-icon fa fa-caret-right bigger-110"></i>现场核实
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<style>
+	.ztree{
+		overflow: auto;
+	}
+</style>
+
+<script>
+	var treeObj;
+	var key = null,nodeList=[];
+	var id = null;
+	var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red"} : {"font-weight":"normal","color":"#333"};
+			}
+		},
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : 'id',
+				pIdKey :'pid',
+			},
+			key:{
+				name:"name"
+			}
+		},
+		callback: {
+			onClick: onClickNode
+		}
+	};
+	var $table = null;
+	$(function(){
+		$table = $('#table');
+		$table.bootstrapTable({
+			iconSize:'sm',
+			onDblClickRow:function(){
+				$.cuslayer({mode:"page",url:"${ctxPath}/risk/detail2",width:'50%',title:'详细信息'});
+			},
+			onClickCell:function(field,value,row){
+				id = row.id;
+			}
+		});
+		loadByBuzLine();
+		key = $("#search-input");
+		$("#search-btn").on("click",function(e){
+			treeObj.cancelSelectedNode();
+			searchNode(e);
+		})
+		//loadData(0);
+
+		$("#column-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+		$("#operator-select").chosen({width: "150px", search_contains: true, disable_search_threshold: 10});
+
+	})
+
+
+
+	function searchNode(e) {
+		// 取得输入的关键字的值
+		var value = $.trim(key.get(0).value);
+
+		// 按名字查询
+		var keyType = "name";
+		if (key.hasClass("empty")) {
+			value = "";
+		}
+
+		// 如果要查空字串，就退出不查了。
+		if (value === "") {
+			return;
+		}
+		updateNodes(false);
+		nodeList = treeObj.getNodesByParamFuzzy(keyType, value);
+		updateNodes(true);
+	}
+
+	function updateNodes(highlight) {
+		for(var i=0, l=nodeList.length; i<l; i++) {
+			nodeList[i].highlight = highlight;
+			treeObj.updateNode(nodeList[i]);
+			treeObj.expandNode(nodeList[i].getParentNode(), true, false, false);
+		}
+	}
+
+
+	function onClickNode(e, treeId, treeNode){
+		if(treeNode.type != undefined){
+			$("#grid_title").text(treeNode.name)
+			if(treeNode.id == 0 || treeNode.id == 1){
+				loadData(0);
+			}else{
+				loadData(treeNode.id);
+			}
+		}
+
+	}
+
+	function loadData(id){
+		$("#table1_box").show();
+		$.ajax({
+			url: "./data/model_run_result.json",
+			dataType: "json",
+			async: false,
+			success: function (data) {
+				$table.bootstrapTable("load",{data:data});
+			}
+		});
+	}
+
+	function loadByBuzOrg(){
+		$.ajax({
+			url: "./data/depart.json",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				var treeData = data;
+
+				var root = {id:0,name:'实体机构',open:true};
+				treeData.splice(0, 0, root);
+
+				$.fn.zTree.init($("#ztree"), setting,treeData);
+				treeObj = $.fn.zTree.getZTreeObj("ztree");
+
+				// 默认展开一级节点
+				var nodes = treeObj.getNodesByParam("level", 0);
+				for(var i=0; i<nodes.length; i++) {
+					treeObj.expandNode(nodes[i], true, false, false);
+				}
+			}
+		});
+	}
+
+	function loadByBuzLine(){
+		$.ajax({
+			url: "./data/risk_result_type.json",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				$.ajax({
+					url: "./data/model.json",
+					dataType: "json",
+					async: false,
+					success: function (json) {
+						var treeData = data;
+
+						$.each(json,function(i,obj){
+							if(obj.riskType != undefined){
+								var ids = obj.riskType.split(",");
+								for(var i = 0; i < ids.length; i++){
+									var pid = ids[i];
+									if(pid != undefined && pid != null && pid.length > 0){
+										treeData.push({id:'m_'+pid +"_" + obj.id,pid:pid,name:obj.name,type:"model"});
+									}
+								}
+							}
+						});
+
+						$.fn.zTree.init($("#ztree"), setting,treeData);
+						treeObj = $.fn.zTree.getZTreeObj("ztree");
+
+						// 默认展开一级节点
+						var nodes = treeObj.getNodesByParam("level", 0);
+						for(var i=0; i<nodes.length; i++) {
+							treeObj.expandNode(nodes[i], true, false, false);
+						}
+					}
+				});
+
+
+			}
+		});
+	}
+
+	function modelNameFormatter(value,row,index){
+		return ' <a  href="javascript:void(0);"'+
+				' data-mode="detail" data-title="'+value+'    详细"'+
+				' data-url="${ctxPath}/model/base/detail/showlayer?id='+row.id+ '"'+
+				'data-width="50%"'+
+				'data-data="{id:'+row.id+'}" >'+
+				value +
+				'</a>';
+
+	}
+
+
+
+</script>

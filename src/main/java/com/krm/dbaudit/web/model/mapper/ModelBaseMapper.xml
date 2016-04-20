@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelBaseMapper">
+
+	<sql id="modelBaseColumns">
+		id,name,property,buz_line,subject,risk_level,status,db_src,run_time,interval,run_way,tname,c_key,c_org,c_customer,description,create_by,create_date,update_by,update_date,DEL_FLAG,last_run_date,last_run_count,last_run_status,code
+	</sql>
+
+	<sql id="aliasModelBaseColumns">
+		b.id,b.name,b.property,b.buz_line,b.subject,b.risk_level,b.status,b.db_src,b.run_time,b.interval,b.run_way,b.tname,b.c_key,b.c_org,b.c_customer,b.description,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG,b.last_run_date,b.last_run_count,b.last_run_status,b.code
+	</sql>
+
+	<select id="findById" resultType="com.krm.dbaudit.web.model.model.ModelBase">
+		select  <include refid="aliasModelBaseColumns" /> ,mp.name as propertyname,ms.name as subjectname,dl.label buzlinename,
+		         dr.label as risklevelname,ds.label as statusname  
+			 from model_base  b 
+			 left join model_buz_property mp on mp.id = b.property
+	         left join model_subject ms on ms.id = b.subject
+	         left join sys_dict dl on dl.value = b.buz_line and dl.type = 'model_buz_line'
+	         left join sys_dict dr on dr.value = b.risk_level and dr.type = 'model_risk_level'
+	         left join sys_dict ds on ds.value = b.status || '' and ds.type = 'model_status'
+		<where>
+			b.id = #{id}
+		</where>
+	</select>
+	
+	<select id="findByIds" resultType="com.krm.dbaudit.web.model.model.ModelBase">
+		select  <include refid="aliasModelBaseColumns" /> ,mp.name as propertyname,ms.name as subjectname,dl.label buzlinename,
+		         dr.label as risklevelname,ds.label as statusname  
+			 from model_base  b 
+			 left join model_buz_property mp on mp.id = b.property
+	         left join model_subject ms on ms.id = b.subject
+	         left join sys_dict dl on dl.value = b.buz_line and dl.type = 'model_buz_line'
+	         left join sys_dict dr on dr.value = b.risk_level and dr.type = 'model_risk_level'
+	         left join sys_dict ds on ds.value = b.status || '' and ds.type = 'model_status'
+		<where>
+			b.id in 
+			<foreach item="item" index="index" collection="model_ids" open="(" separator="," close=")">  
+			  		#{item}
+			</foreach>
+		</where>
+	</select>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.model.model.ModelBase">
+		select  <include refid="aliasModelBaseColumns" /> ,mp.name as propertyname,ms.name as subjectname,dl.label buzlinename,
+		         dr.label as risklevelname,ds.label as statusname  
+			 from model_base  b 
+			 left join model_buz_property mp on mp.id = b.property
+	         left join model_subject ms on ms.id = b.subject
+	         left join sys_dict dl on dl.value = b.buz_line and dl.type = 'model_buz_line'
+	         left join sys_dict dr on dr.value = b.risk_level and dr.type = 'model_risk_level'
+	         left join sys_dict ds on ds.value = b.status || '' and ds.type = 'model_status'
+				
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(name)">
+			    and b.name like '%' || #{name} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(property)">
+			    and b.property =  #{property}
+			 </if>
+			 <if test="@Ognl@isNotBlank(buzLine)">
+			    and b.buz_line =  #{buzLine} 
+			 </if>
+			 <if test="@Ognl@isNotBlank(subject)">
+			    and b.subject =  #{subject}
+			 </if>
+			 <if test="@Ognl@isNotBlank(riskLevel)">
+			    and b.risk_level =  #{riskLevel} 
+			 </if>
+			 <if test="@Ognl@isNotBlank(status)">
+			    and b.status =  #{status}
+			 </if>
+			 <if test="@Ognl@isNotBlank(statuses)">
+			    and b.status in 
+			    <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">  
+			  		#{item}
+				</foreach>
+			 </if>
+			 <if test="@Ognl@isNotBlank(dbSrc)">
+			    and b.db_src like '%' || #{dbSrc} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(runTime)">
+			    and b.run_time like '%' || #{runTime} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(interval)">
+			    and b.interval =  #{interval}
+			 </if>
+			 <if test="@Ognl@isNotBlank(runWay)">
+			    and b.run_way =  #{runWay}
+			 </if>
+			 <if test="@Ognl@isNotBlank(tname)">
+			    and b.tname like '%' || #{tname} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(cKey)">
+			    and b.c_key like '%' || #{cKey} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(cOrg)">
+			    and b.c_org like '%' || #{cOrg} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(cCustomer)">
+			    and b.c_customer like '%' || #{cCustomer} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(description)">
+			    and b.description like '%' || #{description} ||'%' 
+			 </if>
+			 <if test="@Ognl@isNotBlank(lastRunDateStart)">
+			    and b.last_run_date &gt;=  #{lastRunDateStart}
+			 </if>
+			 <if test="@Ognl@isNotBlank(lastRunDateEnd)">
+			    and b.last_run_date &lt;=  #{lastRunDateEnd}
+			 </if>
+			 <if test="@Ognl@isNotBlank(lastRunCount)">
+			    and b.last_run_count =  #{lastRunCount}
+			 </if>
+			 <if test="@Ognl@isNotBlank(lastRunStatus)">
+			    and b.last_run_status =  #{lastRunStatus}
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+		<if test="@Ognl@isBlank(sortC)"> 
+			order by id desc
+		</if>
+	</select>
+	
+	<!-- 模型编码重复校验 -->
+	<select id="checkmodelcode" resultType="java.lang.Integer">
+		select count(1) as datacount from model_base 
+		<where>
+			id not in 
+			<foreach item="item" index="index" collection="model_ids" open="(" separator="," close=")">  
+			  		#{item}
+			</foreach>
+			and code=#{code}
+		</where>
+	</select>
+	
+	<!-- 模型编码重复校验 -->
+	<select id="checkmodelname" resultType="java.lang.Integer">
+		select count(1) as datacount from model_base 
+		<where>
+			id not in 
+			<foreach item="item" index="index" collection="model_ids" open="(" separator="," close=")">  
+			  		#{item}
+			</foreach>
+			and name=#{name}
+		</where>
+	</select>
+	
+	<!-- 批量提交修改使用 -->
+	<update id="submismodels">
+		update model_base set
+			status = 2
+			<if test="@Ognl@isNotBlank(name)">
+				,name=#{name}
+			</if>
+			<if test="@Ognl@isNotBlank(code)">
+				,code=#{code}
+			</if>
+			<if test="@Ognl@isNotBlank(property)">
+				,property=#{property}
+			</if>
+			<if test="@Ognl@isNotBlank(buzLine)">
+				,buz_Line=#{buzLine}
+			</if>
+			<if test="@Ognl@isNotBlank(subject)">
+				,subject=#{subject}
+			</if>
+			<if test="@Ognl@isNotBlank(riskLevel)">
+				,risk_Level=#{riskLevel}
+			</if>
+			<if test="@Ognl@isNotBlank(description)">
+				,description=#{description}
+			</if>
+			<if test="@Ognl@isNotBlank(cOrg)">
+				,c_org=#{cOrg}
+			</if>
+			<if test="@Ognl@isNotBlank(cCustomer)">
+				,c_customer=#{cCustomer}
+			</if>
+		<where>
+			id in 
+			<foreach item="item" index="index" collection="model_ids" open="(" separator="," close=")">  
+			  		#{item}
+			</foreach>
+		</where>
+	</update>
+</mapper>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+	<script src="./jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="./echarts-2.1.10/build/dist/echarts.js"></script>
+</head>
+<body>
+		<div class="widget-body">
+			<div class="widget-main padding-0">
+				<div id="picBody" style="height: 400px;"></div>
+			</div>
+		</div>
+</body>
+</html>
+
+<script type="text/javascript">
+$(function(){
+	// 路径配置
+    require.config({
+        paths: {
+            echarts : './echarts-2.1.10/build/dist'
+        }
+    });
+	countByPie();
+})
+
+function countByPie(){
+		var option = {
+			title : {
+				text: '',
+				subtext: '',
+				x:'center'
+			},
+			tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c}万元 ({d}%)"
+			},
+			legend: {
+				orient : 'vertical',
+				x : 'left',
+				data:['2010081000041580','2010081000041396','201008100004139','2010081000041321','2010081000041472']
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: false},
+					magicType : {
+						show: true,
+						type: ['pie', 'funnel'],
+						option: {
+							funnel: {
+								x: '25%',
+								width: '100%',
+								funnelAlign: 'left',
+								max: 1548
+							}
+						}
+					},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			calculable : true,
+			series : [
+				{
+					name:'标题',
+					type:'pie',
+					radius : '55%',
+					center: ['50%', '60%'],
+					data:[ 
+						{value:4, name:'2010081000041580'},
+						{value:6, name:'2010081000041396'},
+						{value:10, name:'201008100004139'},
+						{value:20, name:'2010081000041321'},
+						{value:5, name:'2010081000041472'}
+					]
+				}
+			]
+		};
+		require(
+				[
+					'echarts',
+					'echarts/chart/pie',
+					'echarts/chart/funnel'
+				],
+				function (ec) {
+					var myChart = ec.init(document.getElementById('picBody'));
+					var ecConfig = require('echarts/config');
+					myChart.setOption(option,true);
+				}
+		);
+	}
+</script>

@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" href="${ctxPath}/static/mtool/lib/jquery-ui-1.8.4.custom/css/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="${ctxPath}/static/mtool/lib/raphael-min.js"></script>
+<script type="text/javascript"src="${ctxPath}/static/mtool/lib/jquery-ui-1.8.4.custom/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="${ctxPath}/static/mtool/lib/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js"></script>
+<script type="text/javascript">
+var ctxPath = '${ctxPath}';
+</script>
+<script type="text/javascript" src="${ctxPath}/static/mtool/myflow.js"></script>
+<script type="text/javascript" src="${ctxPath}/static/mtool/myflow.jpdl.js"></script>
+<script type="text/javascript" src="${ctxPath}/static/mtool/myflow.editors.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$('#myflow')
+				.myflow(
+						{
+							basePath : "",
+	
+							tools : {
+								save : {
+									onclick : function(data) {
+										alert('save:\n' + data);
+									}
+								}
+							}
+						});
+
+	});
+</script>
+<style type="text/css">
+body {
+	margin: 0 !important;
+	pading: 0 !important;
+	text-align: left;
+	font-family: Arial, sans-serif, Helvetica, Tahoma;
+	font-size: 12px;
+	line-height: 1.5;
+	color: black;
+	background-image: url(${ctxPath}/static/mtool/img/bg.png);
+}
+
+#myflow_tools{
+position: absolute; top: 10; left: 10; background-color: #fff; width: 70px; cursor: default; padding: 3px;
+}
+
+.ui-widget-conten{
+    background: myflow_tools_handle gradient(to bottom, #ffffff 0%, #eeeeee 100%) repeat-x scroll 0  linear-gradient(to bottom, #ffffff 0%, #eeeeee 100%) repeat-x scroll 0 0;
+    border-bottom: 1px solid #ddd;
+    box-sizing: content-box;
+    color: #669fc7;
+    min-height: 38px;
+    padding-left: 12px;
+    position: relative;
+}
+
+.node {
+	width: 70px;
+	text-align: left;
+	vertical-align: middle;
+	border: 1px solid #fff;
+	line-height: 20px;
+}
+
+.node img{
+	vertical-align: middle;
+}
+
+.mover {
+	border: 1px solid #ddd;
+	background-color: #ddd;
+}
+
+.selected {
+	background-color: #ddd;
+}
+
+.state {
+	
+}
+
+#myflow_props table {
+	
+}
+
+#myflow_props th {
+	letter-spacing: 2px;
+	text-align: left;
+	color: #000;
+}
+
+#myflow_props td {
+	background: #fff;
+	padding: 6px;
+}
+
+#pointer {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#path {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#task {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#state {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+</style>
+</head>
+<body>
+	<div id="myflow_tools" class="ui-widget-content">
+		<div id="myflow_tools_handle" style="text-align: center;" class="ui-widget-header">工具集</div>
+		<div class="node" id="myflow_save">
+			<img src="${ctxPath}/static/mtool/img/save.gif" />&nbsp;&nbsp;保存
+		</div>
+		<div><hr/></div>
+		<div class="node selectable" id="pointer"><img
+			src="${ctxPath}/static/mtool/img/select16.gif" />&nbsp;&nbsp;选择
+		</div>
+		<div class="node selectable" id="path"><img
+			src="${ctxPath}/static/mtool/img/16/flow_sequence.png" />&nbsp;&nbsp;连接
+		</div>
+		<div><hr /></div>
+		<div class="node state" id="start" type="start">
+			<img src="${ctxPath}/static/mtool/img/16/start_event_empty.png" />&nbsp;&nbsp;开始
+		</div>
+
+		<div class="node state" id="task1" type="task1">
+			<img src="${ctxPath}/static/mtool/img/16/task_empty.png" />&nbsp;&nbsp;任务一
+		</div>
+	
+		<div class="node state" id="task2" type="task2">
+			<img src="${ctxPath}/static/mtool/img/16/task_empty.png" />&nbsp;&nbsp;任务二
+		</div>
+	
+		<div class="node state" id="task3" type="task3">
+			<img src="${ctxPath}/static/mtool/img/16/task_empty.png" />&nbsp;&nbsp;任务三
+		</div>
+	
+		
+		<div class="node state" id="task4" type="task4">
+			<img src="${ctxPath}/static/mtool/img/16/task_empty.png" />&nbsp;&nbsp;任务四
+		</div>
+	
+		
+		<div class="node state" id="end" type="end">
+			<img src="${ctxPath}/static/mtool/img/16/end_event_terminate.png" />&nbsp;&nbsp;结束
+		</div>
+	</div>
+
+
+	<div id="myflow_props"
+		style="position: absolute; top: 30; right: 50; background-color: #fff; width: 220px; padding: 3px;"
+		class="ui-widget-content">
+		<div id="myflow_props_handle" class="ui-widget-header">属性</div>
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			
+		</table>
+		<div>&nbsp;</div>
+	</div>
+	<div>
+	</div>
+	
+	<div id="myflow"></div>
+</body>
+</html>

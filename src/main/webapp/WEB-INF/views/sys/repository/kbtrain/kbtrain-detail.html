@@ -1,0 +1,66 @@
+
+<div class="layer">
+   <div class="profile-user-info profile-user-info-striped wordbreak" >
+   	  <div class="profile-info-row">
+ 			<div class="profile-info-name">编码</div>
+          <div class="profile-info-value">${kbTrain.trainCode!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">名称</div>
+          <div class="profile-info-value">${kbTrain.trainTitle!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">类型</div>
+          <div class="profile-info-value">培训学习</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">关键字</div>
+          <div class="profile-info-value">${kbTrain.keyword!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">作者出处</div>
+          <div class="profile-info-value">${kbTrain.trainSrc!}</div>
+      </div>
+      @var flag = kbTrain.publicFlag;
+      @if(flag == 1){
+	      <div class="profile-info-row">
+	          <div class="profile-info-name">发布标志</div>
+	          <div class="profile-info-value">已发布</div>
+	      </div>
+	  @}else{
+	  	<div class="profile-info-row">
+	          <div class="profile-info-name">发布标志</div>
+	          <div class="profile-info-value">未发布</div>
+	      </div>
+	  @}
+      <div class="profile-info-row">
+          <div class="profile-info-name">简要描述</div>
+          <div class="profile-info-value">${kbTrain.trainDesc!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">备注</div>
+          <div class="profile-info-value">${kbTrain.memo}</div>
+      </div>
+      @if(fileName != null){
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">附件</div>
+          <div class="profile-info-value">已上传附件&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-sm " role="button"
+                          	title="查看附件"
+							data-mode="page" data-title="查看附件"
+							data-url="${ctxPath}/sysAccessory/file/showlayer?id=${kbTrain.docId!}&mode=detail" 
+							data-width="50%"
+                          >查看附件</a></div>
+      	</div>
+      @}else{
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">附件</div>
+          <div class="profile-info-value">未上传附件</div>
+      	 </div>
+      @}
+   </div>   
+        
+</div>
+
+
+
+

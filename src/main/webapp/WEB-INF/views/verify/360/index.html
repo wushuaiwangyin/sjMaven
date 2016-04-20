@@ -1,0 +1,205 @@
+<h3 class="header smaller lighter blue">
+    查询条件
+    <small>支持客户号查询</small>
+</h3>
+
+<div role="form" class="form-inline">
+    <div>
+        <span>客户号</span>
+        <input type="text" value="" class="form-control width-50" name="cNo" id="cNo">
+             <!--   对私：<input type="radio" id="isPublic1" name="isPublic" value="0" checked="checked"/>对公：<input type="radio" name="isPublic" id="isPublic2" value="1" /> -->
+        <button class="btn btn-primary btn-sm" type="submit" id="queryBtn">对公客户查询</button>
+         <button class="btn btn-primary btn-sm" type="submit" id="queryBtn2">对私客户查询</button>
+    </div>
+</div>
+
+<br/>
+
+<h3 class="header smaller lighter blue">
+    历史记录
+    <small>最近一次查询时间：<span id="hisDate" name="hisDate"></span></small>
+</h3>
+
+<div class="" id="feed">
+    <div class="profile-feed row">
+        <div id="his" class="col-sm-12">
+           <!--   <div class="profile-activity clearfix">
+                <div>
+                    <img src="./static/img/avatars/avatar5.png" alt="Alex Doe's avatar" class="pull-left">
+                    <a href="#" class="user">北京同仁科技</a>
+
+                    <div class="time">
+                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                        1小时前
+                    </div>
+                </div>
+
+                <div class="tools action-buttons">
+                    <a class="blue" href="#">
+                        <i class="ace-icon fa fa-search bigger-125"></i>
+                    </a>
+
+                    <a class="red" href="#">
+                        <i class="ace-icon fa fa-times bigger-125"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-activity clearfix">
+                <div>
+                    <img src="./static/img/avatars/avatar1.png" alt="Susan Smith's avatar" class="pull-left">
+                    <a href="#" class="user">东宝实业集团有限公司 </a>
+                    <div class="time">
+                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                        2 小时前
+                    </div>
+                </div>
+
+                <div class="tools action-buttons">
+                    <a class="blue" href="#">
+                        <i class="ace-icon fa fa-search bigger-125"></i>
+                    </a>
+
+                    <a class="red" href="#">
+                        <i class="ace-icon fa fa-times bigger-125"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-activity clearfix">
+                <div>
+                    <i class="pull-left thumbicon fa fa-check btn-success no-hover"></i>
+                    <a href="#" class="user">东辽县天源木制品有限公司	</a>
+                    <div class="time">
+                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                        5 小时前
+                    </div>
+                </div>
+
+                <div class="tools action-buttons">
+                    <a class="blue" href="#">
+                        <i class="ace-icon fa fa-search bigger-125"></i>
+                    </a>
+
+                    <a class="red" href="#">
+                        <i class="ace-icon fa fa-times bigger-125"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-activity clearfix">
+                <div>
+                    <i class="pull-left thumbicon fa fa-picture-o btn-info no-hover"></i>
+                    <a href="#" class="user"> 九台市吉盛粮油经销有限公司</a>
+                    <div class="time">
+                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                        5 小时前
+                    </div>
+                </div>
+
+                <div class="tools action-buttons">
+                    <a class="blue" href="#">
+                        <i class="ace-icon fa fa-search bigger-125"></i>
+                    </a>
+
+                    <a class="red" href="#">
+                        <i class="ace-icon fa fa-times bigger-125"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-activity clearfix">
+                <div>
+                    <img src="./static/img/avatars/avatar4.png" alt="David Palms's avatar" class="pull-left">
+                    <a href="#" class="user"> 乾安县鑫兴建筑材料经销有限责任公司</a>
+                    <div class="time">
+                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+                        8 小时前
+                    </div>
+                </div>
+
+                <div class="tools action-buttons">
+                    <a class="blue" href="#">
+                        <i class="ace-icon fa fa-search bigger-125"></i>
+                    </a>
+
+                    <a class="red" href="#">
+                        <i class="ace-icon fa fa-times bigger-125"></i>
+                    </a>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="space-12"></div>
+
+    <div class="center">
+        <button class="btn btn-sm btn-primary btn-white btn-round" type="button">
+            <i class="ace-icon fa fa-rss bigger-150 middle orange2"></i>
+            <span class="bigger-110">查看更多</span>
+
+            <i class="icon-on-right ace-icon fa fa-arrow-right"></i>
+        </button>
+    </div>
+</div>
+<script>
+    $(function(){
+    //	var =${isPublic!};
+     	$.post("${ctxPath}/cust360/main/getHistoryRecds",{row:10},function(data){
+    		//alert(data.length);
+    	 	 if(data.length!=0){
+    			var strStart="<div class='profile-activity clearfix'>  <div>  <i class='pull-left thumbicon fa fa-key btn-info no-hover'></i>";
+    			$("#his").empty();
+    			$("#hisDate").empty();
+    			var hisdate;
+    		 	 for(var i=0;i<data.length;i++){
+    			//	$("#his").append(strStart+"<a href='javascript:queryCust("+$.trim(data[i].CUSTID)+","+$.trim(data[i].ISPUBLIC)+")' id='"+$.trim(data[i].CUSTID)+"'  class='user'>"+data[i].CUSTNAME+"</a> </div></div>");
+    		$("#his").append(strStart+"<a href=\"javascript:queryCust('"+data[i].CUSTID+"','"+$.trim(data[i].ISPUBLIC)+"')\" id='"+$.trim(data[i].CUSTID)+"'  class='user'>"+data[i].CUSTID+"</a> </div></div>");
+    			hisdate=$.trim(data[i].HSDATE);
+    		 	 } 
+    		 	$("#hisDate").append(hisdate) ;
+    		}  
+    	});
+    	
+    	
+        $("#queryBtn").on("click",function(){
+        	var custid=$("#cNo").val();
+        	//alert(custid);
+        	if(custid==''){
+        		alert("请输入客户号");
+        		return false;
+        	}
+        	var isPublic="2";//对公
+            $("#fill-main-content").html(loadHtmlPage("cust360/main/query?isPublic="+isPublic+"&custId="+custid+"&model_id=2"));
+            
+            
+        });
+        $("#queryBtn2").on("click",function(){
+        	var custid=$("#cNo").val();
+        	if(custid==''){
+        		alert("请输入客户号");
+        		return false;
+        	}
+        	var isPublic="1";//对私
+            $("#fill-main-content").html(loadHtmlPage("cust360/main/query?isPublic="+isPublic+"&custId="+custid+"&model_id=11"));
+            
+            
+        });
+       /*  $(".fa-search").on("click",function(){
+            $("#fill-main-content").html(loadHtmlPage("verify/360/result/index"));
+        });
+        $(".user").on("click",function(){
+        		var isPublic="0";	
+        		 var custid=$(this).attr("id");
+        		  $("#fill-main-content").html(loadHtmlPage("cust360/main/query?isPublic="+isPublic+"&custId="+custid));
+        }) ; */
+        
+    })
+    
+     function  queryCust(id,ispublic){
+    	var custid=''+$.trim(id);
+    	//alert(custid+","+ispublic);
+    	   var isPublic=''+ispublic;	
+    	   $("#fill-main-content").html(loadHtmlPage("cust360/main/query?isPublic="+isPublic+"&custId="+custid));
+       }
+</script>

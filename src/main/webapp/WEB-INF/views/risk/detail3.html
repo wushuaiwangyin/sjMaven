@@ -1,0 +1,71 @@
+<div class="widget-box" id="y_box1">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title"></h5>
+        <div class="widget-toolbar no-border">
+                <span class="btn btn-purple btn-xs"
+                      onclick="downloadFile('table_model','${ctxPath}/data/export?custNo='+custNo)">
+                <i class="ace-icon fa fa-cloud-download bigger-130"></i>
+                	导出Excel</span>
+        </div>
+    </div>
+    
+	<div class="layer">
+	    <div class="widget-main padding-8">
+	        <table id="table_model"    data-pagination="true"
+	               data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+	               data-toolbar="#toolbar"
+	               data-smart-display="true">
+	            <thead>
+	            <tr>
+	                <th data-field="state" data-checkbox="true"></th>
+	                <th data-field="modelname"  data-sortable="true" data-formatter="modelNameFormatter" >模型名称</th>
+	                <th data-field="custname" data-sortable="true" >客户名称</th>
+	                <th data-field="id" data-align="center" data-sortable="false" data-width="75"  data-formatter="operatorBtn3">操作</th>
+	            </tr>
+	            </thead>
+	          </table>
+	    </div>
+	</div>
+</div>	
+
+<script>
+    var $table_model = $('#table_model');
+    $table_model.bootstrapTable({
+        iconSize:'sm',
+        onLoadSuccess:tableLoadSuccess
+    });
+
+    $.ajax({
+        url: "${ctxPath}/second/risk/details",
+        dataType: "json",
+        async: false,
+        method:"post",
+        success: function (data) {
+            var d = [];
+            $.each(data,function(i,obj){
+                if(obj.custname == custName){
+                    d.push(obj)
+                }
+            })
+            $table_model.bootstrapTable("load",{data:d});
+        }
+    })
+
+    function modelNameFormatter(value,row,index){
+    	return ' <a  href="javascript:void(0);"'+
+		' data-mode="detail" data-title="'+value+'    详细"'+
+		' data-url="${ctxPath}/model/base/detail/showlayer?id='+row.id+ '"'+
+		'data-width="50%"'+
+		'data-data="{id:41}" >'+
+		value +
+		'</a>';
+    }
+    
+    function operatorBtn3(value, row) {
+		return $("#rowBtn_edit").html()
+		.replace(new RegExp("{row.id}", "g"), row.id)
+		.replace(new RegExp("{row.custno}", "g"), row.custno);
+	}
+
+   
+</script>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/default/easyui.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="${ctxPath!}/static/tool/easyui/themes/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${ctxPath!}/static/tool/styles/table.css" />
+		
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/tool/easyui/jquery.easyui.min.js"></script>
+<title>数据叠加</title>
+<script type="text/javascript">
+
+//alert("您传递的参数为：" +window.dialogArguments);
+var dlgargs = window.dialogArguments;
+$(function(){
+	//window.returnValue="hahaha!";
+	//加载树结构
+	$('#tabletree').tree({
+        url: "getflowtree.action?tablename="+dlgargs,
+        loadFilter: function(data){
+            return data;
+        }
+    });
+	$('#tabletree').tree({
+		onClick: function(node){
+	    	 $('#tabletree').find('.tree-node-selected').removeClass('tree-node-selected');//移除上次选中的节点
+	    	 $("#tabletree").tree("select",node.target);//选中当前节点
+	    	 //加载步骤信息
+	    	 tblempty();
+	    	 $.ajax(
+	    		{ url: ""+"getflowinfo.action?tablename="+node.name, 
+					success: function(data){
+						$("#loading").empty();
+						var json = eval(data);
+						$.each(json,function(infoIndex,info){ 
+			        		var action_id = info["action_id"];
+			        		if(action_id != '' && action_id == 'get_data'){
+			        			var action_info = eval(info["action_info"]);
+			        			$.each(action_info,function(infoIndex,info){ 
+			        				//alert('dd');
+			        				
+			        				$('#tablename').text(info["flow_targettable"]);
+			        				$('#action_id').text(info["flow_type"]);
+			        				$('#srctable').text(info["flow_srctable"]);
+			        				//$('#scope').text(info["flow_field"]);
+			        				$('#condition').text(info["flow_condition"]);
+			        				$('#cols').text(info["flow_field"]);
+			        			});
+			        		}
+			        	});
+					}
+					//beforeSend:function(XMLHttpRequest){
+			        //      $("#loading").html("<img src='../images/loading.gif' />");
+			        //}
+	    	 });
+	    },
+	    onDblClick: function(node){
+	    	alert(node.name);
+	    }
+    }); 
+});
+
+
+function tblempty(){
+	$('#tablename').text('');
+	$('#action_id').text('');
+	$('#srctable').text('');
+	$('#scope').text('');
+	$('#condition').text('');
+	$('#cols').text('');
+}
+</script>
+<style type="text/css">
+body{font-size: 12px;}
+.asstable{
+            width:100%;
+            border-collapse:collapse;
+        }
+.asstable tr{
+            height: 35px;
+        }
+.asstable td{
+            border:1px solid #95b8e7;
+        }
+</style>
+</head>
+<body>
+<div style="width: 645px;height:415px;margin: 5px;border: 0px solid red;">
+	<div style="width: 300px;height:400px;margin: 5px; float: left;border: 0px solid red;">
+		<div class="easyui-panel" style="padding:0px;" fit="true">
+						<ul id="tabletree" class="easyui-tree" data-options="lines:true"></ul>
+		</div>
+	</div>
+	<div style="width: 300px;height:400px;margin: 5px; float: left;border: 0px solid gray;">
+		<table class="asstable">
+			<tr>
+				<td style="width: 80px;">文件名：</td><td><span id="tablename"></span> </td>
+			</tr>
+			<tr>
+				<td style="width: 80px;">操作方式：</td><td><span id="action_id"></span> </td>
+			</tr>
+			<tr>
+				<td style="width: 80px;">上级数据表：</td><td><span id="srctable"></span> </td>
+			</tr>
+			<tr>
+				<td style="width: 80px;">数据范围：</td><td><span id="scope"></span> </td>
+			</tr>
+			<tr>
+				<td style="width: 80px;">数据条件：</td><td><span id="condition"></span> </td>
+			</tr>
+			<tr>
+				<td style="width: 80px;">数据字段：</td><td><span id="cols"></span> </td>
+			</tr>
+		</table>
+	</div>
+</div>
+</body>
+</html>

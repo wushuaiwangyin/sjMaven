@@ -1,0 +1,34 @@
+<div class="layer">
+    <div class="widget-main padding-3">
+       <table id="table-detail_info" data-url="${ctxPath}/kbStdEntry/entryList?stdCode=${stdCode!}" data-height="500"  data-pagination="true"
+               data-search="false"  data-page-list="[10, 20, 50, 100, 200]"   data-page-size="10" data-striped="true"
+               data-click-to-select="true"  data-toolbar="#toolbar"  data-toggle="table"
+               data-smart-display="true"> 
+            <thead>
+                <tr>
+                    <th data-field="entryCode" >审计依据条目编码</th>
+                    <th data-field="stdCode" >审计依据编码</th>
+                    <th data-field="keyword"  >关键字</th>
+                    <th data-field="content"  data-visible="true" >条目内容</th>
+                    <th data-field="creatorId"  data-visible="true" >创建人</th>
+                    <th data-field="createTime"  data-visible="true" >创建时间</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script>
+    var $table_detail = $('#table-detail_info');
+    $table_detail.bootstrapTable({
+        iconSize:'sm',
+        onLoadSuccess:tableLoadSuccess
+    });
+</script>

@@ -1,0 +1,127 @@
+<div class="widget-box">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">查询条件</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+			<form method="post" class="form-search" id="search-form" >
+                <div role="form" class="form-inline">
+                     <div class="form-group">
+                        <span>账号</span>
+                        <input type="text" value="" class="form-control w100" name="acctno" id="acctno">
+                     </div>
+                     <div class="form-group">
+                        <span>关联次数</span>
+                        <input type="text" value="" class="form-control w70" name="queryCount" id="queryCount">
+                     </div>
+                     <div class="form-group">
+                        <span>交易金额</span>
+                        <input type="text" value="" class="form-control w70" name="amt" id="amt">
+                     </div>
+                    <button class="btn btn-primary btn-sm" type="button" id="ok">查询</button>
+                </div>
+               </form>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+<div class="widget-body">
+				<div id="list-page" class="widget-main padding-8">
+					<table id="table"   data-pagination="true"   data-click-to-select="false"
+									  data-search="false" data-page-list="[10, 20, 50, 100, 200]"  data-striped="true"
+									    data-page-size="10" data-click-to-select="false" 
+									  data-smart-display="true" 
+									  data-toggle="table" 
+									  >
+							<thead>
+						<tr>
+							<th data-field="acctno">账号</th>
+							<th data-field="name">客户名称</th>
+							<th data-field="searchStep">交易笔数</th>
+							<th data-field="searchFlow" >步骤编号</th>		
+							<th data-field="searchFlow" data-align="center" data-sortable="false" data-width="75"  data-formatter="operatorBtn33">操作</th>				
+						</tr>
+						</thead>
+					</table>
+				</div>
+</div>
+
+<br/>
+
+<div id="rowBtn_edit" style="display: none;">
+	<div class="hidden-sm hidden-xs action-buttons">
+		<a class="green" href="javascript:void(0);" title="流程图"
+		   data-mode="page" data-title="流程图"
+		   data-url="${ctxPath}/capitalflow/showflowlayer"
+		   data-width="80%"
+		   data-height="100%"
+		   data-data="{searchFlow:'{row.searchFlow}'}"
+		   data-table = "table"
+		 >
+			<i class="ace-icon fa fa-list bigger-130"></i>
+		</a>
+	</div>
+</div>
+
+
+
+<script>
+
+var $table = $('#table');
+$table.bootstrapTable({
+    iconSize:'sm',
+    onLoadSuccess:tableLoadSuccess
+});
+
+var nodesstr = "";
+var linksstr = "";
+var loadingindex;
+    // 路径配置
+    require.config({
+        paths: {
+            echarts : './static/echarts-2.1.10/build/dist'
+        }
+    });
+
+    $("#ok").on("click",function(){
+    	
+    	var acctno = $('#acctno').val();
+    	var queryCount = $('#queryCount').val();
+    	var amt = $('#amt').val();
+    	if(queryCount==''){
+    		layer.msg('请输入关联次数！', 1, 1,function(){});
+    		return;
+    	}
+    	
+    	if(acctno=='' && amt==''){
+    		layer.msg('请输入账号或者交易金额限制！', 1, 1,function(){});
+    		return;
+    	}
+    	//获取该账号下的所有关联节点，最反回最大步数，通过返回的最大步数判断是否满足条件
+    		$.ajax({
+    			url:"${ctxPath}/capitalflow/searchflow",
+    			dataType: "json",
+    			data:{acctno:acctno,queryCount:queryCount,amt:amt},
+    			type:'post',
+    			beforeSend:function(){
+    				loadingindex = layer.load('正在查询中，可能需要几分钟的时间....');
+    			},
+    			success: function (data) {
+    				layer.close(loadingindex);
+    				var d = [];
+                    $.each(data,function(i,obj){
+                            d.push(obj);
+                    })
+                    $table = $('#table');
+                    $table.bootstrapTable("load",d);
+                }
+    		});
+    });
+    
+    function operatorBtn33(value, row) {
+		return $("#rowBtn_edit").html()
+		.replace(new RegExp("{row.searchFlow}", "g"), row.searchFlow);
+	}
+</script>

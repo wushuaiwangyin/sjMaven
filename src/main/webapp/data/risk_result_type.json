@@ -1,0 +1,4 @@
+[
+    {"id":1,"pid":0,"index":1,"name":"分类一","user":"admin"},
+    {"id":2,"pid":0,"index":1,"name":"分类二","remark":"admin"}
+]

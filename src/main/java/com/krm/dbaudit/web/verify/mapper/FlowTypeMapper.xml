@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.verify.mapper.FlowTypeMapper">
+
+	<sql id="flowTypeColumns">
+		id,name,parent_id,sort,description,create_by,create_date,update_by,update_date,DEL_FLAG
+	</sql>
+
+	<sql id="aliasFlowTypeColumns">
+		b.id,b.name,b.parent_id,b.sort,b.description,b.create_by,b.create_date,b.update_by,b.update_date,b.DEL_FLAG
+	</sql>
+
+	<!-- 根据节点Id删除底下全部子节点包括孙子节点 -->
+	<update id="deleteFlowTypeByRootId">
+		update flow_type set del_flag = 1 where id in (select id from flow_type start with id = #{id} connect by PRIOR id = parent_id)
+	</update>
+	
+	<select id="findFlowTree" resultType="com.krm.dbaudit.web.verify.model.FlowType">
+		select id,name,parent_id from flow_type where del_flag = 0
+	</select>
+</mapper>

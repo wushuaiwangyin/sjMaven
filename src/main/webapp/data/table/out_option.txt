@@ -1,0 +1,8 @@
+<option value="EVENT">事件</option>
+<option value="NAME">事件人</option>
+<option value="EVENTDATE">事情时间</option>
+<option value="SOURCE">网站来源</option>
+<option value="NATRURE">行业性质 </option>
+<option value="PROVINCE">所属省份</option>
+<option value="NUMBERS">事件人证件号码</option>
+<option value="CREATEDATE">导入日期</option>

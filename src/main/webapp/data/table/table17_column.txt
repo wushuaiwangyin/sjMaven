@@ -1,0 +1,17 @@
+<tr><th data-field="a" data-sortable="true">客户号</th>
+<th data-field="b" data-sortable="true">开户网点</th>
+<th data-field="c" data-sortable="true">客户名称2</th>
+<th data-field="d" data-sortable="true">客户类别</th>
+<th data-field="e" data-sortable="true">客户状态</th>
+<th data-field="f" data-sortable="true">证件类别</th>
+<th data-field="g" data-sortable="true">证件号码</th>
+<th data-field="h" data-sortable="true">开户日期</th>
+<th data-field="i" data-sortable="true">开户用户</th>
+<th data-field="j" data-sortable="true">销户日期</th>
+<th data-field="k" data-sortable="true">销户用户</th>
+<th data-field="l" data-sortable="true">信贷许可</th>
+<th data-field="m" data-sortable="true">是否股东</th>
+<th data-field="n" data-sortable="true">CUSTTG</th>
+<th data-field="o" data-sortable="true">TIMESTAMP</th>
+<th data-field="p" data-sortable="true">证件1</th>
+</tr>

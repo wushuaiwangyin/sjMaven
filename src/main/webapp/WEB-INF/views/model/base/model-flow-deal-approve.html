@@ -1,0 +1,94 @@
+<div class="layer">
+	<form name="FormPost" id="model_write-form" class="FormGrid"  method="post"
+		action="${ctxPath}/model/approve/dealsave">
+		
+		<input type="hidden" value="${ids!}" name="ids"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD"></td>
+					<td class="DataTD width-100">
+						<div class="radio inline">
+							<label>
+								<input name="type" type="radio" class="ace" checked value="6"/>
+								<span class="lbl"> 审批通过 </span>
+							</label>
+						</div>
+						<div class="radio inline">
+							<label>
+								<input name="type" type="radio" class="ace" value="5"/>
+								<span class="lbl"> 审批不通过</span>
+							</label>
+						</div>
+					</td>
+				</tr>
+				
+				<tr class="FormData">
+					<td class="CaptionTD">意见</td>
+					<td class="DataTD">
+						<textarea name="remarks" class="autosize-transition form-control "
+						style="resize: none;"></textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="submitForm">
+		<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i> 确定
+	</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="user-save-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i> 取 消
+	</span>
+</div>
+
+<script type="text/javascript">
+
+$(function() {
+	$("#submitForm").click(function () {
+		validId.submitForm(false);
+		return false;
+	});
+
+	$("#user-save-cancel").click(function () {
+		layer.closeAll();
+		return false;
+	});
+
+	var validId = $("#model_write-form").Validform({
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#model_write-form").data('loadi',loadi);
+		},
+		callback:function(data){
+			layer.close($("model_write-form").data('loadi'));
+			if(data>0) {
+				layer.msg('操作成功', 1, 1,function(){
+
+					location.reload();
+
+					layer.closeAll();
+				});
+			}else{
+				layer.msg('操作失败', 3, 1);
+			}
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true
+	});
+
+
+});
+
+
+	
+</script>

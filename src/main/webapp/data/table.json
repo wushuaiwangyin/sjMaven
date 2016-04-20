@@ -1,0 +1,27 @@
+[
+  {"id":1,"name":"存款","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":12,"name":"储蓄明细","theme":"主题集1","source":1,"pid":1,"type":"t"},
+  {"id":19,"name":"账户信息表","theme":"主题集1","source":1,"pid":1,"type":"t"},
+
+  {"id":2,"name":"支付","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":11,"name":"大额支付往来","theme":"支付","source":1,"pid":2,"type":"t"},
+
+  {"id":3,"name":"贷款","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":13,"name":"分偿贷款账户表","theme":"主题集1","source":1,"pid":3,"type":"t"},
+  {"id":18,"name":"普通贷款账户表","theme":"主题集1","source":1,"pid":3,"type":"t"},
+
+  {"id":4,"name":"客户","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":17,"name":"客户基本信息表","theme":"主题集1","source":1,"pid":4,"type":"t"},
+
+  {"id":5,"name":"机构","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":15,"name":"机构信息","theme":"主题集1","source":1,"pid":5,"type":"t"},
+
+  {"id":6,"name":"柜员","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":14,"name":"柜员信息","theme":"主题集1","source":1,"pid":6,"type":"t"},
+
+  {"id":7,"name":"参数","type":"s","pid":0,"source":1,"title":"描述信息"},
+  {"id":16,"name":"科目","theme":"主题集1","source":1,"pid":7,"type":"t"}
+
+
+
+]

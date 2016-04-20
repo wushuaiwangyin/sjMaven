@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.sys.mapper.KbAudtiMapper">
+	
+	<sql id="kbAuditColumns">
+		audit_id, audit_code, audit_title, audit_type, audit_object, keyword, audit_desc, disporder, doc_id, status, creator_id, create_time, editor_id, edit_time
+	</sql>
+	
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.sys.model.KbAudit">
+		select <include refid="kbAuditColumns"/>,sy.label as type
+		from kb_audit kb
+		left join sys_dict sy on kb.audit_type = sy.id and sy.type = 'business_type'
+		<where>
+			kb.status = 1
+			<if test="@Ognl@isNotBlank(type)">
+				and kb.audit_type in 
+				<foreach item="item" index="index" collection="type" open="(" separator="," close=")">  
+ 					#{item}
+ 				</foreach>
+			</if>
+ 			<if test="@Ognl@isNotBlank(name)">
+				and kb.audit_title like '%' || #{name} ||'%'
+			</if>
+		</where>
+		order by kb.create_time desc
+	</select>
+	
+	<select id="findById"  resultType="com.krm.dbaudit.web.sys.model.KbAudit">
+		select <include refid="kbAuditColumns"/>,sy.label as type
+		from kb_audit kb
+		left join sys_dict sy on kb.audit_type = sy.id and sy.type = 'business_type'
+		<where>
+			kb.audit_id = #{id}
+		</where>
+	</select>
+</mapper>

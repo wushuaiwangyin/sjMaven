@@ -1,0 +1,206 @@
+<div class="widget-box" id="y_box1">
+    <div class="widget-header widget-header-flat widget-header-small">
+        <h5 class="widget-title">查询结果</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main padding-8">
+            <div id="picBody" style="height: 500px;"></div>
+        </div>
+    </div>
+</div>
+
+<a class="green" id="showdetail" href="javascript:void(0);" style="display: none;"  title="详细"
+		   data-mode="page" data-title="详细"
+		   data-url="${ctxPath}/verify/cusguarflow/showdata"
+		   data-width="80%"
+		   data-data="{id:'{row.id}'}"
+				>
+			<i class="ace-icon fa fa-list bigger-130"></i>
+</a>
+
+<script>
+$(function(){
+	var searchFlow = "${searchFlow}";
+	var nodesstr = "";
+	var linksstr = "";
+	    // 路径配置
+	    require.config({
+	        paths: {
+	            echarts : './static/echarts-2.1.10/build/dist'
+	        }
+	    });
+	    $.ajax({
+			url:"${ctxPath}/verify/cusguarflow/showflow",
+			data:{searchFlow:searchFlow},
+			type:'post',
+			beforeSend:function(){
+				
+			},
+			success: function (data) {
+
+				if(null != data && data != -1){
+					//组装流向图
+					var uname = data.name + "担保流向图";
+					var nodeslist = data.nodelist;
+					//var nodesstr = "";
+					var nodearray=new Array();
+					var linkslist = data.linklist;
+					//var linksstr = "";
+					var linkarray=new Array();
+					//组装nodes
+					var sourceid;
+					var targetid;
+					var sourcename
+					var targetname;
+					for(var j = 0 ;j < nodeslist.length; j++){
+						if(nodeslist[j].name == data.name){
+							nodearray.push({category:0, name: ""+nodeslist[j].name+"",value : nodeslist[j].cusid+","+nodeslist[j].searchFlow,label: ""+nodeslist[j].name+"\n（主要）"});
+						}else{
+							nodearray.push({category:0, name: ""+nodeslist[j].name+"",value : nodeslist[j].cusid+","+nodeslist[j].searchFlow});
+						}
+					}
+					for(var k = 0 ;k < linkslist.length; k++){
+						var lkguarNo = linkslist[k].guarNo;
+						var lkborrowerNo = linkslist[k].borrowerNo;
+							
+						for(var i = 0 ;i < nodeslist.length; i++){
+							var cusid = nodeslist[i].cusid;
+							if(cusid == lkborrowerNo){
+								targetid = i;
+								targetname = nodeslist[i].name;
+							}
+							if(cusid == lkguarNo){
+								sourceid = i;
+								sourcename = nodeslist[i].name;
+							}
+						}
+						linksstr = {source : ""+sourcename+"", target : ""+targetname+"", weight : 1,itemStyle:{ normal: zc}};
+						linkarray.push(linksstr);
+					}
+					var zc = {
+			                width: 2.5,
+			                color: 'red'
+			        }
+			        var sr = {
+			            width: 2.5,
+			            color: 'blue'
+			        }
+
+			        var option = {
+			            title : {
+			                text: uname,
+			                subtext: '',
+			                x:'center',
+			                y:'top'
+			            },
+			            tooltip : {
+			                trigger: 'item',
+			                formatter: '{a} : {b}'
+			            },
+			            toolbox: {
+			                show : true,
+			                feature : {
+			                    restore : {show: true},
+			                    magicType: {show: true, type: ['force', 'chord']},
+			                    saveAsImage : {show: true}
+			                }
+			            },
+			            series : [
+			                {
+			                    type:'force',
+			                    name : "担保流向",
+			                    ribbonType: false,
+			                    itemStyle: {
+			                        normal: {
+			                            label: {
+			                                show: true,
+			                                textStyle: {
+			                                    color: '#333'
+			                                }
+			                            },
+			                            nodeStyle : {
+			                                brushType : 'both',
+			                                borderColor : 'rgba(255,215,0,0.4)',
+			                                borderWidth : 1
+			                            },
+			                            linkStyle: {
+			                                type: 'curve',
+			                                shadowBlur: 10
+			                            }
+			                        },
+			                        emphasis: {
+			                            label: {
+			                                show: false
+			                                // textStyle: null      // 默认使用全局文本样式，详见TEXTSTYLE
+			                            },
+			                            nodeStyle : {
+			                                //r: 30
+			                            },
+			                            linkStyle : {}
+			                        }
+			                    },
+			                    useWorker: false,
+			                    minRadius : 15,
+			                    maxRadius : 25,
+			                    gravity: 1.1,
+			                    scaling: 1.1,
+			                    linkSymbol: 'arrow',
+			                    roam: 'move',
+			                    nodes: nodearray,
+			                    links : linkarray
+			                }
+			            ]
+			        };
+					
+					require(
+			                [
+			                    'echarts',
+			                    'echarts/chart/force',
+			                    'echarts/chart/chord'
+			                ],
+			                function (ec) {
+			                    var myChart = ec.init(document.getElementById('picBody'));
+			                    var ecConfig = require('echarts/config');
+
+
+			                    function focus(param) {
+			                        var data = param.data;
+			                        var links = option.series[0].links;
+			                        var nodes = option.series[0].nodes;
+			                        if (
+			                                data.source !== undefined
+			                                && data.target !== undefined
+			                        ) { //点击的是边
+			                            var sourceNode = nodes.filter(function (n) {return n.name == data.source})[0];
+			                            var targetNode = nodes.filter(function (n) {return n.name == data.target})[0];
+			                            console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+			                        } else { // 点击的是点
+			                            console.log("选中了" + data.name + '(' + data.value + ')');
+			                        	//alert("您点中了11"+data.value);
+			                            //显示该节点主动发起的所有交易明细
+			                            $('#showdetail').data("data","{id:'"+data.value+"'}");
+			                            $('#showdetail').click();
+			                            
+			                            /////////
+			                        }
+			                    }
+			                    myChart.on(ecConfig.EVENT.CLICK, focus)
+
+			                    myChart.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+			                        console.log(myChart.chart.force.getPosition());
+			                    });
+
+			                    myChart.setOption(option,true);
+			                }
+			        );
+				}else{
+					layer.msg('查询不到任务满足条件的记录！', 1, 1,function(){});
+					return;
+				}
+	        }
+	    });
+	
+})
+
+
+</script>

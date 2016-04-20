@@ -1,0 +1,58 @@
+
+<div class="layer">
+   <div class="profile-user-info profile-user-info-striped wordbreak" >
+   	  <div class="profile-info-row">
+ 			<div class="profile-info-name">编码</div>
+          <div class="profile-info-value">${kbAudit.auditCode!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">名称</div>
+          <div class="profile-info-value">${kbAudit.auditTitle!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">审计类型</div>
+          <div class="profile-info-value">${kbAudit.type!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">审计对象</div>
+          <div class="profile-info-value">${kbAudit.auditObject!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">关键字</div>
+          <div class="profile-info-value">${kbAudit.keyword!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">描述</div>
+          <div class="profile-info-value">${kbAudit.auditDesc!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">创建人</div>
+          <div class="profile-info-value">${kbAudit.creatorId!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">创建时间</div>
+          <div class="profile-info-value">${kbAudit.createTime!}</div>
+      </div>
+      @if(fileName != null){
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">附件</div>
+          <div class="profile-info-value">已上传附件&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-sm " role="button"
+                          	title="查看附件"
+							data-mode="page" data-title="查看附件"
+							data-url="${ctxPath}/sysAccessory/file/showlayer?id=${kbAudit.docId!}&mode=detail" 
+							data-width="50%"
+                          >查看附件</a></div>
+      	</div>
+      @}else{
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">附件</div>
+          <div class="profile-info-value">未上传附件</div>
+      	 </div>
+      @}
+   </div>   
+        
+</div>
+
+
+
+

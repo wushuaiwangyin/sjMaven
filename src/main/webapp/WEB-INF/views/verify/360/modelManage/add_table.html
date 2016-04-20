@@ -1,0 +1,78 @@
+<div class="layer">
+     <form name="FormPost" id="model-save-form" class="FormGrid"  method="post"
+		action="${ctxPath}/model/base/submitsave">
+		
+		<input type="hidden" value="" name="id"/>
+		<input type="hidden" value="" name="ids"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">物理表名称</td>
+					<td class="DataTD width-100">
+					 <input type="text" id="tabName" name="tabName" datatype="*"  nullmsg="请与数据库物理表名保持一致" value="${tableName!}"  onchange="checkRepeat(this.value)">  
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">对公/对私</td>
+					<td class="DataTD width-100">
+					<select id="flag" >
+					<option
+					 @if(isPublic=="2"){
+					selected="selected"
+					 @}
+					  id="2">对公</option>
+					<option 
+					 @if(isPublic=="1"){
+					 selected="selected"
+					  @} 
+					  id="1">对私</option>
+					</select>
+					</td>
+				</tr>
+				
+				<tr class="FormData">
+					<td class="CaptionTD" colspan="1"><input type="button" id="savebtn" class="" value="save"></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+    </div>
+    
+   <script type="text/javascript">
+   
+   function checkRepeat(tableName){
+	   var params={"tableName":tableName};
+	   $.ajax({
+		   type:"POST",
+		   url:"${ctxPath}/cust360/model/manage/checkTableNameRepeat",
+		   data:{tableName:tableName},
+		   success:function(data){
+			   alert(data);
+		   }
+	   });
+   }
+   
+   $(function(){
+	   $("#savebtn").click(function(){
+		   var tableName=$("#tabName").val();
+		   var flag=$("#flag option:selected").attr("id");
+		  $.post('${ctxPath}/cust360/model/manage/saveTable',{tableName:tableName,isPub:flag},function(data){
+			 // alert(data);
+			 var params={"tableName":tableName};
+			  if("success"==data){
+				  alert("恭喜您,保存成功啦！");
+				 $("#addcols",window.parent.document).show();
+				 $("#addcols",window.parent.document).attr("data-data","{tableName:'"+tableName+"'}");
+				 $("#tableName",window.parent.document).val(tableName); 
+				 var index = layer.index;
+					 layer.close(index);
+			  }else{
+				  alert("对不起，保存出错了！");
+			  }
+			 
+			  
+		  }) 
+	   });
+	   
+   })
+   </script>

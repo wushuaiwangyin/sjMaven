@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.dbaudit.web.modeltool.mapper.ToolFunctionMapper">
+	<select id="listFunction" resultType="com.krm.dbaudit.web.modeltool.model.ToolFunction">
+		select id,type,parent_id,fun_name,fun_script,fun_memo,run_script from TOOL_DEF_FUNCTION 
+		start with parent_id=0 connect by prior id=parent_id
+	</select>
+	
+	<select id="checkFunction" resultType="java.lang.String">
+		select F_FUNCTION_ANALYSE(#{funscript},#{tablename}) from dual
+	</select>
+	
+	<select id="getFunInfoById" resultType="com.krm.dbaudit.web.modeltool.model.ToolFunction">
+		select id,type,parent_id,fun_name,fun_script,fun_memo,run_script from TOOL_DEF_FUNCTION 
+		<where>
+			id=#{id} and type!=0
+		</where>
+	</select>
+	<select id="getFunctionParams" resultType="com.krm.dbaudit.web.modeltool.model.ToolFunctionParam">
+		select id,fun_id,param_name,param_type,param_index,param_memo from TOOL_DEF_FUNCTION_PARAMS
+		<where>
+			fun_id=#{id}
+		</where>
+		order by param_index
+	</select>
+</mapper>

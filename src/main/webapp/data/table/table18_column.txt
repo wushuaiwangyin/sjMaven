@@ -1,0 +1,19 @@
+<tr><th data-field="a" data-sortable="true">会计日期</th>
+<th data-field="b" data-sortable="true">借据编号</th>
+<th data-field="c" data-sortable="true">合同编号</th>
+<th data-field="d" data-sortable="true">机构代号</th>
+<th data-field="e" data-sortable="true">客户证件类型</th>
+<th data-field="f" data-sortable="true">客户证件号码</th>
+<th data-field="g" data-sortable="true">客户名称</th>
+<th data-field="h" data-sortable="true">借款日期</th>
+<th data-field="i" data-sortable="true">到期日期</th>
+<th data-field="j" data-sortable="true">借款金额</th>
+<th data-field="k" data-sortable="true">帐户余额</th>
+<th data-field="l" data-sortable="true">利率</th>
+<th data-field="m" data-sortable="true">罚息利率</th>
+<th data-field="n" data-sortable="true">最后抵帐日期</th>
+<th data-field="o" data-sortable="true">四级分类结构</th>
+<th data-field="p" data-sortable="true">会计科目</th>
+<th data-field="q" data-sortable="true">备注</th>
+<th data-field="r" data-sortable="true">RIQI</th>
+</tr>

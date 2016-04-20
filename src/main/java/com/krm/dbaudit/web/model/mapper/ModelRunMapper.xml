@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.dbaudit.web.model.mapper.ModelRunMapper">
+
+	<sql id="modelRunColumns">
+		id,model_id,run_date,run_time,run_status,create_by,run_result_count
+	</sql>
+
+	<sql id="aliasModelRunColumns">
+		b.id,b.model_id,b.run_date,b.run_time,b.run_status,b.create_by,b.run_result_count
+	</sql>
+
+	<select id="findPageInfo" resultType="com.krm.dbaudit.web.model.model.ModelRun">
+		select  <include refid="aliasModelRunColumns" />  
+			from model_run_log  b 
+		<where>
+			b.del_flag = 0
+			 <if test="@Ognl@isNotBlank(model)">
+			    and b.model =  #{model}
+			 </if>
+			 <if test="@Ognl@isNotBlank(startTimeStart)">
+			    and b.start_time &gt;=  #{startTimeStart}
+			 </if>
+			 <if test="@Ognl@isNotBlank(startTimeEnd)">
+			    and b.start_time &lt;=  #{startTimeEnd}
+			 </if>
+			 <if test="@Ognl@isNotBlank(status)">
+			    and b.status =  #{status}
+			 </if>
+			 <if test="@Ognl@isNotBlank(progress)">
+			    and b.progress =  #{progress}
+			 </if>
+			 <if test="@Ognl@isNotBlank(remark)">
+			    and b.remark like '%' || #{remark} ||'%' 
+			 </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY b.${sortC}   ${order}
+		</if>
+	</select>
+	
+	<select id="selectByModelId" resultType="com.krm.dbaudit.web.model.model.ModelRun">
+		select <include refid="aliasModelRunColumns" />,to_char(run_date,'yyyy') as runyearstr,to_char(run_date,'mm-dd hh24:mi:ss') as runtimestr
+		from model_run_log b
+		<where>
+			model_id=#{modelid}
+		</where>
+		order by id desc
+	</select>
+	
+</mapper>

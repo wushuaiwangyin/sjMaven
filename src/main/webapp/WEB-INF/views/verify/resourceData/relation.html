@@ -1,0 +1,41 @@
+<div class="layer">
+    <div class="widget-main padding-8">
+        <table id="table-relation"  data-height="500"   data-pagination="true"
+               data-search="false" data-page-list="[10, 20, 50, 100, 200]"   data-smart-display="true">
+            <thead>
+            <tr>
+                <th data-field="id" data-align="center" data-sortable="true" data-width="50">编号</th>
+                <th data-field="name" data-align="center" data-sortable="true">名称</th>
+                <th data-field="orgNo" data-sortable="true" data-sorter="priceSorter">机构号</th>
+                <th data-field="remark" data-sortable="true" data-sorter="priceSorter">描述</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    var $table_relation = $('#table-relation');
+
+
+    $.ajax({
+        url: "./data/depart.json",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+            var d = [];
+            $.each(data,function(i,obj){
+                if(obj.orgNo == '010110'){
+                    d.push(obj);
+                }
+            })
+            $table_relation.bootstrapTable({
+                iconSize:'sm',
+                data:d
+            });
+        }
+    });
+
+
+</script>

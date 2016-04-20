@@ -1,0 +1,172 @@
+<div class="layer">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+            <th class="center" width="60">ID</th>
+            <th class="center" width="240">名称</th>
+            <th class="left">进度</th>
+            <th class="center" width="80">状态</th>
+        </tr>
+        </thead>
+        <tbody id="progress_body">
+
+        </tbody>
+    </table>
+</div>
+<div class="width-100 clearfix" tag-save-btn style="bottom: 0px;left: 0px;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110 width-50  pull-left"  id="start-run">开始运行</span>
+	<span class="btn btn-yellow btn-sm bigger-110 width-50 pull-right" id="model-run-cancel">
+		<i class="ace-icon fa fa-times align-top  bigger-125"></i>关闭
+	</span>
+</div>
+<style>
+    .progress{
+        margin-bottom: 0px;
+    }
+</style>
+<script>
+    $("#model-run-cancel").click(function () {
+        layer.close(lastIndex);
+        layer.close(layer.index);
+        return false;
+    });
+    
+    var steps_run = {};
+    var stop = false;
+    var count = 0;
+    var currunstatus = false;
+    var steps = {};
+
+    $("#start-run").click(function () {
+        steps = $("#progress_body tr");;
+        if( $(this).text() != "运行中"){
+        	$.ajax({
+     			url:"${ctxPath}/model/runflow/flowrunbegin",
+     		//	async:false,
+     			type:'post',
+     		}).done(function(data) {
+        	$("#start-run").text("运行中");
+        	calc(steps,0);
+     		});
+        }
+    });
+
+    $.ajax({
+        url: "${ctxPath}/model/runflow/flowinfo",
+        dataType: "json",
+        data:{id:${modelid!}},
+		type:'post',
+        async: false,
+        success: function(data) {
+            var c = $("#progress_body");
+            var html = "";
+            $.each(data,function(i,obj){
+                html+= '<tr><td class="center">'+obj.id+'</td>' +
+                            '<td  class="center">'+obj.name+'</td>'+
+                            '<td  class="left">' +
+                                '<div data-percent="0%" class="progress pos-rel"> ' +
+                                     '<div style="width:0%;" class="progress-bar"></div>' +
+                                 '</div>' +
+                            '</td>'+
+                            '<td  class="center"><span class="label label-sm label-info">未开始</span></td>';
+            })
+            c.html(html);
+        }
+    });
+
+
+    function calc(steps,i){
+    	
+        stop = false;
+        count = steps.length;
+        var currentTr = steps[i];
+        $(currentTr).find(".progress").attr("data-percent","0%");
+        $(currentTr).find(".progress-bar").css("width","0%");
+        $(currentTr).find(".progress-bar").removeClass("progress-bar-success");
+        $(currentTr).find(".label").text("未开始").removeClass("label-success").removeClass("label-error").addClass("label-info");
+        steps_run["step_"+i] = false;
+        var $td = $(currentTr).children('td');
+    	var flowid = $td.eq(0).text();
+    	
+        var p = 0
+        var currentTr = steps[i];
+        $(currentTr).find(".label").text("运行中");
+        if(stop){
+        	steps_run["step_"+i] = true;
+	        $(currentTr).find(".label").text("停止").removeClass("label-info").addClass("label-error");
+	        return;
+        }
+        
+        p=getRandomNum(1,38);
+        $(currentTr).find(".progress").attr("data-percent",p + "%");
+        $(currentTr).find(".progress-bar").css("width",p + "%");
+           $.ajax({
+    			url:"${ctxPath}/model/runflow/flowrun",
+    			data:{id:flowid},
+    		//	async:false,
+    			type:'post',
+    		}).done(function(data){
+    			if(data>0)
+    			{
+	     			p=100;
+	     			$(currentTr).find(".progress").attr("data-percent",p + "%");
+	                $(currentTr).find(".progress-bar").css("width",p + "%");
+                 	if(p == 100){
+                    	$(currentTr).find(".label").text("运行完成").removeClass("label-info").addClass("label-success");
+                    	$(currentTr).find(".progress-bar").addClass("progress-bar-success");
+                    	steps_run["step_"+i] = true;
+                    	if(count == i + 1){
+                    		$.ajax({
+                     			url:"${ctxPath}/model/runflow/flowrunend",
+                     		//	async:false,
+                     			data:{tmpflag:0},
+                     			type:'post',
+                     		}).done(function(data)
+                        	{
+                        	})
+                         	$("#start-run").text("重新运行");
+                     	}
+                 	}
+                 	if(i+1<steps.length)
+                 		calc(steps,i+1);
+    			}
+    			else
+    			{
+    				stop = true;
+                    $(currentTr).find(".label").text("出错").removeClass("label-info").addClass("label-error");
+                    steps_run["step_"+i] = true;
+                    $("#start-run").text("重新运行");
+                    $.ajax({
+             			url:"${ctxPath}/model/runflow/flowrunend",
+             			data:{tmpflag:0},
+             			type:'post',
+             		}).done(function(data)
+                	{
+                	})
+                	return;	
+    			}
+    		}).fail(function(error){
+    			stop = true;
+                $(currentTr).find(".label").text("出错").removeClass("label-info").addClass("label-error");
+                steps_run["step_"+i] = true;
+                $("#start-run").text("重新运行");
+                $.ajax({
+         			url:"${ctxPath}/model/runflow/flowrunend",
+         			data:{tmpflag:0},
+         			type:'post',
+         		}).done(function(data)
+            	{
+            	})
+                return;
+    		});
+    }
+    function getRandomNum(Min,Max) {
+        var Range = Max - Min;
+        var Rand = Math.random();
+        return(Min + Math.round(Rand * Range));
+    }
+    function flowtest(flowid) {
+    	//alert(flowid);
+    	var r = 0;
+    }
+</script>

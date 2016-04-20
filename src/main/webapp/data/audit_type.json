@@ -1,0 +1,7 @@
+[
+    {"id":1,"pid":0,"index":1,"name":"专项模型","remark":"p"},
+    {"id":11,"pid":1,"index":1,"name":"高管人员经济责任稽核","remark":"l"},
+    {"id":1101,"pid":11,"index":1,"name":"内控取数","remark":"l"},
+    {"id":12,"pid":1,"index":1,"name":"年度业务经营综合考评指标","remark":"l"},
+    {"id":1201,"pid":12,"index":1,"name":"考评指标分析","remark":"l"}
+]

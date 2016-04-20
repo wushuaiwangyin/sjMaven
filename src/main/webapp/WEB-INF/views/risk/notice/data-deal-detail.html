@@ -1,0 +1,67 @@
+
+<div class="layer">
+   <div class="profile-user-info profile-user-info-striped wordbreak" >
+   	  <div class="profile-info-row">
+ 			<div class="profile-info-name">编号</div>
+          <div class="profile-info-value">${dataNoticeModel.id!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">模型名称</div>
+          <div class="profile-info-value">${dataNoticeModel.modelname!}</div>
+      </div>
+         <div class="profile-info-row">
+          <div class="profile-info-name">通知机构</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeOrganName!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">被通知机构</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeOrganName2!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">交易机构</div>
+          <div class="profile-info-value">${dataNoticeModel.bnoticeOrganName!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">通知时间</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeStartTime!}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">通知书内容</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeDealRequire}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理时间</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeEndTime}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">发送通知人</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeSender}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理人</div>
+          <div class="profile-info-value">${dataNoticeModel.noticeDealer}</div>
+      </div>
+      <div class="profile-info-row">
+          <div class="profile-info-name">处理状态</div>
+          <div class="profile-info-value">${dataNoticeModel.noticestatus}</div>
+      </div>
+	 @if(modelDataFile != null){
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">通知附件</div>
+          <div class="profile-info-value">已上传附件&nbsp;&nbsp;&nbsp;<button class="btn btn-primary btn-sm" id="downloadFile" 
+                       onclick="Angel.downloadFile('','${ctxPath}/data/download?id=${modelDataFile.id!}')">点击下载</button>
+          </div>
+      	</div>
+      @}else{
+      	 <div class="profile-info-row">
+          <div class="profile-info-name">通知附件</div>
+          <div class="profile-info-value">未上传附件</div>
+      	 </div>
+      @}
+   </div>   
+        
+</div>
+
+
+
+
